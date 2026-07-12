@@ -21,7 +21,7 @@ from playsound3 import playsound
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from data_aksara import HONOCOROKO_DATA
+from data.data_aksara import HONOCOROKO_DATA
 
 
 class AksaraCard(QFrame):
