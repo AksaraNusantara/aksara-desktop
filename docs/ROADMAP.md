@@ -1,69 +1,70 @@
-# Aksara Nusantara - Roadmap
+# Aksara Nusantara Roadmap
 
-> Aksara Nusantara adalah aplikasi pembelajaran aksara tradisional Indonesia yang dimulai dari Aksara Jawa (Honocoroko). Proyek ini dikembangkan secara bertahap dengan fokus pada kualitas kode, kemudahan pemeliharaan, dan pengalaman belajar yang menyenangkan.
+## Milestone 1 — Foundation & Refactoring
 
----
+**Status:** 🚧 Sedang Berlangsung
 
-# Milestone 1 - Foundation & Refactoring
+### Selesai
 
-Membangun fondasi proyek yang bersih dan mudah dikembangkan.
+- ✅ Extract AksaraCard
+- ✅ Extract FlashcardTab
+- ✅ Extract TransliterasiTab
 
-## Progress
+### Sedang Dikerjakan
 
-- [x] 1.1 Extract AksaraCard
-- [x] 1.2 Extract FlashcardTab
-- [ ] 1.3 Extract TransliterasiTab
-- [ ] 1.4 Extract QuizTab
-- [ ] 1.5 Progress Manager
-- [ ] 1.6 Audio Manager
-- [ ] 1.7 Theme Manager
-- [ ] 1.8 Project Structure Cleanup
+- 🔄 Refactor QuizTab
 
----
+### Berikutnya
 
-# Milestone 2 - Learning Engine
-
-- [ ] Sandhangan
-- [ ] Pasangan
-- [ ] Murda
-- [ ] Rekan
-- [ ] Angka Jawa
-- [ ] Tanda Baca
+- Progress Manager
+- Audio Manager
+- Theme Manager
+- AlphabetTab
+- Final Cleanup
 
 ---
 
-# Milestone 3 - Gamification
+## Milestone 2 — Learning Engine
 
-- [ ] Achievement
-- [ ] Daily Challenge
-- [ ] Learning Statistics
-- [ ] Learning Streak
-- [ ] Review Mistakes
-
----
-
-# Milestone 4 - User Experience
-
-- [ ] Search Aksara
-- [ ] Favorites
-- [ ] Better Themes
-- [ ] Settings
-- [ ] Accessibility
+- Sandhangan
+- Pasangan
+- Murda
+- Rekan
+- Angka Jawa
+- Tanda Baca
 
 ---
 
-# Milestone 5 - Multi Script Support
+## Milestone 3 — Smart Learning
 
-- [ ] Aksara Bali
-- [ ] Aksara Sunda
-- [ ] Aksara Batak
-- [ ] Aksara Lontara
-- [ ] Aksara Kaganga
+- Achievement
+- Daily Challenge
+- Learning Statistics
+- Review Mistakes
 
 ---
 
-# Milestone 6 - Cross Platform
+## Milestone 4 — User Experience
 
-- [ ] Desktop Release
-- [ ] Android Version
-- [ ] Web Version
+- Better Themes
+- Search
+- Favorites
+- Accessibility
+
+---
+
+## Milestone 5 — Multi Script
+
+- Aksara Bali
+- Aksara Sunda
+- Aksara Batak
+- Lontara
+- Kaganga
+
+---
+
+## Milestone 6 — Cross Platform
+
+- Desktop
+- Android
+- Web

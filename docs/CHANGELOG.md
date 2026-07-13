@@ -1,43 +1,43 @@
 # Changelog
 
-Semua perubahan penting pada proyek **Aksara Nusantara** akan didokumentasikan di file ini.
-
-Format changelog ini mengikuti prinsip *Keep a Changelog* dan menggunakan *Semantic Versioning*.
+Semua perubahan penting pada proyek Aksara Nusantara didokumentasikan di sini.
 
 ---
 
 ## [0.1.0] - Unreleased
 
 ### Added
-- Aplikasi desktop berbasis Python dan PySide6.
-- Halaman Aksara Lengkap untuk menampilkan 20 aksara dasar Honocoroko.
-- Fitur Flashcard untuk membantu menghafal aksara.
-- Fitur Quiz pilihan ganda.
-- Fitur Transliterasi Latin ? Aksara Jawa (versi awal).
-- Dukungan font Noto Sans Javanese.
-- Sistem tema aplikasi (Default, Krem, Klasik Jawa, High Contrast).
-- Penyimpanan progress belajar menggunakan file JSON.
-- Pengucapan aksara menggunakan Google Text-to-Speech (gTTS).
+
+- Desktop application menggunakan Python & PySide6.
+- Tampilan Aksara Lengkap.
+- Flashcard.
+- Quiz.
+- Transliterasi Latin ? Aksara Jawa.
+- Audio menggunakan Google Text-to-Speech.
+- Theme system.
+- Progress menggunakan JSON.
+- Font Noto Sans Javanese.
 
 ### Changed
-- Struktur proyek mulai dimodularisasi.
-- `data_aksara.py` diubah menjadi `aksara_jawa.py` sebagai persiapan dukungan berbagai aksara Nusantara.
-- Class `AksaraCard` dipindahkan ke modul `ui/aksara_card.py`.
-- Class `FlashcardTab` dipindahkan ke modul `tabs/flashcard_tab.py`.
 
-### Documentation
-- Menambahkan `README.md`.
-- Menambahkan `PROJECT_LOG.md`.
-- Menambahkan `ROADMAP.md`.
-- Menambahkan `TODO.md`.
+- Refactoring menuju arsitektur modular.
+- `data_aksara.py` diubah menjadi `aksara_jawa.py`.
+- `AksaraCard` dipindahkan ke `ui/`.
+- `FlashcardTab` dipindahkan ke `tabs/`.
+- `TransliterasiTab` dipindahkan ke `tabs/`.
+- `TRANSLITERATION_MAP` dipindahkan ke `aksara_jawa.py`.
 
 ### Development
-- Inisialisasi Git repository.
-- Menambahkan `.gitignore`.
-- Menyiapkan Virtual Environment (`.venv`).
-- Memulai penggunaan Git commit yang terstruktur.
+
+- Git repository dibuat.
+- Virtual Environment dibuat.
+- Mulai menggunakan Git workflow.
+- Menambahkan dokumentasi proyek.
 
 ### Known Issues
-- Transliterasi Aksara Jawa ? Latin masih berupa placeholder.
-- Engine transliterasi Latin ? Aksara Jawa masih sederhana dan belum mendukung sandhangan, pasangan, maupun aturan penulisan lengkap.
-- Audio masih menggunakan implementasi langsung pada masing-masing tab dan belum dipusatkan ke Audio Manager.
+
+- Quiz masih berada di `main.py`.
+- Progress Manager belum dipisahkan.
+- Audio Manager belum dipisahkan.
+- Theme Manager belum dipisahkan.
+- Engine transliterasi masih sederhana.

@@ -31,7 +31,7 @@ Proyek ini juga menjadi sarana belajar pengembangan perangkat lunak modern mengg
 - Menampilkan 20 aksara dasar Honocoroko
 - Flashcard interaktif
 - Quiz pilihan ganda
-- Transliterasi Latin ? Aksara Jawa (versi awal)
+- Transliterasi Latin → Aksara Jawa (versi awal)
 - Pengucapan menggunakan Google Text-to-Speech
 - Tema aplikasi
 - Penyimpanan progress belajar
@@ -60,22 +60,22 @@ Proyek ini juga menjadi sarana belajar pengembangan perangkat lunak modern mengg
 ```
 AksaraNusantara/
 
-+-- docs/
-�   +-- CHANGELOG.md
-�   +-- PROJECT_LOG.md
-�   +-- ROADMAP.md
-�   +-- TODO.md
-�
-+-- fonts/
-�
-+-- tabs/
-�
-+-- ui/
-�
-+-- main.py
-+-- aksara_jawa.py
-+-- requirements.txt
-+-- README.md
+├── docs/
+│   ├── CHANGELOG.md
+│   ├── PROJECT_LOG.md
+│   ├── ROADMAP.md
+│   └── TODO.md
+│
+├── fonts/
+│
+├── tabs/
+│
+├── ui/
+│
+├── main.py
+├── aksara_jawa.py
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -148,6 +148,25 @@ python main.py
 - Web Application
 
 Lihat detail pada **ROADMAP.md**
+
+---
+
+## Current Progress
+
+**Current Version**
+
+0.1.0 (Unreleased)
+
+**Current Milestone**
+
+Milestone 1 — Foundation & Refactoring
+
+Progress:
+
+- ✅ AksaraCard
+- ✅ FlashcardTab
+- ✅ TransliterasiTab
+- 🔄 QuizTab
 
 ---
 

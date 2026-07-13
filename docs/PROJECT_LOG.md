@@ -1,45 +1,69 @@
-## Milestone 1.1 � Extract AksaraCard
+# PROJECT LOG
+
+---
+
+## Milestone 1.1 – Extract AksaraCard
 
 **Tanggal**
-2026-07-14
+14 Juli 2026
+
+**Status**
+✅ Selesai
 
 **Tujuan**
-Memindahkan class `AksaraCard` dari `main.py` ke `ui/aksara_card.py` agar kode lebih modular.
+Memisahkan komponen kartu aksara menjadi modul tersendiri agar UI lebih modular.
 
 **Perubahan**
 - Membuat folder `ui`
-- Membuat file `aksara_card.py`
+- Membuat `ui/aksara_card.py`
 - Memindahkan class `AksaraCard`
-- Memperbarui import pada `main.py`
-- Menghapus import yang tidak digunakan
+- Membersihkan import pada `main.py`
 
 **Git Commit**
-refactor: extract AksaraCard and rename Javanese data module
+refactor: extract AksaraCard into ui package
 
-**Catatan**
-Refactoring selesai tanpa mengubah perilaku aplikasi.
+---
 
-
-
-
-## Milestone 1.2 � Extract FlashcardTab
+## Milestone 1.2 – Extract FlashcardTab
 
 **Tanggal**
-2026-07-14
+14 Juli 2026
+
+**Status**
+✅ Selesai
 
 **Tujuan**
-Memindahkan class `FlashcardTab` ke modul terpisah agar struktur proyek lebih modular.
+Memisahkan tab Flashcard menjadi modul tersendiri.
 
 **Perubahan**
 - Membuat folder `tabs`
-- Membuat `flashcard_tab.py`
+- Membuat `tabs/flashcard_tab.py`
 - Memindahkan seluruh class `FlashcardTab`
-- Memindahkan seluruh import yang diperlukan
-- Memperbarui import di `main.py`
-- Menghapus import yang tidak digunakan
+- Memperbaiki dependency dan import
+- Memperbaiki masalah encoding UTF-8
 
 **Git Commit**
 refactor: extract FlashcardTab into tabs package
 
-**Catatan**
-Refactoring selesai tanpa mengubah perilaku aplikasi.
+---
+
+## Milestone 1.3 – Extract TransliterasiTab
+
+**Tanggal**
+14 Juli 2026
+
+**Status**
+✅ Selesai
+
+**Tujuan**
+Memisahkan fitur transliterasi ke modul tersendiri.
+
+**Perubahan**
+- Membuat `tabs/transliterasi_tab.py`
+- Memindahkan class `TransliterasiTab`
+- Memindahkan `TRANSLITERATION_MAP` ke `aksara_jawa.py`
+- Membersihkan import
+- Program tetap berjalan tanpa perubahan perilaku
+
+**Git Commit**
+refactor: extract TransliterasiTab into tabs package
