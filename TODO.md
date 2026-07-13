@@ -1,5 +1,0 @@
-- [x] Install Git
-- [x] Initial Commit
-- [ ] Split Tabs
-- [ ] Theme Manager
-- [ ] Learning Engine

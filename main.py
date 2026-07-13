@@ -24,67 +24,17 @@ sys.path.insert(0, str(current_dir))
 from data.aksara_jawa import HONOCOROKO_DATA
 from ui.aksara_card import AksaraCard
 from tabs.flashcard_tab import FlashcardTab
+from tabs.transliterasi_tab import TransliterasiTab
 
 # Simple transliteration dictionary (bisa dikembangkan)
-trans_dict = {
-    "ha": "ꦲ", "na": "ꦤ", "ca": "ꦕ", "ra": "ꦫ", "ka": "ꦏ",
-    "da": "ꦢ", "ta": "ꦠ", "sa": "ꦱ", "wa": "ꦮ", "la": "ꦭ",
-    "pa": "ꦥ", "dha": "ꦝ", "ja": "ꦗ", "ya": "ꦪ", "nya": "ꦚ",
-    "ma": "ꦩ", "ga": "ꦒ", "ba": "ꦧ", "tha": "ꦛ", "nga": "ꦔ",
-    # Tambah sandhangan nanti
-    "a": "", "i": "ꦶ", "u": "ꦸ", "e": "ꦺ", "o": "ꦾ"
-}
-
-class TransliterasiTab(QWidget):
-    def __init__(self, javanese_font):
-        super().__init__()
-        self.javanese_font = javanese_font
-        self.init_ui()
-    
-    def init_ui(self):
-        layout = QVBoxLayout(self)
-        
-        title = QLabel("Transliterasi Latin ↔ Aksara Jawa")
-        title.setFont(QFont("Arial", 18, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title)
-        
-        # Input Latin
-        layout.addWidget(QLabel("Ketik teks Latin:"))
-        self.input_latin = QTextEdit()
-        self.input_latin.setMaximumHeight(80)
-        layout.addWidget(self.input_latin)
-        
-        btn_layout = QHBoxLayout()
-        self.btn_to_jawa = QPushButton("→ Ke Aksara Jawa")
-        self.btn_to_latin = QPushButton("← Ke Latin")
-        btn_layout.addWidget(self.btn_to_jawa)
-        btn_layout.addWidget(self.btn_to_latin)
-        layout.addLayout(btn_layout)
-        
-        # Output
-        layout.addWidget(QLabel("Hasil:"))
-        self.output = QTextEdit()
-        self.output.setFont(self.javanese_font)
-        self.output.setReadOnly(True)
-        layout.addWidget(self.output)
-        
-        self.btn_to_jawa.clicked.connect(self.latin_to_jawa)
-        self.btn_to_latin.clicked.connect(self.jawa_to_latin)
-    
-    def latin_to_jawa(self):
-        text = self.input_latin.toPlainText().lower().strip()
-        result = ""
-        for word in text.split():
-            for syllable in trans_dict:
-                if syllable in word:
-                    word = word.replace(syllable, trans_dict[syllable])
-            result += word + " "
-        self.output.setText(result.strip())
-    
-    def jawa_to_latin(self):
-        # Sederhana dulu, hanya tampilkan pesan
-        self.output.setText("Fitur ini masih dalam pengembangan\n(Membaca aksara Jawa ke Latin lebih kompleks)")
+#trans_dict = {
+#    "ha": "ꦲ", "na": "ꦤ", "ca": "ꦕ", "ra": "ꦫ", "ka": "ꦏ",
+#    "da": "ꦢ", "ta": "ꦠ", "sa": "ꦱ", "wa": "ꦮ", "la": "ꦭ",
+#    "pa": "ꦥ", "dha": "ꦝ", "ja": "ꦗ", "ya": "ꦪ", "nya": "ꦚ",
+#    "ma": "ꦩ", "ga": "ꦒ", "ba": "ꦧ", "tha": "ꦛ", "nga": "ꦔ",
+#    # Tambah sandhangan nanti
+#    "a": "", "i": "ꦶ", "u": "ꦸ", "e": "ꦺ", "o": "ꦾ"
+#}
 
 
 class MainWindow(QMainWindow):

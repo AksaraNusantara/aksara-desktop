@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Aksara Nusantara
 
@@ -6,7 +7,7 @@ aksara_tab.py
 Flashcard learning module.
 """
 
-from PySide6.QtWidgets import (QFrame, QVBoxLayout, QWidget, QLabel,
+from PySide6.QtWidgets import (QFrame, QWidget, QLabel,
                                QVBoxLayout, QHBoxLayout, QPushButton)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
