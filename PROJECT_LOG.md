@@ -1,30 +1,16 @@
-\# Project Log
+## Milestone 1.1 – Extract AksaraCard
 
-\---
-\## Milestone 1.1 - Data Package Refactoring
-\*\*Tanggal:\*\* 12 Juli 2026
-\### Tujuan
+**Tanggal**
+2026-07-14
 
-Memisahkan data aksara ke dalam package `data`.
+**Tujuan**
+Memindahkan class AksaraCard ke file terpisah.
 
-\### Hasil
-\- Membuat struktur folder awal.
-\- Membuat package `data`.
-\- Memindahkan `data\_aksara.py`.
-\- Mengubah import pada aplikasi.
-\- Aplikasi tetap berjalan dengan baik.
+**Perubahan**
+- Membuat folder `ui`
+- Membuat `aksara_card.py`
+- Memindahkan class
+- Memperbaiki import
 
-\### Pelajaran
-\- Python package menggunakan file `\_\_init\_\_.py`.
-\- Refactoring kecil lebih aman daripada perubahan besar.
-
-\### Commit
-refactor: move data module into package
-
-
-
-\## Milestone 1.1.5 â€“ Development Environment
-\*\*Tanggal:\*\* 13 Juli 2026
-
-
-
+**Git Commit**
+refactor: extract AksaraCard into ui package

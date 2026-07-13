@@ -21,25 +21,8 @@ from playsound3 import playsound
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-from data.data_aksara import HONOCOROKO_DATA
-
-
-class AksaraCard(QFrame):
-    def __init__(self, aksara, nama, latin, javanese_font):
-        super().__init__()
-        self.setFrameShape(QFrame.Shape.StyledPanel)
-        self.setMinimumHeight(160)
-        layout = QVBoxLayout(self)
-        
-        label = QLabel(aksara)
-        label.setFont(javanese_font)
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
-        info = QLabel(f"<b>{nama}</b><br><span style='color:#555;'>{latin}</span>")
-        info.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
-        layout.addWidget(label)
-        layout.addWidget(info)
+from data.aksara_jawa import HONOCOROKO_DATA
+from ui.aksara_card import AksaraCard
 
 
 class FlashcardTab(QWidget):
@@ -297,10 +280,16 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         main_layout = QVBoxLayout(widget)
         
-        title = QLabel("ꦲꦤꦕꦫꦏ  Honocoroko")
-        title.setFont(QFont("Arial", 24, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(title)
+        title_jawa = QLabel("ꦲꦤꦕꦫꦏ")
+        title_jawa.setFont(QFont(self.javanese_font.family(), 18))
+        title_jawa.setAlignment(Qt.AlignCenter)
+
+        title_latin = QLabel("Honocoroko")
+        title_latin.setFont(QFont("Arial", 18, QFont.Weight.Bold))
+        title_latin.setAlignment(Qt.AlignCenter)
+
+        main_layout.addWidget(title_jawa)
+        main_layout.addWidget(title_latin)
         
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -387,15 +376,15 @@ class MainWindow(QMainWindow):
             layout.addWidget(btn)
         
         btn_layout = QHBoxLayout()
-        self.btn_sound = QPushButton("🔊 Dengar Pengucapan")
+        #self.btn_sound = QPushButton("🔊 Dengar Pengucapan")
         self.btn_check = QPushButton("Check Answer")
         self.btn_next = QPushButton("Next Question")
         
-        self.btn_sound.clicked.connect(self.play_quiz_sound)
+        #self.btn_sound.clicked.connect(self.play_quiz_sound)
         self.btn_check.clicked.connect(self.check_answer)
         self.btn_next.clicked.connect(self.load_new_question)
         
-        btn_layout.addWidget(self.btn_sound)
+        #btn_layout.addWidget(self.btn_sound)
         btn_layout.addWidget(self.btn_check)
         btn_layout.addWidget(self.btn_next)
         layout.addLayout(btn_layout)
