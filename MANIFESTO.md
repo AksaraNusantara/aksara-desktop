@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 \# Aksara Nusantara Manifesto
 
 
@@ -279,4 +280,3 @@ We build community.
 
 
 \*\*Welcome to Aksara Nusantara.\*\*
-

@@ -1,5 +1,6 @@
 # Contributing to Aksara Nusantara
 
+<<<<<<< HEAD
 First of all, thank you for considering contributing to **Aksara Nusantara**.
 
 Every contribution—whether it is code, documentation, design, translation, testing, or simply reporting an issue—helps preserve Indonesia's traditional writing systems for future generations.
