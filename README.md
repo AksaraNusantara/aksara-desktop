@@ -1,61 +1,108 @@
-# Aksara Desktop
+# Aksara Nusantara
+### Desktop Edition
 
 > **Belajar. Menulis. Melestarikan.**  
 > *Learn. Write. Preserve.*
 
-Aksara Desktop adalah aplikasi desktop open source yang dikembangkan sebagai bagian dari **Ekosistem Aksara Nusantara**. Proyek ini bertujuan membantu masyarakat mempelajari, menulis, dan melestarikan berbagai aksara tradisional Indonesia melalui teknologi modern.
+Aksara Nusantara Desktop adalah aplikasi desktop open source yang dikembangkan untuk membantu masyarakat mempelajari, menulis, dan melestarikan berbagai aksara tradisional Indonesia melalui teknologi modern.
 
-*Aksara Desktop is an open-source desktop application developed as part of the **Aksara Nusantara Ecosystem**. Its mission is to help people learn, write, and preserve Indonesian traditional scripts using modern technology.*
-
----
-
-## 🌏 Tentang / About
-
-Indonesia memiliki kekayaan aksara tradisional yang luar biasa. Namun, seiring perkembangan zaman, semakin sedikit orang yang dapat membaca dan menulisnya.
-
-Aksara Desktop hadir sebagai media pembelajaran yang mudah digunakan, gratis, dan terbuka untuk semua orang. Selain menjadi aplikasi pembelajaran, proyek ini juga menjadi sarana bagi para developer untuk belajar pengembangan aplikasi desktop Python, dokumentasi, dan kolaborasi dalam proyek open source.
-
-Setiap aksara menyimpan cerita. Ketika sebuah aksara tidak lagi dapat dibaca, bukan hanya huruf yang hilang, tetapi juga sebagian dari warisan budaya yang dikandungnya. Aksara Desktop hadir untuk membantu menjaga agar warisan itu tetap hidup melalui pembelajaran dan teknologi terbuka.
-
-Indonesia is home to many beautiful traditional writing systems. Unfortunately, many of them are becoming less familiar to younger generations.
-
-Aksara Desktop aims to make learning these scripts easier while also serving as an educational open-source project for developers interested in Python desktop application development.
-
-Every script carries a story. When a script can no longer be read, we risk losing not only its characters, but also part of the cultural heritage it represents. Aksara Desktop exists to help keep that heritage alive through learning and open technology.
+The project aims to preserve Indonesia's rich writing systems by providing free and open educational tools for everyone.
 
 ---
 
-## ✨ Fitur / Features
+## 🌏 Vision
 
-Versi saat ini menyediakan beberapa fitur berikut:
+Indonesia is home to dozens of traditional writing systems that represent centuries of history, literature, philosophy, and culture.
 
-- 📖 Flashcard pembelajaran aksara
-- ❓ Mode kuis
-- 🔤 Transliterasi Latin ↔ Aksara
+Unfortunately, many of these scripts are becoming less familiar to younger generations.
+
+**Aksara Nusantara** exists to help preserve this cultural heritage through open-source software, educational resources, and community collaboration.
+
+We believe technology should not replace culture.
+
+Technology should help preserve it.
+
+---
+
+## ✨ Features
+
+Current features include:
+
+- 📖 Alphabet learning
+- 🃏 Flashcards
+- ❓ Interactive Quiz
+- 🔤 Latin ⇄ Javanese Transliteration
 - 🔊 Text-to-Speech
-- 🖥️ Antarmuka desktop berbasis Qt (PySide6)
+- 💾 Learning Progress Tracking
+- 🖥️ Desktop application powered by PySide6 (Qt)
 
-Fitur baru akan terus ditambahkan pada rilis berikutnya.
+More features will be added in future releases.
+
+---
+
+## 🚧 Current Status
+
+Project Status
+
+🟠 Active Development
+
+Current Version
+
+**v0.1 (Pre-release)**
+
+Current Milestone
+
+**Milestone 1 — Foundation**
+
+Implemented:
+
+- ✅ Alphabet Learning
+- ✅ Flashcards
+- ✅ Quiz
+- ✅ Transliteration
+- ✅ Progress Saving
+- ✅ Documentation
 
 ---
 
 ## 📷 Screenshot
 
-> *Coming Soon*
+Coming Soon
 
 ---
 
-## 🚀 Memulai / Getting Started
+## 🚀 Getting Started
 
-### Persyaratan
+### Requirements
 
-- Python 3.x
+- Python 3.12+
 - PySide6
+- Windows / Linux
 
 ### Clone Repository
 
 ```bash
 git clone https://github.com/AksaraNusantara/aksara-desktop.git
+
+cd aksara-desktop
+```
+
+### Create Virtual Environment
+
+```bash
+python -m venv .venv
+```
+
+Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+Linux / macOS
+
+```bash
+source .venv/bin/activate
 ```
 
 ### Install Dependencies
@@ -64,7 +111,7 @@ git clone https://github.com/AksaraNusantara/aksara-desktop.git
 pip install -r requirements.txt
 ```
 
-### Jalankan Aplikasi
+### Run
 
 ```bash
 python main.py
@@ -72,50 +119,98 @@ python main.py
 
 ---
 
+## 📂 Project Structure
+
+```
+assets/
+data/
+docs/
+fonts/
+progress/
+tabs/
+ui/
+utils/
+widgets/
+
+main.py
+requirements.txt
+README.md
+LICENSE
+```
+
+---
+
+## 📚 Documentation
+
+Additional documentation can be found inside the `docs` directory.
+
+- CHANGELOG.md
+- PROJECT_LOG.md
+- ROADMAP.md
+- TODO.md
+- MANIFESTO.md
+- THIRD_PARTY_NOTICES.md
+
+---
+
 ## 🛣️ Roadmap
 
-Versi awal berfokus pada:
+Current roadmap includes:
 
-- Pembelajaran Hanacaraka
-- Flashcard
-- Quiz
-- Transliterasi
-- Dokumentasi
-
-Pengembangan berikutnya akan mencakup:
-
-- Dukungan aksara Nusantara lainnya
+- Improve Hanacaraka learning experience
+- Additional Javanese writing rules
+- Unicode utilities
 - Font management
-- Dataset
-- Tool Unicode
-- Fitur ekspor
-- Dukungan komunitas
+- More quizzes
+- Better transliteration engine
+- Audio improvements
+
+Future ecosystem goals:
+
+- Desktop Edition
+- Android Edition
+- Web Edition
+- Unicode Tools
+- Dataset Project
+- Font Project
+- Community Portal
 
 ---
 
-## 🤝 Kontribusi / Contributing
+## 🤝 Contributing
 
-Kontribusi selalu diterima.
+Contributions are welcome.
 
-Baik Anda seorang programmer, guru, mahasiswa, peneliti, desainer, maupun pemerhati budaya, setiap kontribusi akan membantu pengembangan Aksara Nusantara.
+Whether you are a developer, teacher, linguist, student, designer, or simply interested in preserving Indonesian traditional scripts, your contribution is greatly appreciated.
 
-Panduan kontribusi akan tersedia pada versi berikutnya.
-
----
-
-## 📜 Lisensi / License
-
-Lisensi open source akan ditentukan sebelum rilis publik pertama.
+Contribution guidelines will be available in a future release.
 
 ---
 
-## 🌱 Tentang Ekosistem Aksara Nusantara
+## 📜 License
 
-Aksara Desktop merupakan bagian dari **Ekosistem Aksara Nusantara**.
+This project is licensed under the MIT License.
 
-Ekosistem ini bertujuan membangun perangkat lunak, dokumentasi, materi pembelajaran, dan komunitas untuk mendukung pelestarian aksara tradisional Indonesia melalui teknologi terbuka.
+See the LICENSE file for details.
+
+Third-party software licenses are available in:
+
+THIRD_PARTY_NOTICES.md
 
 ---
+
+## 🌱 About Aksara Nusantara
+
+Aksara Desktop is the first application developed as part of the **Aksara Nusantara Ecosystem**.
+
+The long-term vision is to build a complete open-source ecosystem dedicated to preserving, learning, researching, and developing Indonesia's traditional writing systems.
+
+Future ecosystem projects include educational applications, datasets, Unicode tools, fonts, documentation, and community resources.
+
+---
+
+> *Technology preserves knowledge.  
+> People preserve culture.*
 
 **Belajar. Menulis. Melestarikan.**
 
