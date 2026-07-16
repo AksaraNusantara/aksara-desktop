@@ -2,16 +2,16 @@
 """
 Aksara Nusantara
 
-transliterasi_tab.py
+quiz_tab.py
 
-Transliterasi learning module.
+Quiz learning module.
 """
 
 import random
 
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QComboBox, QButtonGroup, QRadioButton,
-                               QPushButton)
+                               QPushButton, QMessageBox)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 
@@ -29,6 +29,7 @@ class QuizTab(QWidget):
         self.current_answer = ""
         self.current_nama = ""
         self.current_level = 1
+        self.OPTION_COUNT = 4
 
         self.init_ui()
 
@@ -53,6 +54,7 @@ class QuizTab(QWidget):
         layout.addWidget(self.score_label)
         
         title = QLabel("Quiz Honocoroko")
+        layout.addSpacing(10)
         title.setFont(QFont("Arial", 20, QFont.Weight.Bold))
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(title)
@@ -63,13 +65,13 @@ class QuizTab(QWidget):
         self.question_label.setStyleSheet("padding: 40px; min-height: 120px;")
         layout.addWidget(self.question_label)
         
-        instr = QLabel("Pilih bacaan yang benar:")
+        instr = QLabel("Pilih jawaban yang benar:")
         instr.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(instr)
         
         self.options_group = QButtonGroup()
         self.option_buttons = []
-        for i in range(4):
+        for _ in range(self.OPTION_COUNT):
             btn = QRadioButton()
             btn.setFont(QFont("Arial", 14))
             self.options_group.addButton(btn)
@@ -78,16 +80,17 @@ class QuizTab(QWidget):
         
         btn_layout = QHBoxLayout()
         #self.btn_sound = QPushButton("?? Dengar Pengucapan")
-        self.btn_check = QPushButton("Check Answer")
-        self.btn_next = QPushButton("Next Question")
+        layout.addSpacing(15)
+        self.btn_check = QPushButton("Periksa Jawaban")
+        self.btn_check.setToolTip(
+            "Periksa jawaban yang dipilih"
+        )
         
         #self.btn_sound.clicked.connect(self.play_quiz_sound)
         self.btn_check.clicked.connect(self.check_answer)
-        self.btn_next.clicked.connect(self.load_new_question)
         
         #btn_layout.addWidget(self.btn_sound)
         btn_layout.addWidget(self.btn_check)
-        btn_layout.addWidget(self.btn_next)
         layout.addLayout(btn_layout)
         
         self.load_new_question()
@@ -97,6 +100,13 @@ class QuizTab(QWidget):
         self.load_new_question()
     
     def load_new_question(self):
+        """Generate a new quiz question."""
+        # Reset pilihan jawaban
+        self.options_group.setExclusive(False)
+        for btn in self.option_buttons:
+            btn.setChecked(False)
+        self.options_group.setExclusive(True)
+
         # Level menentukan berapa aksara yang ditampilkan
         num_chars = self.current_level
         
@@ -109,7 +119,7 @@ class QuizTab(QWidget):
         
         # Generate options
         options = [self.current_answer]
-        while len(options) < 4:
+        while len(options) < self.OPTION_COUNT:
             wrong = " ".join([item[2] for item in random.sample(HONOCOROKO_DATA, num_chars)])
             if wrong not in options:
                 options.append(wrong)
@@ -134,6 +144,7 @@ class QuizTab(QWidget):
             QMessageBox.warning(self, "Error Suara", f"Gagal memutar suara:\n{str(e)}")
     
     def check_answer(self):
+        """Validate the selected answer."""
         selected = self.options_group.checkedButton()
         if not selected:
             QMessageBox.warning(self, "Pilih Jawaban", "Silakan pilih salah satu!")
@@ -144,16 +155,19 @@ class QuizTab(QWidget):
         
         if is_correct:
             self.current_score += 1
-            result = f"?? Benar! Skor sesi ini: {self.current_score}/{self.current_total}"
+            result = (
+                f"✅ Benar!\n\n"
+                f"Skor sesi: {self.current_score}/{self.current_total}"
+            )
         else:
-            result = f"? Salah. Jawaban benar: **{self.current_answer}**"
+            result = result = f"❌ Salah.\n\nJawaban yang benar adalah:\n{self.current_answer}"
         
         QMessageBox.information(self, "Hasil", result)
         
         # Update high score jika lebih tinggi
         if self.current_score > self.progress.get("high_score", 0):
             self.progress["high_score"] = self.current_score
-            self.score_label.setText(f"Skor Tertinggi: {self.progress['high_score']} ??")
+            self.score_label.setText(f"Skor Tertinggi: {self.progress['high_score']}")
             self.save_progress()
         
         self.load_new_question()
