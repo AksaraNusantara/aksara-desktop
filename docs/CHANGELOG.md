@@ -22,10 +22,11 @@ Semua perubahan penting pada proyek Aksara Nusantara didokumentasikan di sini.
 
 - Refactoring menuju arsitektur modular.
 - `data_aksara.py` diubah menjadi `aksara_jawa.py`.
-- `AksaraCard` dipindahkan ke `ui/`.
-- `FlashcardTab` dipindahkan ke `tabs/`.
-- `TransliterasiTab` dipindahkan ke `tabs/`.
+- `AksaraCard` dipindahkan ke folder `ui/`.
+- `FlashcardTab` dipindahkan ke folder `tabs/`.
+- `TransliterasiTab` dipindahkan ke folder `tabs/`.
 - `TRANSLITERATION_MAP` dipindahkan ke `aksara_jawa.py`.
+- Quiz diubah dari fungsi `create_quiz_tab()` menjadi class `QuizTab`.
 
 ### Development
 
@@ -41,3 +42,13 @@ Semua perubahan penting pada proyek Aksara Nusantara didokumentasikan di sini.
 - Audio Manager belum dipisahkan.
 - Theme Manager belum dipisahkan.
 - Engine transliterasi masih sederhana.
+
+
+## [0.1.1] - 2026-07-14
+
+### Changed
+
+- Quiz diubah menjadi class `QuizTab`.
+- `QuizTab` dipindahkan ke `tabs/quiz_tab.py`.
+- Struktur `MainWindow` disederhanakan dengan menghapus implementasi Quiz dari file utama.
+- Seluruh tab utama kini menggunakan pendekatan modular.

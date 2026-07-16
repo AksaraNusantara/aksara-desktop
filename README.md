@@ -170,6 +170,17 @@ Progress:
 
 ---
 
+Milestone 1.5
+
+📉 main.py
+- Sebelum : 620 baris
+- Sesudah : 470 baris
+
+📦 Module
++ tabs/quiz_tab.py
+
+---
+
 # Kontribusi
 
 Kontribusi selalu diterima.

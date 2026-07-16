@@ -2,15 +2,17 @@
 
 ## Milestone 1 – Foundation & Refactoring
 
+## Phase 1 â€“ Foundation & Modularization
+
 - [x] 1.1 Extract AksaraCard
 - [x] 1.2 Extract FlashcardTab
 - [x] 1.3 Extract TransliterasiTab
-- [ ] 1.4 Refactor QuizTab menjadi class
-- [ ] 1.5 Extract QuizTab
-- [ ] 1.6 Progress Manager
-- [ ] 1.7 Audio Manager
-- [ ] 1.8 Theme Manager
-- [ ] 1.9 AlphabetTab
+- [x] 1.4 Refactor QuizTab menjadi class
+- [x] 1.5 Extract QuizTab ke folder `tabs`
+- [ ] 1.6 Extract AlphabetTab
+- [ ] 1.7 Progress Manager
+- [ ] 1.8 Audio System
+- [ ] 1.9 Theme Manager
 - [ ] 1.10 Final Cleanup
 
 ---

@@ -4,23 +4,26 @@
 
 **Status:** 🚧 Sedang Berlangsung
 
-### Selesai
+## Phase 1 – Foundation & Modularization
 
-- ✅ Extract AksaraCard
-- ✅ Extract FlashcardTab
-- ✅ Extract TransliterasiTab
+### ✅ Completed
 
-### Sedang Dikerjakan
+- Extract `AksaraCard`.
+- Extract `FlashcardTab`.
+- Extract `TransliterasiTab`.
+- Refactor Quiz menjadi class `QuizTab`.
+- Extract `QuizTab` ke folder `tabs`.
 
-- 🔄 Refactor QuizTab
+### 🔄 Current Milestone
 
-### Berikutnya
+- Extract `AlphabetTab`.
 
-- Progress Manager
-- Audio Manager
-- Theme Manager
-- AlphabetTab
-- Final Cleanup
+### 📌 Next
+
+- Progress Manager.
+- Audio System.
+- Theme Manager.
+- Final cleanup.
 
 ---
 
