@@ -2,7 +2,6 @@
 
 import sys
 from pathlib import Path
-import random
 import json
 from datetime import datetime
 
@@ -26,17 +25,7 @@ from ui.aksara_card import AksaraCard
 from tabs.flashcard_tab import FlashcardTab
 from tabs.transliterasi_tab import TransliterasiTab
 from tabs.quiz_tab import QuizTab
-
-# Simple transliteration dictionary (bisa dikembangkan)
-#trans_dict = {
-#    "ha": "ꦲ", "na": "ꦤ", "ca": "ꦕ", "ra": "ꦫ", "ka": "ꦏ",
-#    "da": "ꦢ", "ta": "ꦠ", "sa": "ꦱ", "wa": "ꦮ", "la": "ꦭ",
-#    "pa": "ꦥ", "dha": "ꦝ", "ja": "ꦗ", "ya": "ꦪ", "nya": "ꦚ",
-#    "ma": "ꦩ", "ga": "ꦒ", "ba": "ꦧ", "tha": "ꦛ", "nga": "ꦔ",
-#    # Tambah sandhangan nanti
-#    "a": "", "i": "ꦶ", "u": "ꦸ", "e": "ꦺ", "o": "ꦾ"
-#}
-
+from tabs.alphabet_tab import AlphabetTab
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -72,7 +61,7 @@ class MainWindow(QMainWindow):
         tabs = QTabWidget()
         self.setCentralWidget(tabs)
         
-        tabs.addTab(self.create_alphabet_tab(), "📖 Aksara Lengkap")
+        tabs.addTab(AlphabetTab(self.javanese_font), "📖 Aksara Lengkap")
         tabs.addTab(FlashcardTab(self.javanese_font), "🃏 Flashcard")
         tabs.addTab(QuizTab(self.javanese_font, self.progress), "❓ Quiz")
         tabs.addTab(TransliterasiTab(self.javanese_font), "🔄 Transliterasi")
@@ -119,41 +108,6 @@ class MainWindow(QMainWindow):
         palette.setColor(QPalette.ColorRole.Button, QColor(205, 133, 63))       # Coklat kayu
         self.setPalette(palette)
     
-    def create_alphabet_tab(self):
-        widget = QWidget()
-        main_layout = QVBoxLayout(widget)
-        
-        title_jawa = QLabel("ꦲꦤꦕꦫꦏ")
-        title_jawa.setFont(QFont(self.javanese_font.family(), 18))
-        title_jawa.setAlignment(Qt.AlignCenter)
-
-        title_latin = QLabel("Honocoroko")
-        title_latin.setFont(QFont("Arial", 18, QFont.Weight.Bold))
-        title_latin.setAlignment(Qt.AlignCenter)
-
-        main_layout.addWidget(title_jawa)
-        main_layout.addWidget(title_latin)
-        
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        main_layout.addWidget(scroll)
-        
-        content = QWidget()
-        grid = QGridLayout(content)
-        grid.setSpacing(15)
-        
-        row = col = 0
-        for aksara, nama, latin in HONOCOROKO_DATA:
-            card = AksaraCard(aksara, nama, latin, self.javanese_font)
-            grid.addWidget(card, row, col)
-            col += 1
-            if col > 4:
-                col = 0
-                row += 1
-        
-        scroll.setWidget(content)
-        return widget
-
     # ==================== SAVE & LOAD PROGRESS ====================
     def load_progress(self):
         try:
@@ -172,9 +126,6 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print("Gagal save progress:", e)
     
-    # ==================== QUIZ TAB (dengan progress) ====================
-
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

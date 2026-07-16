@@ -4,7 +4,7 @@ Aksara Nusantara
 
 aksara_tab.py
 
-Flashcard learning module.
+Aksaracard learning module.
 """
 
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QLabel
