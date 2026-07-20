@@ -1,0 +1,148 @@
+# PROJECT_WORKFLOW.md
+
+> Single Source of Truth for Aksara Nusantara Development
+
+---
+
+## Project
+
+**Aksara Nusantara**
+
+## Current Milestone
+
+**Core Engine v1.0**
+
+---
+
+# Current Progress
+
+## Phase A — Specification
+
+| Sprint | Topic | Status |
+|--------|-------|--------|
+| A1 | Introduction, Goals, Terminology | ✅ Complete |
+| A2 | Architecture Overview, Lifecycle, Directory Layout | ✅ Complete (Pending Final Review) |
+| A3 | Manifest, Metadata, Versioning | 🟡 In Progress |
+| A4 | BaseScriptPack Interface | ⏳ Pending |
+| A5 | Character Model | ⏳ Pending |
+| A6 | Transliteration API | ⏳ Pending |
+| A7 | Asset Management | ⏳ Pending |
+| A8 | Error Handling, Compatibility, Testing Requirements | ⏳ Pending |
+| A9 | Reference Implementation | ⏳ Pending |
+| A10 | Review & Freeze Specification v1.0 | ⏳ Pending |
+
+---
+
+## Phase B — Core Engine Implementation
+
+B1 BaseScriptPack
+B2 ScriptRegistry
+B3 ScriptLoader
+B4 ScriptValidator
+B5 Character Model
+B6 Asset Loader
+B7 Unit Tests
+B8 Integration Tests
+B9 Documentation Update
+B10 Core Engine v1.0
+
+Status: ⏳ Waiting for Phase A
+
+---
+
+## Phase C — Reference ScriptPack (Jawa)
+
+C1 Metadata
+C2 Character Data
+C3 Transliteration
+C4 Assets
+C5 Flashcard
+C6 Quiz
+C7 Integration Tests
+C8 Alpha Release
+
+Status: ⏳ Waiting for Phase B
+
+---
+
+# Current Session
+
+Current Phase:
+Phase A
+
+Current Sprint:
+A3
+
+Today's Goal:
+- Manifest Specification
+- Metadata Specification
+- Versioning Rules
+
+Current Mode:
+Document Writing
+
+---
+
+# Locked Decisions
+
+## ADR-0001
+
+Entry Point:
+scriptpack.py
+
+Status:
+Accepted
+
+Reason:
+Official entry point for every ScriptPack.
+
+---
+
+# Editorial Policy
+
+- Specifications: English
+- ADR: Bahasa Indonesia
+- Workflow: English + Bahasa Indonesia (practical)
+
+---
+
+# Development Constitution
+
+1. One Sprint = One Goal
+2. Specification Before Implementation
+3. Freeze Before Coding
+4. New Ideas → Parking Lot
+5. Finish → Test → Commit
+6. One Conversation = One Deliverable
+
+---
+
+# Parking Lot
+
+- Marketplace
+- Plugin Repository
+- Cloud Sync
+- AI Features
+- OCR
+- Mobile Version
+- Web Version
+
+---
+
+# Definition of Done (Core Engine v1.0)
+
+- BaseScriptPack
+- ScriptRegistry
+- ScriptLoader
+- ScriptValidator
+- Character Model
+- Transliteration API
+- Asset Loader
+- Reference ScriptPack (Jawa)
+- Unit Tests
+- Documentation
+
+---
+
+Last Updated:
+Sprint A3

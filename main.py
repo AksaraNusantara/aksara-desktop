@@ -26,6 +26,7 @@ from tabs.flashcard_tab import FlashcardTab
 from tabs.transliterasi_tab import TransliterasiTab
 from tabs.quiz_tab import QuizTab
 from tabs.alphabet_tab import AlphabetTab
+from utils.paths import FONTS_DIR
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -91,7 +92,7 @@ class MainWindow(QMainWindow):
         print(f"Tema diubah ke: {theme_name}")
 
     def load_embedded_font(self):
-        font_path = Path("fonts/NotoSansJavanese-Regular.ttf")
+        font_path = FONTS_DIR / "NotoSansJavanese-Regular.ttf"
         if font_path.exists():
             font_id = QFontDatabase.addApplicationFont(str(font_path))
             if font_id != -1:
