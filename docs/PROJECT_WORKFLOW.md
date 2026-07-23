@@ -144,5 +144,17 @@ Official entry point for every ScriptPack.
 
 ---
 
+## Specification Traceability
+
+Before implementation begins, every approved specification SHOULD be mapped to one or more implementation files.
+
+Implementation SHOULD include references to the specification sections being implemented.
+
+This mapping SHALL be maintained in:
+
+docs/development/TRACEABILITY.md
+
+---
+
 Last Updated:
 Sprint A3
