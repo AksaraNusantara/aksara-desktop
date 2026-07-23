@@ -176,3 +176,15 @@ after the public package namespace has been finalized.
 
 ---
 
+2026-07-23
+
+Architecture Decision
+
+Introduce core/exceptions.py before validator.py.
+
+Reason:
+Provide a unified exception hierarchy for the Core Engine and
+avoid duplicated exception definitions across modules.
+
+---
+
