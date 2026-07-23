@@ -156,5 +156,133 @@ docs/development/TRACEABILITY.md
 
 ---
 
+---
+
+# Development Lifecycle
+
+Every major feature SHALL follow the lifecycle defined below.
+
+```text
+Idea
+
+↓
+
+Discussion
+
+↓
+
+Architecture
+
+↓
+
+Specification
+
+↓
+
+Review
+
+↓
+
+Freeze
+
+↓
+
+Traceability
+
+↓
+
+Implementation
+
+↓
+
+Testing
+
+↓
+
+Review
+
+↓
+
+Release
+```
+
+The objective of this lifecycle is to ensure that implementation follows approved specifications rather than undocumented assumptions.
+
+No implementation SHOULD begin before the relevant specification has been reviewed and frozen.
+
+---
+
+# Milestones
+
+The project progresses through major architectural milestones.
+
+## M1 — Core Runtime Frozen
+
+Completed:
+
+- Core Runtime Architecture
+- ScriptPack Specification
+- Core Engine API
+- Traceability Workflow
+
+---
+
+## M2 — Repository Layout Frozen
+
+Completed:
+
+- Repository Structure
+- Python Package Layout
+- Architectural Layering
+- Documentation Organization
+
+---
+
+## M3 — Core Engine Implementation
+
+Planned:
+
+- BaseScriptPack
+- Script Validator
+- Script Registry
+- Script Loader
+- Core Engine
+
+---
+
+## M4 — Reference Desktop Application
+
+Planned:
+
+- PySide6 Desktop Application
+- Learning Modules
+- Quiz System
+- User Profiles
+
+---
+
+## M5 — ScriptPack Ecosystem
+
+Future:
+
+- Additional ScriptPacks
+- Marketplace
+- Plugin Distribution
+- Community Contributions
+
+---
+
+# Development Rule
+
+Every implementation SHALL satisfy all of the following:
+
+- traceable to an approved specification;
+- documented;
+- reviewable;
+- testable;
+- maintainable.
+
+If an implementation cannot be traced to an approved specification, the implementation SHOULD be reviewed before development continues.
+
 Last Updated:
 Sprint A3

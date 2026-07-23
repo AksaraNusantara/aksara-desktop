@@ -134,3 +134,45 @@ Memindahkan implementasi `QuizTab` ke modul terpisah agar setiap tab memiliki fi
 
 **Git Commit**
 refactor: move QuizTab into tabs package
+
+---
+
+## 2026-07-23
+
+### Milestone
+
+Core Runtime Specification Frozen
+
+### Completed
+
+- BaseScriptPack Interface
+- Script Registry
+- Script Loader
+- Script Validator
+- Core Engine API
+- Specification Traceability Workflow
+- Traceability Matrix
+
+### Architecture Decisions
+
+- BaseScriptPack no longer exposes `get_manifest()`.
+- Registry is the single source of truth for manifest metadata.
+- Core Engine is the only public entry point for applications.
+- Every implementation must reference its originating specification.
+
+### Next Phase
+
+Begin implementation of the Core Engine.
+
+---
+
+Temporary Repository Decision
+
+During the initial Core Engine implementation,
+the repository may keep Python packages at the repository root.
+
+Migration to the final src/ package layout will occur
+after the public package namespace has been finalized.
+
+---
+

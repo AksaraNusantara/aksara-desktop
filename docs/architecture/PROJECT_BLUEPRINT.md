@@ -275,3 +275,109 @@ Technology changes.
 Culture remains.
 
 Aksara Nusantara exists to connect both.
+
+---
+
+# Architecture Evolution
+
+## From Desktop Application to Ecosystem
+
+The Aksara Nusantara project originally began as a desktop application for learning the Javanese script (Hanacaraka).
+
+As the project evolved, its scope expanded beyond a single application.
+
+The project is now designed as a reusable software ecosystem consisting of:
+
+- a reusable Core Engine;
+- standardized ScriptPack implementations;
+- multiple applications built upon the same runtime;
+- future extension through additional writing systems.
+
+Desktop applications are therefore considered one possible consumer of the framework rather than the framework itself.
+
+---
+
+## Layered Architecture
+
+The ecosystem follows a layered architecture.
+
+```text
+Repository
+
+        ¦
+
+        ?
+
+Python Package
+
+        ¦
+
+        ?
+
+Core Engine
+
+        ¦
+
+        ?
+
+ScriptPack
+
+        ¦
+
+        ?
+
+Applications
+```
+
+Each layer has a clearly defined responsibility.
+
+Higher layers depend on lower layers.
+
+Lower layers SHALL NOT depend on higher layers.
+
+---
+
+## Architectural Dependency
+
+The dependency direction SHALL always be:
+
+Applications
+
+?
+
+Core Engine
+
+?
+
+ScriptPack Interface
+
+?
+
+ScriptPack Implementation
+
+Applications SHALL communicate with the Core Engine through the public API.
+
+Applications SHOULD NOT access internal runtime components directly.
+
+---
+
+## Architectural Goals
+
+The layered architecture supports:
+
+- maintainability;
+- scalability;
+- modularity;
+- testability;
+- future expansion;
+- multiple user interfaces.
+
+Future implementations MAY include:
+
+- desktop applications;
+- command-line tools;
+- web applications;
+- mobile applications;
+- cloud services.
+
+All implementations SHALL share the same Core Engine whenever practical.
