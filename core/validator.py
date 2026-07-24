@@ -34,6 +34,7 @@ SPDX-License-Identifier: MIT
 # Standard Library
 # =============================================================================
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -75,6 +76,8 @@ class ScriptPackValidator:
             If validation fails.
         """
 	self._validate_directory(package_path)
+
+	manifest = self._validate_manifest(package_path)
 
         raise NotImplementedError
 
@@ -132,7 +135,24 @@ def _validate_directory(self, package_path: Path) -> None:
         ValidationError
             If the manifest is missing or invalid.
         """
-        raise NotImplementedError
+        manifest_path = package_path / "manifest.json"
+
+        try:
+            with manifest_path.open(
+                "r",
+                encoding="utf-8"
+            ) as file:
+                return json.load(file)
+
+        except FileNotFoundError as exc:
+            raise ValidationError(
+                "Missing manifest.json."
+            ) from exc
+
+        except json.JSONDecodeError as exc:
+            raise ValidationError(
+                "Invalid manifest.json format."
+            ) from exc
 
     def _validate_required_fields(
         self,
