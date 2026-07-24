@@ -188,3 +188,16 @@ avoid duplicated exception definitions across modules.
 
 ---
 
+## Sprint B1
+
+Completed
+
+- AN-STD-002 Version 1.0
+- Python Module Template finalized
+
+Next Sprint
+
+- validator.py
+
+---
+

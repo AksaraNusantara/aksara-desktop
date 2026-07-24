@@ -1993,6 +1993,7 @@ Typical operations MAY include:
 - get_loaded_scripts();
 
 Future specification revisions MAY define additional API methods.
+The exact method names are implementation-specific.
 
 ---
 
@@ -2041,4 +2042,106 @@ Such extensions SHOULD preserve backward compatibility whenever practical.
 ---
 
 
+# 16. Character Model
 
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+The current Core Engine does not require a standardized Character Model for ScriptPack discovery, validation, loading, or lifecycle management.
+
+Future revisions of this specification MAY define a canonical Character Model to improve interoperability between ScriptPacks.
+
+
+---
+
+
+# 17. Transliteration
+
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+The current Core Engine does not define a standardized transliteration interface.
+
+Future revisions MAY specify a common transliteration contract to improve interoperability across ScriptPack implementations.
+
+
+---
+
+
+# 18. Audio Support
+
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+Audio resources are considered optional and are outside the scope of the current Core Engine specification.
+
+Future revisions MAY define standardized audio interfaces, pronunciation resources, and related metadata.
+
+
+---
+
+
+# 19. Error Handling
+
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+General Core Engine error behavior is currently defined by individual component specifications.
+
+Future revisions MAY introduce a unified error model covering ScriptPack implementations and Core Engine services.
+
+
+---
+
+
+# 20. Security Considerations
+
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+The current specification assumes ScriptPacks originate from trusted sources.
+
+Future revisions MAY define security recommendations, integrity verification, package authenticity, and sandboxing requirements.
+
+
+---
+
+
+# 21. Future Compatibility
+
+## Status
+
+This section is intentionally reserved for future specification revisions.
+
+Future revisions MAY introduce compatibility guidelines covering new ScriptPack capabilities while preserving interoperability with existing implementations.
+
+
+---
+
+
+# Appendix A — Manifest Example
+
+Reserved for future revision.
+
+This appendix will provide a complete example of a ScriptPack manifest.
+
+---
+
+# Appendix B — Directory Layout Example
+
+Reserved for future revision.
+
+This appendix will provide a reference ScriptPack directory structure.
+
+---
+
+# Appendix C — Glossary
+
+Reserved for future revision.
+
+This appendix will provide an extended glossary of terms used throughout this specification.
