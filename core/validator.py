@@ -50,6 +50,14 @@ from typing import Any
 
 from core.exceptions import ValidationError
 
+REQUIRED_MANIFEST_FIELDS = (
+    "id",
+    "name",
+    "version",
+    "author",
+    "entry_point",
+)
+
 
 class ScriptPackValidator:
     """
@@ -75,9 +83,11 @@ class ScriptPackValidator:
         ValidationError
             If validation fails.
         """
-	self._validate_directory(package_path)
+        self._validate_directory(package_path)
 
-	manifest = self._validate_manifest(package_path)
+        manifest = self._validate_manifest(package_path)
+
+        self._validate_required_fields(manifest)
 
         raise NotImplementedError
 
@@ -171,7 +181,11 @@ def _validate_directory(self, package_path: Path) -> None:
         ValidationError
             If any required field is missing.
         """
-        raise NotImplementedError
+        for field in REQUIRED_MANIFEST_FIELDS:
+            if field not in manifest:
+                raise ValidationError(
+                    f"Missing required manifest field: '{field}'."
+                )
 
     def _validate_interface(self, package_path: Path) -> None:
         """
