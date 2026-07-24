@@ -1,65 +1,80 @@
 # AN-STD-002
 
+# Python Module Template
+
+---
+
 ## 1. Purpose
 
-This document defines the standard structure for all Python modules
-within the Aksara Nusantara project.
+This document defines the standard structure for all Python modules within the Aksara Nusantara project.
 
-Its goals are:
+Its goals are to:
 
-- Ensure consistency
-- Improve readability
-- Simplify code reviews
-- Improve traceability
-- Reduce maintenance cost
+- ensure consistency;
+- improve readability;
+- simplify code reviews;
+- improve traceability;
+- reduce maintenance cost.
 
+---
 
 ## 2. Scope
 
-This standard applies to every Python source file inside the repository.
+This standard applies to every Python source file contained within the repository.
 
-Examples:
+Examples include:
 
 - core/
 - scriptpacks/
 - ui/
+- data/
 - tests/
 
+Unless explicitly documented otherwise, all Python modules SHALL conform to this standard.
+
+---
 
 ## 3. Standard Module Layout
 
-Every Python module SHALL follow the layout below.
+Every Python module SHALL follow the structure below.
 
 1. Module Header
 2. Imports
-3. Module Constants (optional)
+3. Module-Level Constants (optional)
 4. Public Classes
-5. Private Functions (optional)
+5. Private Helper Functions (optional)
 6. Public Functions (optional)
 
-The layout SHALL remain consistent across the entire repository.
+The overall layout SHALL remain consistent across the repository.
 
+---
 
-##4. Module Header
+## 4. Module Header
+
+Every module SHALL begin with a standardized documentation header.
+
+Example:
+
+```python
+"""
 ===============================================================================
 
 Aksara Nusantara
 
 Module:
-    core.validator
+    core.example_service
 
 Module Type:
     Core Service
 
 Purpose:
-    Validate ScriptPack implementations.
+    Demonstrates the standard Python module structure.
 
 Implements:
-    AN-STD-001
-    Section 14
+    AN-STD-002
 
 References:
-    docs/standards/SCRIPTPACK_INTERFACE_SPECIFICATION.md
+    docs/standards/PYTHON_MODULE_TEMPLATE.md
 
     docs/development/TRACEABILITY.md
 
@@ -68,102 +83,206 @@ Copyright (c) Aksara Nusantara Project
 SPDX-License-Identifier: MIT
 
 ===============================================================================
+"""
+```
 
+The header SHALL clearly identify:
 
-##5. Import Order
+- module name;
+- module type;
+- module purpose;
+- implemented standards (if applicable);
+- referenced documents;
+- copyright information;
+- SPDX license identifier.
+
+---
+
+## 5. Import Order
+
+Imports SHALL appear in the following order.
+
+```python
 # Standard Library
 
-# Third-party
+# Third-party Packages
 
-# Local Project
+# Local Project Imports
+```
 
+Each group SHOULD be separated by one blank line.
 
-##6. Module-Level Constants
+Unused imports SHALL NOT be committed.
+
+---
+
+## 6. Module-Level Constants
+
+Constants SHOULD appear immediately after imports.
+
+Example:
+
+```python
 DEFAULT_TIMEOUT = 30
+```
 
+Constants SHALL use UPPER_CASE naming.
 
-##7. Class Guidelines
+---
+
+## 7. Class Guidelines
+
 Every public class SHALL include:
 
-- Class docstring
-- Public API
-- Type hints
+- a descriptive class docstring;
+- explicit public API;
+- type hints where appropriate;
+- a single well-defined responsibility.
 
+Classes SHOULD follow the Single Responsibility Principle.
 
-##8. Method Guidelines
-Public methods:
+---
 
-- Shall include a docstring.
+## 8. Method Guidelines
 
-- Shall use type hints.
+Public methods SHALL:
 
-- Shall describe workflow.
+- include a docstring;
+- use type hints;
+- clearly describe their behavior.
 
 Private methods:
 
-- Shall perform implementation details.
+- SHOULD encapsulate implementation details;
+- MAY omit type hints when obvious from context.
 
-- May omit type hints when obvious.
+Methods SHOULD remain small and focused.
 
+---
 
-##9. Exception Guidelines
+## 9. Exception Guidelines
+
 Core modules SHALL:
 
-- Raise exceptions.
+- raise exceptions instead of printing errors;
+- never interact directly with the user interface;
+- preserve exception context using:
 
-- Never print errors.
+```python
+raise ValidationError(...) from exc
+```
 
-- Never interact with UI.
+Exceptions SHOULD be meaningful and specific.
 
-- Preserve exception context using
+---
 
-raise ... from exc
+## 10. Traceability Guidelines
+
+Modules implementing project standards SHALL identify:
+
+- implemented standard(s);
+- implemented specification section(s);
+- referenced documents.
+
+Traceability improves long-term maintainability and documentation quality.
+
+---
+
+## 11. Example Module
+
+```python
+"""
+===============================================================================
+
+Aksara Nusantara
+
+Module:
+    core.example_service
+
+Module Type:
+    Example Service
+
+Purpose:
+    Demonstrates the standard module layout.
+
+Implements:
+    AN-STD-002
+
+References:
+    docs/standards/PYTHON_MODULE_TEMPLATE.md
+
+===============================================================================
+"""
+
+# Standard Library
+from pathlib import Path
+
+# Third-party Packages
+# None
+
+# Local Project Imports
+from core.exceptions import CoreEngineError
 
 
-##10. Traceability Guidelines
-Each module SHALL identify:
-
-Implemented Standard
-
-Implemented Section
-
-Reference Documents
+DEFAULT_TIMEOUT = 30
 
 
-##11. Example Module
-Header
+class ExampleService:
+    """
+    Demonstrates the recommended class structure.
+    """
 
-?
+    def process(self, path: Path) -> bool:
+        """
+        Process a resource.
 
-Imports
+        Parameters
+        ----------
+        path:
+            Resource location.
 
-?
+        Returns
+        -------
+        bool
+            True if successful.
+        """
+        return self._exists(path)
 
-Class
+    def _exists(self, path: Path) -> bool:
+        """
+        Internal helper.
+        """
+        return path.exists()
+```
 
-?
+The purpose of this example is to demonstrate layout rather than implementation.
 
-Public Method
+---
 
-?
+## 12. Revision History
 
-Private Method
-
-
-##12. Revision History
 | Version | Date | Description |
-|---------|------|-------------|
+|----------|------|-------------|
 | 1.0 | 2026-07 | Initial version |
 
+---
 
 ## 13. Design Principles
 
-Python modules within Aksara Nusantara SHOULD follow these principles:
+Python modules SHOULD follow these principles:
 
-- Single Responsibility Principle (SRP)
-- Fail Fast
-- Composition over Inheritance
-- Explicit is better than implicit
-- Small public API
-- Stateless services where applicable
-- Traceability over memory
+- Single Responsibility Principle (SRP);
+- Fail Fast;
+- Composition over Inheritance;
+- Explicit is better than implicit;
+- Small public APIs;
+- Stateless services where applicable;
+- Traceability over memory.
+
+---
+
+## 14. Conformance
+
+Python modules within the Aksara Nusantara repository SHALL conform to this standard unless explicitly documented otherwise.
+
+Project-specific architectural standards (for example AN-STD-001) take precedence where applicable.
