@@ -37,6 +37,8 @@ SPDX-License-Identifier: MIT
 import json
 from pathlib import Path
 from typing import Any
+import importlib.util
+import inspect
 
 # =============================================================================
 # Third-party Packages
@@ -49,6 +51,7 @@ from typing import Any
 # =============================================================================
 
 from core.exceptions import ValidationError
+from core.scriptpack import BaseScriptPack
 
 REQUIRED_MANIFEST_FIELDS = (
     "id",
@@ -89,7 +92,9 @@ class ScriptPackValidator:
 
         self._validate_required_fields(manifest)
 
-        raise NotImplementedError
+        self._validate_interface(package_path)
+
+        return True
 
 def _validate_directory(self, package_path: Path) -> None:
     	"""
@@ -201,4 +206,34 @@ def _validate_directory(self, package_path: Path) -> None:
         ValidationError
             If the ScriptPack implementation is invalid.
         """
-        raise NotImplementedError
+        script_path = package_path / "script.py"
+
+        try:
+            spec = importlib.util.spec_from_file_location(
+                "scriptpack_module",
+                script_path
+            )
+
+            if spec is None or spec.loader is None:
+                raise ValidationError(
+                    "Unable to create module specification."
+                )
+
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+        except Exception as exc:
+            raise ValidationError(
+                f"Failed to import ScriptPack: {exc}"
+            ) from exc
+
+        for _, obj in inspect.getmembers(module, inspect.isclass):
+            if (
+                issubclass(obj, BaseScriptPack)
+                and obj is not BaseScriptPack
+            ):
+                return
+
+        raise ValidationError(
+            "No BaseScriptPack implementation found."
+        )
