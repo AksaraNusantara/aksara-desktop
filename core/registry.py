@@ -91,7 +91,26 @@ class ScriptPackRegistry:
         self,
         identifier: str
     ) -> None:
-        raise NotImplementedError
+        """
+        Unregister a ScriptPack.
+
+        Parameters
+        ----------
+        identifier:
+            ScriptPack identifier.
+
+        Raises
+        ------
+        RegistryError
+            If the ScriptPack is not registered.
+        """
+        try:
+            del self._registry[identifier]
+
+        except KeyError as exc:
+            raise RegistryError(
+                f"Unknown ScriptPack: '{identifier}'."
+            ) from exc
 
     def get(
         self,
@@ -130,7 +149,18 @@ class ScriptPackRegistry:
         raise NotImplementedError
 
     def list(self) -> list[str]:
-        raise NotImplementedError
+        """
+        Return the identifiers of all registered ScriptPacks.
+
+        Returns
+        -------
+        list[str]
+            Registered ScriptPack identifiers.
+        """
+        return sorted(self._registry.keys())
 
     def clear(self) -> None:
-        raise NotImplementedError
+        """
+        Remove all registered ScriptPacks.
+        """
+        self._registry.clear()
