@@ -94,10 +94,34 @@ class ScriptPackRegistry:
         raise NotImplementedError
 
     def get(
-    self,
+        self,
         identifier: str
     ) -> BaseScriptPack:
-        raise NotImplementedError
+        """
+        Retrieve a registered ScriptPack.
+
+        Parameters
+        ----------
+        identifier:
+            ScriptPack identifier.
+
+        Returns
+        -------
+        BaseScriptPack
+            The registered ScriptPack implementation.
+
+        Raises
+        ------
+        RegistryError
+            If the ScriptPack is not registered.
+        """
+        try:
+            return self._registry[identifier]
+
+        except KeyError as exc:
+            raise RegistryError(
+                f"Unknown ScriptPack: '{identifier}'."
+            ) from exc
 
     def contains(
         self,
