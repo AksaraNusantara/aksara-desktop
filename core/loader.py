@@ -97,18 +97,132 @@ class ScriptPackLoader:
 
     def _load_manifest(
         self,
-        package_path: Path
+        package_path: Path,
     ) -> dict[str, Any]:
-        raise NotImplementedError
+        """
+        Load a ScriptPack manifest.
+
+        Parameters
+        ----------
+        package_path:
+            Path to the ScriptPack directory.
+
+        Returns
+        -------
+        dict[str, Any]
+            Parsed manifest.
+
+        Raises
+        ------
+        LoaderError
+            If the manifest cannot be loaded.
+        """
+        manifest_path = package_path / "manifest.json"
+
+        try:
+            with manifest_path.open(
+                "r",
+                encoding="utf-8",
+            ) as file:
+                return json.load(file)
+
+        except Exception as exc:
+            raise LoaderError(
+                f"Failed to load manifest: {manifest_path}"
+            ) from exc
 
     def _import_module(
         self,
         package_path: Path,
-        manifest: dict[str, Any]
+        manifest: dict[str, Any],
     ):
+        """
+        Import the ScriptPack module.
+
+        Parameters
+        ----------
+        package_path:
+            Path to the ScriptPack directory.
+
+        manifest:
+            Parsed ScriptPack manifest.
+
+        Returns
+        -------
+        module
+            Imported Python module.
+
+        Raises
+        ------
+        LoaderError
+            If the module cannot be imported.
+        """
+        entry_point = manifest["entry_point"]
+
+        module_path = package_path / entry_point
+
+        try:
+            spec = importlib.util.spec_from_file_location(
+                module_path.stem,
+                module_path,
+            )
+
+            if spec is None or spec.loader is None:
+                raise LoaderError(
+                    f"Unable to create import specification for '{entry_point}'."
+                )
+
+            module = importlib.util.module_from_spec(spec)
+
+            spec.loader.exec_module(module)
+
+            return module
+
+        except Exception as exc:
+            raise LoaderError(
+                f"Failed to import ScriptPack module: '{entry_point}'."
+            ) from exc
 
     def _create_instance(
         self,
-        module
+        module,
     ) -> BaseScriptPack:
-        raise NotImplementedError
+        """
+        Create a ScriptPack instance from an imported module.
+
+        Parameters
+        ----------
+        module:
+            Imported ScriptPack module.
+
+        Returns
+        -------
+        BaseScriptPack
+            ScriptPack implementation instance.
+
+        Raises
+        ------
+        LoaderError
+            If no valid ScriptPack implementation is found.
+        """
+        try:
+            for attribute in vars(module).values():
+
+                if (
+                    isinstance(attribute, type)
+                    and issubclass(attribute, BaseScriptPack)
+                    and attribute is not BaseScriptPack
+                ):
+                    return attribute()
+
+            raise LoaderError(
+                "No BaseScriptPack implementation found."
+            )
+
+        except LoaderError:
+            raise
+
+        except Exception as exc:
+            raise LoaderError(
+                "Failed to create ScriptPack instance."
+            ) from exc
