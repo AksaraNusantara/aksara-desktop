@@ -29,7 +29,8 @@ SPDX-License-Identifier: MIT
 # Standard Library
 # =============================================================================
 
-# None
+from pathlib import Path
+import json
 
 # =============================================================================
 # Third-party Packages
@@ -64,9 +65,29 @@ class SampleScriptPack(BaseScriptPack):
 
     def get_characters(self):
         """
-        Return ScriptPack character definitions.
+        Return all enabled Sample characters.
         """
-        raise NotImplementedError
+
+        character_directory = (
+            Path(__file__).parent
+            / "assets"
+            / "characters"
+        )
+
+        characters: list[dict] = []
+
+        for json_file in sorted(character_directory.glob("*.json")):
+
+            with json_file.open(
+                "r",
+                encoding="utf-8"
+            ) as fp:
+
+                data = json.load(fp)
+
+            characters.extend(data["characters"])
+
+        return characters
 
     def transliterate(
         self,

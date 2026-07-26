@@ -1,16 +1,18 @@
-[
-    {
-        "glyph": "A",
-        "latin": "a",
-        "unicode": "U+0041",
-        "category": "letter",
-        "description": "Sample Character A"
-    },
-    {
-        "glyph": "B",
-        "latin": "b",
-        "unicode": "U+0042",
-        "category": "letter",
-        "description": "Sample Character B"
-    }
-]
+{
+    "characters": [
+        {
+            "glyph": "A",
+            "latin": "a",
+            "unicode": "U+0041",
+            "category": "letter",
+            "description": "Sample Character A"
+        },
+        {
+            "glyph": "B",
+            "latin": "b",
+            "unicode": "U+0042",
+            "category": "letter",
+            "description": "Sample Character B"
+        }
+    ]
+}
