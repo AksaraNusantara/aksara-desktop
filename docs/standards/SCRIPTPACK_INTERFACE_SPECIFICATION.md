@@ -1,2147 +1,1068 @@
 # AN-STD-001
 
-
-
-# ScriptPack Specification
-
-
+# ScriptPack Interface Specification
 
 ---
 
+## Document Information
 
-
-Document ID : AN-STD-001
-
-
-
-Title : ScriptPack Specification
-
-
-
-Version : 0.2.0-draft
-
-
-
-Status : Draft
-
-
-
-Owner : Aksara Nusantara Project
-
-
-
-Created : 2026-07-20
-
-
-
-Last Updated : 2026-07-20
-
-
-
-Related Documents
-
-
-
-- PROJECT_WORKFLOW.md
-
-- PROJECT_PRINCIPLES.md
-
-- CORE_ARCHITECTURE.md
-
-
+| Item         | Value                              |
+| ------------ | ---------------------------------- |
+| Document ID  | AN-STD-001                         |
+| Title        | ScriptPack Interface Specification |
+| Status       | Foundation v1.0 (Frozen)           |
+| Version      | 1.0                                |
+| Owner        | Aksara Nusantara Project           |
+| License      | MIT                                |
+| Last Updated | 2026-07-26                         |
 
 ---
 
+# Revision History
 
-
-# Abstract
-
-
-
-This document defines the official specification for ScriptPack packages used by the Aksara Nusantara Core Engine.
-
-
-
-The purpose of this specification is to establish a stable, extensible, and implementation-independent contract between the Core Engine and every ScriptPack.
-
-
-
-This document serves as the canonical reference for all ScriptPack implementations.
-
-
-
-Whenever implementation and specification differ, this specification takes precedence.
-
-
+| Version | Date        | Description                                                                |
+| ------- | ----------- | -------------------------------------------------------------------------- |
+| 0.x     | Development | Initial drafting and architectural exploration                             |
+| 1.0     | 2026-07-26  | First frozen specification aligned with the Foundation v0.1 implementation |
 
 ---
-
-
 
 # Table of Contents
 
-
-
 1. Introduction
-
-
-
 2. Scope
-
-
-
 3. Terminology
-
-
-
 4. Conformance
-
-
-
 5. Design Principles
-
-
-
 6. ScriptPack Architecture
-
-
-
 7. ScriptPack Directory Layout
-
-
-
 8. Manifest
-
-
-
-9. Script Information
-
-
-
+9. Metadata
 10. Versioning and Compatibility
-
-
-
 11. BaseScriptPack Interface
-
-
-
 12. Script Registry
-
-
-
 13. Script Loader
-
-
-
 14. Script Validation
-
-
-
-15. Asset Management
-
-
-
+15. Core Engine API
 16. Character Model
-
-
-
 17. Transliteration
-
-
-
 18. Audio Support
-
-
-
 19. Error Handling
-
-
-
 20. Security Considerations
-
-
-
 21. Future Compatibility
-
-
 
 Appendix A — Manifest Example
 
-
-
 Appendix B — Directory Layout Example
-
-
 
 Appendix C — Glossary
 
+Appendix D — Core Engine Lifecycle
 
+Appendix E — Reference Implementation
 
 ---
-
-
 
 # 1. Introduction
 
+This specification defines the architecture and programming interface used by ScriptPacks within the Aksara Nusantara platform.
 
+A ScriptPack is an independent software package that encapsulates all resources required to support a specific writing system.
 
-## 1.1 Purpose
+The objective of this specification is to ensure that all ScriptPacks:
 
+* are portable;
+* are independently maintainable;
+* can be loaded dynamically;
+* remain compatible with future versions of the platform.
 
+This document serves as the normative reference for both the Core Engine and ScriptPack developers.
 
-The ScriptPack system provides a standardized mechanism for representing writing systems supported by the Aksara Nusantara ecosystem.
-
-
-
-Rather than embedding script-specific logic into the Core Engine, each writing system SHALL be distributed as an independent ScriptPack.
-
-
-
-This architecture allows the Core Engine to remain generic while enabling support for additional writing systems without modification.
-
-
-
-## 1.2 Goals
-
-
-
-The ScriptPack architecture has the following goals:
-
-
-
-- Separate Core Engine from script-specific implementation.
-
-- Support multiple writing systems through a common interface.
-
-- Enable independent development of ScriptPacks.
-
-- Encourage community contributions.
-
-- Preserve backward compatibility whenever possible.
-
-- Provide a stable SDK for future extensions.
-
-
-
-## 1.3 Non-Goals
-
-
-
-This specification does not define:
-
-
-
-- graphical user interface
-
-- learning methodology
-
-- quiz implementation
-
-- application workflow
-
-- marketplace protocol
-
-
-
-These subjects are covered by separate specifications.
-
-
+Whenever implementation conflicts with this specification, this specification SHALL be considered authoritative.
 
 ---
-
-
 
 # 2. Scope
 
-
-
 This specification defines:
 
+* ScriptPack architecture;
+* directory structure;
+* metadata format;
+* loading mechanism;
+* validation requirements;
+* Core Engine interaction;
+* character repository model;
+* transliteration support;
+* audio support;
+* compatibility requirements.
 
+This specification does **not** define:
 
-- ScriptPack package structure
+* graphical user interface behavior;
+* quiz implementation;
+* educational content;
+* application-specific workflows.
 
-- Manifest format
-
-- Metadata model
-
-- Versioning rules
-
-- BaseScriptPack interface
-
-- Registry behavior
-
-- Loader behavior
-
-- Validation requirements
-
-- Asset organization
-
-- Character model
-
-- Transliteration contract
-
-- Audio integration
-
-
-
-This specification does not mandate any specific programming language.
-
-
-
-Although the reference implementation is written in Python, alternative implementations MAY exist provided they conform to this specification.
-
-
+Those subjects are intentionally left to higher application layers.
 
 ---
-
-
 
 # 3. Terminology
 
+The following terminology is used throughout this specification.
 
+| Term                 | Definition                                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Core Engine          | Platform component responsible for discovering, validating, loading, and managing ScriptPacks.              |
+| ScriptPack           | Independent package implementing support for a writing system.                                              |
+| Metadata             | Information describing a ScriptPack, loaded from `manifest.json`.                                           |
+| Character Repository | Collection of character definitions contained within a ScriptPack.                                          |
+| Manifest             | JSON file describing the ScriptPack.                                                                        |
+| Entry Point          | Python module used to instantiate the ScriptPack implementation.                                            |
+| Identifier           | Unique identifier of a ScriptPack.                                                                          |
+| Asset                | Any non-Python resource required by a ScriptPack, including images, audio, fonts, or character definitions. |
 
-The following terms are used throughout this document.
-
-
-
-Core Engine
-
-
-
-The runtime responsible for discovering, validating, loading, and managing ScriptPacks.
-
-
-
-BaseScriptPack
-
-An abstract interface implemented by every ScriptPack implementation.
-
-ScriptPack
-
-A package representing one writing system, including metadata, assets, and one implementation of BaseScriptPack.
-
-ScriptPack Implementation
-
-The concrete class implementing BaseScriptPack.
-
-
-
-Manifest
-
-
-
-The primary metadata file describing a ScriptPack.
-
-
-
-Registry
-
-
-
-The component responsible for maintaining available ScriptPacks.
-
-
-
-Loader
-
-
-
-The component responsible for loading ScriptPacks into memory.
-
-
-
-Validator
-
-
-
-The component responsible for verifying ScriptPack conformance.
-
-
-
-Character Model
-
-
-
-The structured representation of characters, symbols, and related metadata belonging to a writing system.
-
-
-
-Conformance
-
-
-
-The degree to which an implementation satisfies this specification.
-
-
+Unless otherwise stated, these terms SHALL carry the meanings defined in this section.
 
 ---
-
-
 
 # 4. Conformance
 
+A ScriptPack conforms to this specification if it satisfies all mandatory requirements defined in this document.
 
+Mandatory requirements are indicated by the keyword **SHALL**.
 
-An implementation conforms to AN-STD-001 if and only if all mandatory requirements defined by this specification are satisfied.
+Recommended behavior is indicated by **SHOULD**.
 
+Optional behavior is indicated by **MAY**.
 
+Prohibited behavior is indicated by **MUST NOT**.
 
-The key words:
-
-
-
-MUST
-
-
-
-MUST NOT
-
-
-
-SHOULD
-
-
-
-SHOULD NOT
-
-
-
-MAY
-
-
-
-are to be interpreted as described in RFC 2119.
-
-
-
-Whenever a conflict exists between implementation and this specification, the specification SHALL take precedence.
-
-
+A conforming implementation SHALL remain compatible with the Core Engine APIs defined by this specification.
 
 ---
-
-
 
 # 5. Design Principles
 
-## 5.1 Purpose
+The ScriptPack architecture is based on the following principles.
 
-This section defines the fundamental principles governing the design of the ScriptPack ecosystem.
+## 5.1 Separation of Concerns
 
-These principles serve as the architectural foundation for all current and future ScriptPack implementations.
+The Core Engine SHALL contain only platform functionality.
 
-Whenever implementation details are unclear, these principles SHALL take precedence.
-
----
-
-## 5.2 Core Engine Independence
-
-The Core Engine MUST remain independent from any specific writing system.
-
-The Core Engine SHALL NOT contain logic that is specific to a particular script, language, alphabet, or orthography.
-
-All script-specific behavior MUST be implemented by the corresponding ScriptPack.
-
-### Rationale
-
-Keeping the Core Engine script-agnostic ensures long-term maintainability and enables support for additional writing systems without modifying the engine itself.
+Writing-system-specific behavior SHALL reside entirely within ScriptPacks.
 
 ---
 
-## 5.3 Single Responsibility
+## 5.2 Modularity
 
-Each ScriptPack SHOULD represent one writing system.
+Each ScriptPack SHALL be self-contained.
 
-A ScriptPack SHOULD NOT combine multiple unrelated writing systems into a single package.
-
-If multiple writing systems are closely related but maintain distinct character inventories or writing rules, separate ScriptPacks SHOULD be created.
-
-### Examples
-
-Recommended:
-
-- Javanese ScriptPack
-- Balinese ScriptPack
-- Hebrew ScriptPack
-- Greek ScriptPack
-
-Not recommended:
-
-- Asian ScriptPack
-- Bible ScriptPack
-- Ancient Languages ScriptPack
+No ScriptPack SHALL depend on the internal implementation of another ScriptPack.
 
 ---
 
-## 5.4 Separation of Responsibilities
+## 5.3 Extensibility
 
-The responsibilities of the Core Engine and ScriptPack SHALL remain clearly separated.
+New writing systems SHOULD be introduced by creating new ScriptPacks.
 
-Core Engine responsibilities include:
-
-- discovery
-- loading
-- validation
-- lifecycle management
-- registry management
-
-ScriptPack responsibilities include:
-
-- character definitions
-- transliteration rules
-- writing system metadata
-- audio resources
-- educational assets
-
-A ScriptPack MUST NOT modify Core Engine behavior.
+The Core Engine SHOULD require no modification when supporting additional writing systems.
 
 ---
 
-## 5.5 Specification First
+## 5.4 Maintainability
 
-All implementations MUST follow the written specification.
+The architecture SHALL prioritize readability and maintainability over implementation complexity.
 
-Whenever implementation differs from this specification, the specification SHALL take precedence.
-
-Developers SHOULD update the specification before introducing architectural changes.
-
-### Rationale
-
-A stable specification provides a common reference for contributors and prevents inconsistent implementations.
+Each component SHOULD have a single clearly defined responsibility.
 
 ---
 
-## 5.6 Extensibility
+## 5.5 Specification-Driven Development
 
-The architecture SHOULD support future writing systems without requiring changes to existing ScriptPacks.
+Major implementations SHALL be based on approved technical specifications.
 
-Adding a new ScriptPack SHOULD require only:
+Changes to platform behavior SHOULD be reflected in both implementation and documentation.
 
-- implementing the required interfaces;
-- providing a valid manifest;
-- supplying the required assets.
-
-No modifications to existing ScriptPacks SHOULD be necessary.
+Documentation is considered part of the implementation.
 
 ---
 
-## 5.7 Backward Compatibility
+## 5.6 Forward Compatibility
 
-Backward compatibility SHOULD be preserved whenever practical.
+The architecture SHOULD support future extensions without breaking existing ScriptPacks whenever practical.
 
-Changes that break compatibility MUST be accompanied by a version increment as defined in Section 10.
-
-Whenever compatibility cannot be maintained, migration guidance SHOULD be provided.
+Backward compatibility SHOULD be preserved across minor specification revisions whenever possible.
 
 ---
-
-## 5.8 Open Architecture
-
-The ScriptPack ecosystem is designed to encourage community contributions.
-
-Any contributor MAY develop a new ScriptPack provided that it conforms to this specification.
-
-Conformance SHALL be determined through validation rather than authorship.
-
----
-
-## 5.9 Educational Focus
-
-The primary objective of the ScriptPack ecosystem is education, preservation, and exploration of writing systems.
-
-Commercial or proprietary extensions MAY exist, provided they do not violate this specification or restrict interoperability with conforming ScriptPacks.
-
----
-
-## 5.10 Future Evolution
-
-This specification is expected to evolve over time.
-
-Future revisions SHOULD extend the specification while minimizing disruption to existing ScriptPacks.
-
-Deprecated features SHOULD remain documented until officially removed in a major specification revision.
-
-
-
----
-
-
 
 # 6. ScriptPack Architecture
 
 ## 6.1 Overview
 
-The ScriptPack architecture is designed around a modular and extensible plugin model.
+A ScriptPack is the fundamental extension mechanism of the Aksara Nusantara platform.
 
-Each ScriptPack is a self-contained package that describes a single writing system and exposes a standardized interface to the Aksara Nusantara Core Engine.
+Each ScriptPack encapsulates everything required to support a single writing system, including:
 
-The Core Engine is responsible for discovering, validating, loading, and managing ScriptPacks, while each ScriptPack is responsible for providing script-specific data and behavior.
+* metadata;
+* implementation logic;
+* character repository;
+* assets;
+* transliteration resources;
+* optional audio resources.
 
----
-
-## 6.2 High-Level Architecture
-
-The ScriptPack ecosystem consists of three primary components:
-
-- Core Engine
-- ScriptPack
-- Application Layer
-
-The relationship between these components is illustrated below.
-
-```text
-+------------------------------------------------------+
-|                  Application Layer                   |
-|  (Desktop App, CLI, Future Mobile App, etc.)         |
-+---------------------------?--------------------------+
-                             
-                              API
-                             
-+------------------------------------------------------+
-|                    Core Engine                       |
-|------------------------------------------------------|
-| Script Registry                                      |
-| Script Loader                                        |
-| Validator                                            |
-| Asset Manager                                        |
-| BaseScriptPack Interface                             |
-+---------------------------?--------------------------+
-                             
-                             
-                loads and validates
-                             
-+------------------------------------------------------+
-|                    ScriptPack                        |
-|------------------------------------------------------|
-| manifest.json                                        |
-| character data                                       |
-| transliteration rules                                |
-| assets                                               |
-| audio                                                |
-| metadata                                             |
-+------------------------------------------------------+
-```
+A ScriptPack SHALL be deployable independently of other ScriptPacks.
 
 ---
 
-## 6.3 Component Responsibilities
+## 6.2 Architectural Principles
 
-### Application Layer
+The ScriptPack architecture follows these principles.
 
-The Application Layer provides the user interface and learning experience.
+### Independence
 
-Applications SHOULD interact only with the Core Engine.
+A ScriptPack SHALL operate independently from all other ScriptPacks.
 
-Applications SHOULD NOT access ScriptPack internals directly.
-
----
-
-### Core Engine
-
-The Core Engine provides the runtime environment for ScriptPacks.
-
-Its responsibilities include:
-
-- discovering available ScriptPacks;
-- validating package integrity;
-- loading compatible ScriptPacks;
-- exposing a unified API;
-- managing ScriptPack lifecycle.
-
-The Core Engine SHALL remain independent of any specific writing system.
+A ScriptPack MUST NOT directly import or depend on another ScriptPack.
 
 ---
 
-### ScriptPack
+### Encapsulation
 
-A ScriptPack contains all resources necessary to describe a writing system.
+All writing-system-specific resources SHALL reside inside the ScriptPack directory.
 
-Typical contents include:
-
-- metadata;
-- character definitions;
-- transliteration rules;
-- pronunciation data;
-- educational assets.
-
-A ScriptPack SHALL NOT contain application-specific logic.
+The Core Engine SHALL treat ScriptPacks as isolated modules.
 
 ---
 
-## 6.4 Communication Model
+### Discoverability
 
-Applications communicate with ScriptPacks indirectly through the Core Engine.
+The Core Engine SHALL discover ScriptPacks dynamically by scanning the configured ScriptPack directory.
 
-The following communication path SHALL be used.
-
-```text
-Application
-       
-      ?
-Core Engine
-       
-      ?
-Script Registry
-       
-      ?
-ScriptPack
-```
-
-Direct communication between the Application Layer and ScriptPack SHOULD be avoided.
+No ScriptPack SHALL require manual registration.
 
 ---
 
-## 6.5 Lifecycle
+### Replaceability
 
-The lifecycle of a ScriptPack consists of the following stages.
-
-1. Discovery
-2. Validation
-3. Registration
-4. Loading
-5. Initialization
-6. Runtime Usage
-7. Unloading
-
-Each stage SHALL complete successfully before the next stage begins.
+A ScriptPack MAY be upgraded, removed, or replaced without requiring modifications to the Core Engine.
 
 ---
 
-## 6.6 Design Benefits
+### Extensibility
 
-The ScriptPack architecture provides the following benefits.
-
-- Separation of concerns.
-- Independent development.
-- Easier testing.
-- Future extensibility.
-- Reduced maintenance cost.
-- Improved portability.
-- Simplified community contribution.
-
-
+Future ScriptPack capabilities SHALL be introduced without breaking existing implementations whenever practical.
 
 ---
-
-
 
 # 7. ScriptPack Directory Layout
 
-## 7.1 Purpose
-
-This section defines the recommended directory structure for a ScriptPack.
-
-A consistent directory layout improves discoverability, simplifies validation, and provides a predictable development experience for both users and contributors.
-
-Unless otherwise specified, directory names are case-sensitive.
-
----
-
-## 7.2 Standard Directory Layout
-
-A ScriptPack SHOULD follow the directory structure shown below.
+A conforming ScriptPack SHALL follow the directory structure defined below.
 
 ```text
-scriptpack/
+scriptpacks/
 
-+-- manifest.json
-+-- README.md
-+-- LICENSE
- 
-+-- characters/
-    +-- characters.json
-    +-- groups.json
- 
-+-- transliteration/
-    +-- rules.json
- 
-+-- assets/
-    +-- images/
-    +-- audio/
-    +-- fonts/
- 
-+-- examples/
- 
-+-- docs/
+    <identifier>/
+
+        manifest.json
+
+        script.py
+
+        assets/
+
+            characters/
+
+            images/
+
+            audio/
+
+            fonts/
 ```
 
-The above layout represents the recommended organization for ScriptPack packages.
-
-Additional files and directories MAY be included provided they do not interfere with the required structure.
+Additional directories MAY be introduced provided they do not conflict with reserved names defined by this specification.
 
 ---
 
-## 7.3 Required Files
+## 7.1 Required Files
 
-Every ScriptPack MUST contain the following files.
+Every ScriptPack SHALL contain the following files.
 
-| File | Required |
-|------|----------|
-| manifest.json | YES |
-| README.md | YES |
-| LICENSE | YES |
-
-If any required file is missing, the ScriptPack SHALL fail validation.
+| File          | Required | Description            |
+| ------------- | -------- | ---------------------- |
+| manifest.json | Yes      | ScriptPack metadata    |
+| script.py     | Yes      | ScriptPack entry point |
 
 ---
 
-## 7.4 Recommended Directories
+## 7.2 Required Directories
 
-The following directories are recommended.
+The following directory SHALL exist.
 
-| Directory | Purpose |
-|-----------|---------|
-| characters | Character definitions |
-| transliteration | Transliteration rules |
-| assets | Fonts, images, and audio |
-| docs | Documentation |
-| examples | Sample resources |
+| Directory | Purpose                            |
+| --------- | ---------------------------------- |
+| assets    | Container for ScriptPack resources |
 
-These directories SHOULD be present whenever applicable.
+Subdirectories inside `assets` MAY be omitted when unused.
 
 ---
 
-## 7.5 Optional Directories
-
-A ScriptPack MAY define additional directories for its own internal organization.
-
-Examples include:
-
-- tests/
-- references/
-- bibliography/
-- datasets/
-
-The Core Engine SHALL ignore unknown directories unless explicitly defined by future specifications.
-
----
-
-## 7.6 Reserved Names
+## 7.3 Reserved Directories
 
 The following names are reserved by this specification.
 
-- manifest.json
-- characters
-- transliteration
-- assets
-- docs
+```text
+assets/
 
-Future versions of this specification MAY reserve additional names.
+characters/
 
----
+images/
 
-## 7.7 Package Root
+audio/
 
-The root directory of a ScriptPack SHALL contain exactly one manifest file.
+fonts/
+```
 
-Nested ScriptPacks are not permitted.
-
-Each package represents one logical ScriptPack.
+Future versions of this specification MAY introduce additional reserved directories.
 
 ---
-
-## 7.8 Future Compatibility
-
-Future versions of this specification MAY introduce additional directories.
-
-Implementations SHOULD ignore directories that are not recognized unless validation rules explicitly state otherwise.
-
-This approach allows the directory layout to evolve without breaking existing ScriptPacks.
-
-
-
----
-
-
 
 # 8. Manifest
 
-## 8.1 Purpose
+## 8.1 Overview
 
-The manifest is the primary entry point of a ScriptPack.
-
-Every ScriptPack MUST provide exactly one manifest file.
-
-The manifest contains metadata, compatibility information, and implementation references required by the Core Engine.
-
-Before loading any ScriptPack implementation, the Core Engine SHALL first validate and process the manifest.
-
-This process is referred to as Manifest First Loading.
-
----
-
-## 8.2 File Name
-
-The manifest file SHALL be named:
+Every ScriptPack SHALL provide a manifest named:
 
 ```text
 manifest.json
 ```
 
-The file SHALL be located in the root directory of the ScriptPack package.
-
-Example:
-
-```text
-<package-root>/
-
-+-- manifest.json
-+-- README.md
-+-- LICENSE
-+-- ...
-```
+The manifest contains metadata required by the Core Engine before the ScriptPack is imported.
 
 ---
 
-## 8.3 File Format
-
-The manifest SHALL use JSON format.
-
-The manifest SHALL be encoded using UTF-8.
-
-The use of UTF-8 with BOM is NOT RECOMMENDED.
-
-Implementations SHOULD reject malformed JSON documents.
-
----
-
-## 8.4 Manifest Structure
-
-A manifest SHALL contain a single JSON object.
-
-Example:
-
-```json
-{
-    "script_id": "jawa",
-    "name": "Javanese Script",
-    "version": "1.0.0",
-    "api_version": "1.0",
-    "implementation": "implementation.py"
-}
-```
-
-Additional fields MAY be included.
-
-Unknown fields SHALL be ignored unless explicitly defined by future specifications.
-
----
-
-## 8.5 Required Fields
+## 8.2 Required Fields
 
 The following fields are mandatory.
 
-| Field | Required |
-|---------|----------|
-| script_id | YES |
-| name | YES |
-| version | YES |
-| api_version | YES |
-| implementation | YES |
-
-A manifest missing any required field SHALL fail validation.
+| Field       | Type   | Description                  |
+| ----------- | ------ | ---------------------------- |
+| identifier  | string | Unique ScriptPack identifier |
+| name        | string | Human-readable name          |
+| version     | string | ScriptPack version           |
+| author      | string | ScriptPack author            |
+| entry_point | string | Python entry module          |
 
 ---
 
-## 8.6 Field Constraints
+## 8.3 Optional Fields
 
-### script_id
+The following metadata fields are optional.
 
-The script_id uniquely identifies a ScriptPack.
+| Field          | Purpose                         |
+| -------------- | ------------------------------- |
+| description    | Human-readable description      |
+| specification  | Supported specification version |
+| language       | ISO language identifier         |
+| writing_system | Writing system name             |
+| unicode_blocks | Supported Unicode blocks        |
+| license        | Distribution license            |
 
-Requirements:
+Unknown fields SHOULD be ignored by the Core Engine.
 
-- MUST be unique.
-- MUST be lowercase.
-- MUST use ASCII letters, digits, and hyphens only.
-- MUST NOT contain spaces.
+---
 
-Examples:
+## 8.4 Identifier Rules
 
-Valid:
+The `identifier` field SHALL satisfy the following requirements.
+
+* unique within the ScriptPack directory;
+* lowercase;
+* ASCII letters, digits, and underscore only;
+* immutable after public release whenever practical.
+
+Example:
 
 ```text
-jawa
+javanese
+
 balinese
-hebrew
-greek
-arabic
-```
 
-Invalid:
-
-```text
-Aksara Jawa
-Hebrew Script
-Ancient Greek
+rejang
 ```
 
 ---
 
-### name
+## 8.5 Entry Point
 
-Human-readable name of the ScriptPack.
-
-Examples:
-
-```text
-Javanese Script
-Hebrew Script
-Greek Script
-```
-
----
-
-### version
-
-Version number of the ScriptPack.
-
-The version SHALL follow Semantic Versioning.
-
-Examples:
-
-```text
-1.0.0
-1.2.3
-2.0.0
-```
-
----
-
-### api_version
-
-Version of the ScriptPack API supported by the package.
-
-This field is used for compatibility checking.
-
-Examples:
-
-```text
-1.0
-1.1
-2.0
-```
-
----
-
-### implementation
-
-Relative path to the ScriptPack implementation.
-
-Examples:
-
-```text
-implementation.py
-
-src/implementation.py
-
-core/scriptpack.py
-```
-
-The referenced file MUST exist.
-
----
-
-## 8.7 Validation Rules
-
-The Core Engine SHALL validate the manifest before loading any implementation.
-
-Validation SHALL include:
-
-- file existence;
-- JSON validity;
-- required fields;
-- field constraints;
-- compatibility checks.
-
-If validation fails, the ScriptPack SHALL NOT be loaded.
-
----
-
-## 8.8 Unknown Fields
-
-Unknown fields SHALL NOT cause validation failure.
-
-This requirement supports future extensions of the specification.
+The `entry_point` field specifies the Python module used to instantiate the ScriptPack.
 
 Example:
 
 ```json
-{
-    "script_id": "jawa",
-    "name": "Javanese Script",
-    "version": "1.0.0",
-    "api_version": "1.0",
-    "implementation": "implementation.py",
-    "future_field": "reserved"
-}
+"entry_point": "script.py"
 ```
 
-The Core Engine SHOULD ignore the field if it is not recognized.
+The referenced file SHALL exist.
 
 ---
 
-## 8.9 Manifest First Loading
-
-The Core Engine SHALL process ScriptPacks using the following sequence.
-
-```text
-Locate Package
-
-?
-
-Locate manifest.json
-
-?
-
-Validate Manifest
-
-?
-
-Compatibility Check
-
-?
-
-Locate Implementation
-
-?
-
-Load Implementation
-
-?
-
-Initialize Runtime
-```
-
-No implementation SHALL be loaded before manifest validation succeeds.
-
----
-
-## 8.10 Future Extensions
-
-Future versions of this specification MAY define additional manifest fields.
-
-Implementations SHOULD remain forward-compatible by ignoring fields they do not recognize.
-
-This approach minimizes compatibility issues across specification revisions.
-
-
-
----
-
-
-
-# 9. Script Information
+# 9. Metadata
 
 ## 9.1 Purpose
 
-This section defines the information describing a writing system represented by a ScriptPack.
+Metadata describes a ScriptPack before it is instantiated.
 
-Script information provides human-readable metadata that enables applications, users, and the Core Engine to identify and present ScriptPacks consistently.
+Metadata SHALL originate from `manifest.json`.
 
-Unlike the manifest, which is primarily intended for package discovery and loading, Script Information describes the writing system itself.
-
----
-
-## 9.2 Scope
-
-Script Information SHALL describe the writing system represented by the ScriptPack.
-
-It SHALL NOT describe implementation details.
-
-Examples of implementation details include:
-
-- Python modules
-- internal file names
-- validation rules
-- runtime configuration
+The Core Engine SHALL load metadata before importing the ScriptPack module.
 
 ---
 
-## 9.3 Required Information
+## 9.2 Metadata Ownership
 
-Every ScriptPack MUST provide the following information.
+Metadata is owned by the Core Engine.
 
-| Field | Description |
-|--------|-------------|
-| Name | Official writing system name |
-| Native Name | Name written in its own script (if applicable) |
-| ISO Code | ISO 15924 script code when available |
-| Direction | Writing direction |
-| Unicode Support | Unicode availability |
+The Core Engine SHALL provide metadata to the ScriptPack implementation during loading.
+
+ScriptPack implementations SHOULD treat metadata as read-only.
 
 ---
 
-## 9.4 Writing Direction
+## 9.3 Metadata Availability
 
-The writing direction SHALL be one of the following values.
+After successful loading, metadata SHALL be available to the ScriptPack implementation through the `metadata` property defined by the BaseScriptPack interface.
 
-| Value | Description |
-|--------|-------------|
-| LTR | Left-to-Right |
-| RTL | Right-to-Left |
-| TTB | Top-to-Bottom |
-| BTT | Bottom-to-Top |
-
-Examples:
-
-- Latin ? LTR
-- Javanese ? LTR
-- Greek ? LTR
-- Hebrew ? RTL
-- Arabic ? RTL
-
-Future revisions MAY introduce additional writing directions.
+ScriptPack implementations MUST NOT attempt to reload or duplicate manifest parsing.
 
 ---
-
-## 9.5 Native Name
-
-If the writing system has a native representation, it SHOULD be provided.
-
-Examples:
-
-| Writing System | Native Name |
-|----------------|-------------|
-| Javanese | ????? |
-| Greek | ???????? |
-| Hebrew | ????? |
-| Arabic | ??????? |
-
-If no native representation exists, this field MAY be omitted.
-
----
-
-## 9.6 ISO Script Code
-
-Whenever available, the ScriptPack SHOULD specify the ISO 15924 code.
-
-Examples:
-
-| Writing System | ISO 15924 |
-|----------------|-----------|
-| Latin | Latn |
-| Javanese | Java |
-| Greek | Grek |
-| Hebrew | Hebr |
-| Arabic | Arab |
-
-If no ISO code exists, the field MAY be left empty.
-
----
-
-## 9.7 Unicode Support
-
-A ScriptPack SHOULD indicate whether the writing system is represented in Unicode.
-
-Possible values include:
-
-- Full
-- Partial
-- None
-
-This information assists applications in determining rendering capabilities.
-
----
-
-## 9.8 Informational Nature
-
-The fields defined in this section are descriptive.
-
-They SHALL NOT influence ScriptPack loading, validation, or compatibility checks.
-
-Their primary purpose is to improve interoperability and user experience.
-
-
-
----
-
-
 
 # 10. Versioning and Compatibility
 
-## 10.1 Purpose
+## 10.1 Specification Version
 
-This section defines the versioning model and compatibility requirements for ScriptPacks and the Core Engine.
-
-Consistent versioning enables predictable upgrades, reliable validation, and long-term ecosystem stability.
-
----
-
-## 10.2 Version Types
-
-The ScriptPack ecosystem defines two independent version numbers.
-
-| Version | Purpose |
-|---------|---------|
-| ScriptPack Version | Version of the ScriptPack package |
-| API Version | Version of the ScriptPack API implemented by the package |
-
-These version numbers SHALL be managed independently.
-
----
-
-## 10.3 ScriptPack Version
-
-The ScriptPack Version identifies releases of an individual ScriptPack.
-
-It SHALL follow Semantic Versioning.
-
-Examples:
-
-```text
-1.0.0
-1.2.0
-1.2.3
-2.0.0
-```
-
-A change to ScriptPack content does not necessarily require an API version change.
-
----
-
-## 10.4 API Version
-
-The API Version identifies the version of the ScriptPack interface implemented by the package.
-
-The Core Engine SHALL use this version to determine compatibility.
+A ScriptPack MAY declare the specification version it targets.
 
 Example:
 
-```text
-1.0
-1.1
-2.0
+```json
+"specification": "1.0"
 ```
 
 ---
 
-## 10.5 Compatibility Rules
+## 10.2 ScriptPack Version
 
-A ScriptPack SHALL declare the API Version it implements.
+Each ScriptPack SHALL define its own version.
 
-The Core Engine SHALL reject ScriptPacks implementing unsupported API versions.
+Example:
 
-Compatibility SHALL be determined before loading any implementation.
-
----
-
-## 10.6 Semantic Versioning
-
-ScriptPack Version SHALL follow Semantic Versioning.
-
-Version numbers use the format:
-
-```text
-MAJOR.MINOR.PATCH
+```json
+"version": "1.0.0"
 ```
 
-Definitions:
-
-- MAJOR   incompatible changes.
-- MINOR   backward-compatible new functionality.
-- PATCH   backward-compatible fixes.
+Semantic Versioning is RECOMMENDED.
 
 ---
 
-## 10.7 API Evolution
+## 10.3 Compatibility
 
-Future revisions of the ScriptPack API SHOULD preserve backward compatibility whenever practical.
+The Core Engine SHOULD reject ScriptPacks declaring incompatible specification versions.
 
-Breaking API changes SHALL require a new major API version.
-
----
-
-## 10.8 Forward Compatibility
-
-The Core Engine SHOULD ignore optional fields and extensions that are unknown but do not affect compatibility.
-
-This requirement allows newer ScriptPacks to coexist with older Core Engine implementations whenever possible.
+Future versions MAY introduce compatibility negotiation.
 
 ---
 
-## 10.9 Validation Sequence
+## 10.4 Forward Compatibility
 
-Compatibility validation SHALL occur after manifest validation and before implementation loading.
-
-The recommended validation order is:
-
-```text
-Locate Package
-
-?
-
-Read Manifest
-
-?
-
-Validate Manifest
-
-?
-
-Check API Version
-
-?
-
-Load Implementation
-
-?
-
-Initialize ScriptPack
-```
+Unknown optional manifest fields SHALL be ignored unless explicitly reserved by future revisions of this specification.
 
 ---
-
-## 10.10 Compatibility Failure
-
-If compatibility requirements are not satisfied, the Core Engine SHALL reject the ScriptPack.
-
-Implementations SHOULD provide a meaningful error message indicating the reason for rejection.
-
-The Core Engine SHALL continue processing other available ScriptPacks whenever possible.
-
-
-
----
-
 
 # 11. BaseScriptPack Interface
 
 ## 11.1 Purpose
 
-This section defines the minimum interface that every ScriptPack Implementation SHALL provide.
+`BaseScriptPack` defines the minimum interface that every ScriptPack SHALL implement.
 
-The BaseScriptPack interface establishes a consistent contract between ScriptPack Implementations and the Core Engine.
+The Core Engine communicates exclusively through this interface.
 
-All ScriptPack Implementations MUST conform to this interface.
-
----
-
-## 11.2 Abstract Interface
-
-BaseScriptPack represents an abstract interface.
-
-It SHALL NOT represent a concrete writing system.
-
-Applications SHALL interact with ScriptPack Implementations through the Core Engine rather than directly.
+Implementations MUST inherit from `BaseScriptPack`.
 
 ---
 
-## 11.3 Implementation Requirement
+## 11.2 Responsibilities
 
-Every ScriptPack Implementation MUST inherit from BaseScriptPack.
+A ScriptPack implementation SHALL:
 
-A ScriptPack Implementation that does not inherit from BaseScriptPack SHALL fail validation.
+* expose metadata supplied by the Core Engine;
+* provide character definitions;
+* encapsulate writing-system-specific behavior.
 
----
+A ScriptPack MUST NOT:
 
-## 11.4 Lifecycle Participation
-
-Every ScriptPack Implementation SHALL participate in the ScriptPack lifecycle defined in Section 6.
-
-Implementations SHALL support initialization and runtime usage.
-
-Implementations MAY support unloading and cleanup operations.
+* load its own manifest;
+* modify Core Engine state;
+* access other ScriptPacks directly.
 
 ---
 
-## 11.5 Required Methods
+## 11.3 Metadata
 
-Every ScriptPack Implementation MUST provide the following methods.
+The Core Engine SHALL inject metadata after a ScriptPack instance has been created.
 
-| Method | Required |
-|---------|----------|
-| get_script_information() | YES |
-| get_characters() | YES |
+Metadata SHALL originate from `manifest.json`.
 
-Failure to implement any required method SHALL result in validation failure.
+The `metadata` property SHALL be treated as read-only by ScriptPack implementations.
 
 ---
 
-## 11.6 get_script_information()
+## 11.4 Character Repository
 
-This method returns the descriptive information defined in Section 9.
+Every ScriptPack SHALL provide access to its character repository.
 
-This information is intended for applications, user interfaces, and educational presentation.
+The minimum required interface is:
 
-The returned information SHALL NOT affect compatibility checks or loading decisions.
+```python
+@property
+def metadata(self) -> dict[str, Any]:
+    ...
 
----
+def get_characters(self) -> list[Character]:
+    ...
+```
 
-## 11.7 get_characters()
-
-This method returns the character definitions provided by the ScriptPack.
-
-Character definitions MAY include:
-
-- base characters;
-- diacritics;
-- punctuation;
-- numerals;
-- grouping information.
-
-Future versions of this specification MAY define additional character categories.
+Future versions MAY define additional optional interfaces.
 
 ---
-
-## 11.8 Optional Methods
-
-Implementations MAY define additional methods.
-
-Examples:
-
-- get_audio()
-- get_examples()
-- get_fonts()
-- get_transliteration_rules()
-
-Optional methods SHALL NOT be required for compatibility unless defined by future specification revisions.
-
----
-
-## 11.9 Runtime State
-
-ScriptPack Implementations SHOULD minimize mutable runtime state whenever possible.
-
-Implementations SHOULD behave consistently across repeated calls.
-
----
-
-## 11.10 Engine Ownership
-
-The Core Engine SHALL own the ScriptPack lifecycle.
-
-ScriptPack Implementations SHALL NOT manage registration, discovery, validation, or loading of other ScriptPacks.
-
----
-
-## 11.11 Future Evolution
-
-Future versions of the specification MAY introduce additional required methods.
-
-Such additions SHOULD preserve backward compatibility whenever practical.
-
-Breaking interface changes SHALL require an API version increment.
-
-
-
----
-
 
 # 12. Script Registry
 
 ## 12.1 Purpose
 
-The Script Registry is responsible for maintaining information about all validated ScriptPacks.
+The Script Registry maintains all successfully loaded ScriptPacks.
 
-Only ScriptPacks that successfully complete validation SHALL be registered.
-
-The Registry provides a centralized view of available ScriptPacks and their current status.
-
-Applications SHALL obtain ScriptPack information through the Core Engine rather than interacting with the Registry directly.
+The registry acts as the single source of truth for loaded ScriptPack instances.
 
 ---
 
-## 12.2 Responsibilities
+## 12.2 Registration
 
-The Script Registry SHALL be responsible for:
+Only validated ScriptPacks SHALL be registered.
 
-- maintaining manifest information;
-- providing lookup services;
-- tracking runtime loading status.
+Registration SHALL occur after:
 
-The Registry SHALL NOT load ScriptPack implementations.
-
-Loading is the responsibility of the Script Loader.
+1. validation;
+2. successful module import;
+3. successful instance creation.
 
 ---
 
-## 12.3 Registry Entry
+## 12.3 Unique Identifier
 
-Each discovered ScriptPack SHALL be represented by one Registry Entry.
+Each ScriptPack SHALL be registered using its metadata identifier.
 
-A Registry Entry SHOULD contain:
+Duplicate identifiers SHALL be rejected.
 
-- package location;
-- manifest information;
-- validation result;
-- compatibility status;
-- loading status.
-
-Future versions MAY define additional registry fields.
+Attempting to register an existing identifier SHALL raise a `RegistryError`.
 
 ---
 
-## 12.4 Registration Process
+## 12.4 Registry Services
 
-The registration process consists of the following steps.
+A conforming registry SHALL support the following operations.
 
-1. Discover package.
-2. Locate manifest.
-3. Validate manifest.
-4. Create Registry Entry.
-5. Store Registry Entry.
+| Operation    | Purpose                     |
+| ------------ | --------------------------- |
+| register()   | Register a ScriptPack       |
+| unregister() | Remove a ScriptPack         |
+| get()        | Retrieve a ScriptPack       |
+| list()       | List registered ScriptPacks |
+| clear()      | Remove all registrations    |
 
-Registration SHALL complete before implementation loading begins.
-
----
-
-## 12.5 Lookup
-
-The Registry SHALL support lookup using ScriptPack identifiers.
-
-Lookup operations SHOULD be deterministic.
-
-If multiple ScriptPacks declare the same identifier, the Registry SHALL reject all conflicting entries.
+Additional convenience methods MAY be introduced in future revisions.
 
 ---
-
-## 12.6 Registry State
-
-The Registry SHALL maintain the following states for each ScriptPack.
-
-| State | Description |
-|--------|-------------|
-| Discovered | Package found |
-| Validated | Manifest validated |
-| Compatible | API compatibility confirmed |
-| Loaded | Implementation loaded |
-| Failed | Registration or loading failed |
-
----
-
-## 12.7 Duplicate Detection
-
-Each ScriptPack identifier MUST be unique.
-
-Duplicate identifiers SHALL result in registration failure.
-
-The Core Engine SHOULD continue processing other ScriptPacks after detecting duplicates.
-
----
-
-## 12.8 Read-Only Metadata
-
-The Registry SHALL treat manifest information as read-only.
-
-Runtime modifications to manifest data SHALL NOT be permitted.
-
----
-
-## 12.9 Separation of Responsibilities
-
-The Registry SHALL NOT:
-
-- instantiate ScriptPack implementations;
-- load assets;
-- perform transliteration;
-- manage application state.
-
-These responsibilities belong to other Core Engine components.
-
----
-
-## 12.10 Future Evolution
-
-Future specification revisions MAY extend Registry capabilities.
-
-Extensions SHOULD preserve backward compatibility whenever practical.
-
-
-
----
-
 
 # 13. Script Loader
 
 ## 13.1 Purpose
 
-The Script Loader is responsible for loading validated ScriptPack Implementations into the Core Engine.
+The Script Loader is responsible for creating ScriptPack instances.
 
-The Loader SHALL only process ScriptPacks that have successfully completed manifest validation and compatibility checks.
-
-The Loader SHALL NOT perform package discovery or manifest validation.
+The loader SHALL perform module import only after successful validation.
 
 ---
 
-## 13.2 Responsibilities
+## 13.2 Loading Sequence
 
-The Script Loader SHALL be responsible for:
-
-- locating the implementation module;
-- importing the implementation module;
-- locating the ScriptPack Implementation class;
-- instantiating the ScriptPack Implementation;
-- reporting loading results.
-
-The Loader SHALL NOT modify manifest information.
-
----
-
-## 13.3 Preconditions
-
-Before loading begins, the following conditions SHALL be satisfied:
-
-- the package has been discovered;
-- the manifest has been validated;
-- the ScriptPack is compatible with the Core Engine;
-- the implementation module exists.
-
-Failure to satisfy any precondition SHALL prevent loading.
-
----
-
-## 13.4 Loading Sequence
-
-The recommended loading sequence is:
+The loading process SHALL follow the sequence below.
 
 ```text
-Registry Entry
+ScriptPack Directory
 
 ↓
 
-Read implementation information
+Load manifest.json
 
 ↓
 
-Import module
+Import entry module
 
 ↓
 
-Locate ScriptPack class
+Instantiate BaseScriptPack
 
 ↓
 
-Verify inheritance
+Inject metadata
 
 ↓
 
-Instantiate ScriptPack
-
-↓
-
-Register runtime instance
+Return instance
 ```
 
 ---
 
-## 13.5 Class Verification
+## 13.3 Manifest Loading
 
-The Loader SHALL verify that the discovered implementation class inherits from BaseScriptPack.
+The loader SHALL read metadata from `manifest.json`.
 
-Classes that do not inherit from BaseScriptPack SHALL be rejected.
-
----
-
-## 13.6 Runtime Instance
-
-Each successfully loaded ScriptPack SHALL produce one runtime instance.
-
-The Core Engine SHALL maintain ownership of runtime instances.
-
-ScriptPack Implementations SHALL NOT instantiate other ScriptPacks.
+Manifest parsing SHALL occur exactly once during the loading process.
 
 ---
 
-## 13.7 Error Handling
+## 13.4 Module Import
 
-Loading failures SHALL NOT terminate the Core Engine.
+The module specified by `entry_point` SHALL be imported dynamically.
 
-The Loader SHOULD continue processing remaining ScriptPacks whenever possible.
-
-Errors SHOULD include:
-
-- package identifier;
-- failure stage;
-- human-readable description.
+Import failures SHALL result in a `LoaderError`.
 
 ---
 
-## 13.8 Loading Status
+## 13.5 Instance Creation
 
-The Loader SHALL report one of the following outcomes.
+Exactly one concrete implementation of `BaseScriptPack` SHALL be instantiated.
 
-| Status | Description |
-|--------|-------------|
-| Loaded | Implementation successfully loaded |
-| Failed | Loading failed |
-| Skipped | Loading skipped due to validation failure |
+Failure to instantiate SHALL result in a `LoaderError`.
 
 ---
 
-## 13.9 Runtime Ownership
+## 13.6 Metadata Injection
 
-The Script Loader SHALL transfer ownership of successfully instantiated ScriptPacks to the Core Engine.
+After instance creation, the loader SHALL inject metadata into the ScriptPack.
 
-The Loader SHALL NOT manage runtime execution after initialization.
-
----
-
-## 13.10 Separation of Responsibilities
-
-The Script Loader SHALL NOT:
-
-- discover packages;
-- validate manifests;
-- perform compatibility checks;
-- manage registry entries;
-- perform transliteration;
-- manage user data.
-
-These responsibilities belong to other Core Engine components.
+ScriptPack implementations SHALL NOT be responsible for loading or parsing the manifest.
 
 ---
 
-## 13.11 Future Evolution
-
-Future specification revisions MAY extend loading capabilities.
-
-Such extensions SHOULD preserve backward compatibility whenever practical.
-
-
-
----
-
-
-# 14. Script Validator
+# 14. Script Validation
 
 ## 14.1 Purpose
 
-The Script Validator is responsible for verifying that a ScriptPack conforms to this specification before it is loaded by the Core Engine.
+Validation ensures that a ScriptPack conforms to this specification before loading.
 
-Validation SHALL occur before any ScriptPack Implementation is imported or instantiated.
-
-The Validator serves as the primary gatekeeper of the ScriptPack ecosystem.
+Validation SHALL occur before any module import.
 
 ---
 
-## 14.2 Responsibilities
+## 14.2 Validation Scope
 
-The Script Validator SHALL be responsible for:
+Validation SHALL include:
 
-- verifying package structure;
-- locating the manifest;
-- validating manifest syntax;
-- validating required manifest fields;
-- verifying API compatibility;
-- reporting validation results.
+* directory structure;
+* required files;
+* manifest format;
+* required metadata fields;
+* entry point existence.
 
-The Validator SHALL NOT load ScriptPack implementations.
-
----
-
-## 14.3 Validation Scope
-
-Validation SHALL include, at minimum:
-
-- package existence;
-- required directory structure;
-- manifest existence;
-- manifest syntax;
-- required fields;
-- field constraints;
-- API compatibility.
-
-Future revisions MAY extend validation requirements.
+Additional validation MAY be introduced by future Core Engine versions.
 
 ---
 
-## 14.4 Validation Sequence
+## 14.3 Required Manifest Fields
 
-The recommended validation sequence is:
+The validator SHALL verify the following mandatory fields.
 
-Locate Package
+| Field       |
+| ----------- |
+| identifier  |
+| name        |
+| version     |
+| author      |
+| entry_point |
 
-↓
-
-Verify Directory Structure
-
-↓
-
-Locate manifest.json
-
-↓
-
-Parse JSON
-
-↓
-
-Validate Required Fields
-
-↓
-
-Validate Field Constraints
-
-↓
-
-Check API Compatibility
-
-↓
-
-Validation Result
+Missing required fields SHALL result in a `ValidationError`.
 
 ---
 
-## 14.5 Validation Result
+## 14.4 Entry Point Validation
 
-Validation SHALL produce one of the following outcomes.
+The validator SHALL verify that the file referenced by `entry_point` exists.
 
-| Result | Description |
-|--------|-------------|
-| Valid | The ScriptPack satisfies all mandatory requirements |
-| Invalid | One or more validation checks failed |
-
-Validation SHALL complete before registration begins.
+Missing files SHALL prevent ScriptPack loading.
 
 ---
 
-## 14.6 Error Reporting
+## 14.5 Validation Failures
 
-Validation failures SHOULD include:
+Validation failures SHALL stop the loading process immediately.
 
-- package identifier, if available;
-- validation stage;
-- descriptive error message.
-
-Error reporting SHOULD assist developers in correcting invalid ScriptPacks.
+The Core Engine MUST NOT attempt to import invalid ScriptPacks.
 
 ---
-
-## 14.7 Failure Handling
-
-Failure to validate one ScriptPack SHALL NOT terminate validation of remaining ScriptPacks.
-
-The Core Engine SHOULD continue validating all discovered ScriptPacks whenever possible.
-
----
-
-## 14.8 Separation of Responsibilities
-
-The Script Validator SHALL NOT:
-
-- register ScriptPacks;
-- load implementations;
-- instantiate ScriptPack classes;
-- perform transliteration;
-- manage runtime instances.
-
-These responsibilities belong to other Core Engine components.
-
----
-
-## 14.9 Future Evolution
-
-Future specification revisions MAY introduce additional validation rules.
-
-Such additions SHOULD preserve backward compatibility whenever practical.
-
-
-
----
-
-
 
 # 15. Core Engine API
 
 ## 15.1 Purpose
 
-The Core Engine provides the primary interface between applications and the ScriptPack ecosystem.
+The Core Engine coordinates all ScriptPack lifecycle operations.
 
-Applications SHOULD interact with the Core Engine rather than directly accessing internal components such as the Validator, Registry, or Loader.
+It is responsible for:
 
----
+* discovery;
+* validation;
+* loading;
+* registration.
 
-## 15.2 Responsibilities
-
-The Core Engine SHALL be responsible for:
-
-- coordinating the ScriptPack lifecycle;
-- initializing internal components;
-- exposing available ScriptPacks;
-- providing access to loaded ScriptPack implementations;
-- managing runtime ownership.
-
-The Core Engine SHALL NOT implement writing-system-specific behavior.
+The Core Engine SHALL NOT contain writing-system-specific logic.
 
 ---
 
-## 15.3 Initialization
+## 15.2 Initialization Sequence
 
-Initialization SHALL perform the following sequence:
+Initialization SHALL follow the sequence below.
 
-1. Discover ScriptPack packages.
-2. Validate discovered packages.
-3. Register validated ScriptPacks.
-4. Load compatible ScriptPack implementations.
-5. Make loaded ScriptPacks available to applications.
+```text
+Discover ScriptPacks
 
-Initialization SHOULD complete before user interaction begins.
+↓
 
----
+Validate
 
-## 15.4 Public API
+↓
 
-Applications SHOULD access ScriptPacks using the Core Engine public interface.
+Load
 
-Typical operations MAY include:
+↓
 
-- initialize();
-- get_available_scripts();
-- get_script(identifier);
-- get_loaded_scripts();
+Register
 
-Future specification revisions MAY define additional API methods.
-The exact method names are implementation-specific.
+↓
+
+Ready
+```
 
 ---
 
-## 15.5 Ownership
+## 15.3 Discovery
 
-The Core Engine SHALL own:
+The Core Engine SHALL discover candidate ScriptPacks by scanning the configured ScriptPack directory.
 
-- Script Registry;
-- Script Loader;
-- Script Validator;
-- runtime ScriptPack instances.
-
-Applications SHALL NOT directly modify these components.
+Discovery SHALL ignore non-directory entries.
 
 ---
 
-## 15.6 Error Handling
+## 15.4 Public Services
 
-Initialization failures SHALL be reported through the Core Engine.
+A conforming Core Engine SHALL provide:
 
-The Core Engine SHOULD continue operating whenever possible, even if one or more ScriptPacks fail validation or loading.
+| Service      | Purpose                           |
+| ------------ | --------------------------------- |
+| initialize() | Load all ScriptPacks              |
+| list()       | List loaded ScriptPacks           |
+| get()        | Retrieve ScriptPack by identifier |
 
----
-
-## 15.7 Separation of Responsibilities
-
-The Core Engine SHALL coordinate internal components.
-
-The Core Engine SHALL NOT duplicate responsibilities already assigned to:
-
-- Script Validator;
-- Script Registry;
-- Script Loader;
-- ScriptPack Implementations.
+Future revisions MAY extend the public API while preserving backward compatibility.
 
 ---
-
-## 15.8 Future Evolution
-
-Future versions of the specification MAY extend the public API.
-
-Such extensions SHOULD preserve backward compatibility whenever practical.
-
-
-
----
-
 
 # 16. Character Model
 
-## Status
+## 16.1 Purpose
 
-This section is intentionally reserved for future specification revisions.
+The Character Model defines the minimum information required to represent a writing-system character.
 
-The current Core Engine does not require a standardized Character Model for ScriptPack discovery, validation, loading, or lifecycle management.
-
-Future revisions of this specification MAY define a canonical Character Model to improve interoperability between ScriptPacks.
-
+Character definitions SHALL remain independent from application-specific logic.
 
 ---
 
+## 16.2 Character Repository
+
+Character definitions SHALL be provided by the ScriptPack.
+
+The Core Engine SHALL treat the repository as read-only.
+
+A ScriptPack MAY organize character data using one or more resource files.
+
+The storage format is implementation-defined, provided it can be exposed through the BaseScriptPack interface.
+
+---
+
+## 16.3 Minimum Character Attributes
+
+Each character SHOULD provide the following information when applicable.
+
+| Attribute   | Description                |
+| ----------- | -------------------------- |
+| glyph       | Native script character    |
+| latin       | Latin transliteration      |
+| unicode     | Unicode code point         |
+| category    | Character classification   |
+| description | Human-readable description |
+
+Future revisions MAY extend this model.
+
+---
 
 # 17. Transliteration
 
-## Status
+## 17.1 Purpose
 
-This section is intentionally reserved for future specification revisions.
+A ScriptPack MAY provide transliteration support.
 
-The current Core Engine does not define a standardized transliteration interface.
-
-Future revisions MAY specify a common transliteration contract to improve interoperability across ScriptPack implementations.
-
+The transliteration algorithm is writing-system specific and SHALL remain the responsibility of the ScriptPack.
 
 ---
 
+## 17.2 Responsibilities
+
+The Core Engine SHALL NOT implement transliteration rules.
+
+The Core Engine SHALL provide only the infrastructure required to access ScriptPack functionality.
+
+---
+
+## 17.3 Future Extensions
+
+Future versions MAY define a standardized transliteration interface.
+
+---
 
 # 18. Audio Support
 
-## Status
+## 18.1 Purpose
 
-This section is intentionally reserved for future specification revisions.
+ScriptPacks MAY provide pronunciation audio.
 
-Audio resources are considered optional and are outside the scope of the current Core Engine specification.
-
-Future revisions MAY define standardized audio interfaces, pronunciation resources, and related metadata.
-
+Audio support is optional.
 
 ---
 
+## 18.2 Audio Assets
+
+Audio resources SHOULD be stored within:
+
+```text id="c8ijoe"
+assets/audio/
+```
+
+The file format is implementation-defined.
+
+---
+
+## 18.3 Missing Audio
+
+The absence of audio SHALL NOT invalidate a ScriptPack.
+
+Applications SHOULD degrade gracefully when audio resources are unavailable.
+
+---
 
 # 19. Error Handling
 
-## Status
+## 19.1 Purpose
 
-This section is intentionally reserved for future specification revisions.
+Errors SHALL be reported through well-defined exception types.
 
-General Core Engine error behavior is currently defined by individual component specifications.
-
-Future revisions MAY introduce a unified error model covering ScriptPack implementations and Core Engine services.
-
+The Core Engine SHALL avoid exposing low-level implementation exceptions whenever practical.
 
 ---
 
+## 19.2 Exception Hierarchy
+
+The Foundation implementation defines the following exception hierarchy.
+
+| Exception       | Purpose              |
+| --------------- | -------------------- |
+| CoreEngineError | Base exception       |
+| ValidationError | Validation failures  |
+| LoaderError     | Loading failures     |
+| RegistryError   | Registry failures    |
+| EngineError     | Core Engine failures |
+
+Future revisions MAY extend this hierarchy.
+
+---
+
+## 19.3 Error Propagation
+
+Validation failures SHALL prevent loading.
+
+Loading failures SHALL prevent registration.
+
+Registry failures SHALL prevent duplicate registrations.
+
+The Core Engine SHALL fail fast whenever integrity cannot be guaranteed.
+
+---
 
 # 20. Security Considerations
 
-## Status
+## 20.1 Trust Model
 
-This section is intentionally reserved for future specification revisions.
+ScriptPacks execute Python code.
 
-The current specification assumes ScriptPacks originate from trusted sources.
-
-Future revisions MAY define security recommendations, integrity verification, package authenticity, and sandboxing requirements.
-
+Applications SHOULD load ScriptPacks only from trusted sources.
 
 ---
 
+## 20.2 Validation
+
+Validation improves structural integrity but SHALL NOT be considered a security mechanism.
+
+Applications requiring stronger security SHOULD implement additional verification.
+
+---
+
+## 20.3 Future Security
+
+Future versions MAY introduce:
+
+* digital signatures;
+* trusted publishers;
+* package verification;
+* integrity checks.
+
+---
 
 # 21. Future Compatibility
 
-## Status
+The ScriptPack architecture is designed to evolve without requiring major Core Engine redesign.
 
-This section is intentionally reserved for future specification revisions.
+Future revisions MAY introduce:
 
-Future revisions MAY introduce compatibility guidelines covering new ScriptPack capabilities while preserving interoperability with existing implementations.
+* additional metadata fields;
+* optional interfaces;
+* plugin capabilities;
+* marketplace integration;
+* cloud synchronization;
+* package signing;
+* dependency management;
+* localization support.
 
+Whenever practical, backward compatibility SHOULD be preserved.
 
 ---
 
-
 # Appendix A — Manifest Example
 
-Reserved for future revision.
-
-This appendix will provide a complete example of a ScriptPack manifest.
+```json id="u0wb3x"
+{
+    "identifier": "javanese",
+    "name": "Javanese Script",
+    "description": "Official Javanese ScriptPack.",
+    "version": "1.0.0",
+    "specification": "1.0",
+    "author": "Aksara Nusantara Project",
+    "license": "MIT",
+    "entry_point": "script.py",
+    "language": "jv",
+    "writing_system": "Hanacaraka",
+    "unicode_blocks": [
+        "Javanese"
+    ]
+}
+```
 
 ---
 
 # Appendix B — Directory Layout Example
 
-Reserved for future revision.
+```text id="4g5ttd"
+scriptpacks/
 
-This appendix will provide a reference ScriptPack directory structure.
+    javanese/
+
+        manifest.json
+
+        script.py
+
+        assets/
+
+            characters/
+
+            images/
+
+            audio/
+
+            fonts/
+```
 
 ---
 
 # Appendix C — Glossary
 
-Reserved for future revision.
+| Term                 | Meaning                                               |
+| -------------------- | ----------------------------------------------------- |
+| Core Engine          | Platform runtime responsible for ScriptPack lifecycle |
+| ScriptPack           | Writing-system extension package                      |
+| Metadata             | Manifest information owned by the Core Engine         |
+| Character Repository | Script-defined character collection                   |
+| Entry Point          | Python module used to instantiate a ScriptPack        |
 
-This appendix will provide an extended glossary of terms used throughout this specification.
+---
+
+# Appendix D — Core Engine Lifecycle
+
+```text id="xw31o7"
+ScriptPack Directory
+
+↓
+
+Validator
+
+↓
+
+Loader
+
+↓
+
+BaseScriptPack
+
+↓
+
+Registry
+
+↓
+
+Core Engine
+
+↓
+
+Application
+```
+
+---
+
+# Appendix E — Foundation Reference Implementation
+
+| Component           | Status |
+| ------------------- | ------ |
+| BaseScriptPack      | ✅      |
+| Registry            | ✅      |
+| Loader              | ✅      |
+| Validator           | ✅      |
+| Core Engine         | ✅      |
+| Javanese ScriptPack | ✅      |
+| Integration Test    | ✅ PASS |
+
+---
+
+# End of Specification
+
+This document defines the Foundation v1.0 ScriptPack architecture for the Aksara Nusantara platform.
+
+Future revisions SHALL preserve backward compatibility whenever practical while allowing the platform to evolve.
+
+This specification serves as the normative reference for all Foundation-compliant ScriptPack implementations.
