@@ -1,0 +1,13 @@
+{
+    "identifier": "sample",
+    "name": "Sample ScriptPack",
+    "description": "Minimal sample implementation of AN-STD-001.",
+    "version": "1.0.0",
+    "specification": "1.0",
+    "author": "Aksara Nusantara Project",
+    "license": "MIT",
+    "entry_point": "script.py",
+    "language": "sample",
+    "writing_system": "Sample",
+    "unicode_blocks": []
+}

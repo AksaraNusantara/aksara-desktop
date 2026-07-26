@@ -2,202 +2,226 @@
 
 ---
 
-## Milestone 1.1 – Extract AksaraCard
+# Project
 
-**Tanggal**
-14 Juli 2026
+**Project Name**
 
-**Status**
-✅ Selesai
+Aksara Nusantara
 
-**Tujuan**
-Memisahkan komponen kartu aksara menjadi modul tersendiri agar UI lebih modular.
+**Repository Status**
 
-**Perubahan**
-- Membuat folder `ui`
-- Membuat `ui/aksara_card.py`
-- Memindahkan class `AksaraCard`
-- Membersihkan import pada `main.py`
+Foundation Development
 
-**Git Commit**
-refactor: extract AksaraCard into ui package
+**Current Branch**
+
+main
 
 ---
 
-## Milestone 1.2 – Extract FlashcardTab
+# Foundation Phase
 
-**Tanggal**
-14 Juli 2026
+The Foundation Phase establishes the long-term architecture of the Aksara Nusantara platform before additional ScriptPack implementations are introduced.
 
-**Status**
-✅ Selesai
+Goals:
 
-**Tujuan**
-Memisahkan tab Flashcard menjadi modul tersendiri.
+- Design a stable Core Engine.
+- Define the ScriptPack specification.
+- Establish documentation standards.
+- Freeze the Character Model.
+- Validate the architecture using multiple ScriptPacks.
 
-**Perubahan**
-- Membuat folder `tabs`
-- Membuat `tabs/flashcard_tab.py`
-- Memindahkan seluruh class `FlashcardTab`
-- Memperbaiki dependency dan import
-- Memperbaiki masalah encoding UTF-8
+Status:
 
-**Git Commit**
-refactor: extract FlashcardTab into tabs package
+🟢 In Progress
 
 ---
 
-## Milestone 1.3 – Extract TransliterasiTab
+# Architecture Milestones
 
-**Tanggal**
-14 Juli 2026
+## Milestone A1
 
-**Status**
-✅ Selesai
+### Core Runtime Specification Frozen
 
-**Tujuan**
-Memisahkan fitur transliterasi ke modul tersendiri.
+Status
 
-**Perubahan**
-- Membuat `tabs/transliterasi_tab.py`
-- Memindahkan class `TransliterasiTab`
-- Memindahkan `TRANSLITERATION_MAP` ke `aksara_jawa.py`
-- Membersihkan import
-- Program tetap berjalan tanpa perubahan perilaku
+✅ Completed
 
-**Git Commit**
-refactor: extract TransliterasiTab into tabs package
+Completed
 
----
-
-## Milestone 1.4 – Refactor QuizTab
-
-**Tanggal**
-14 Juli 2026
-
-**Status**
-✅ Selesai
-
-**Tujuan**
-Mengubah implementasi Quiz dari fungsi `create_quiz_tab()` menjadi class `QuizTab` agar konsisten dengan arsitektur aplikasi dan lebih mudah dipelihara.
-
-**Perubahan**
-- Membuat class `QuizTab(QWidget)`.
-- Memindahkan seluruh UI Quiz ke dalam class.
-- Memindahkan state Quiz (`current_score`, `current_total`, `current_answer`, `current_nama`, dan `current_level`) menjadi atribut class.
-- Memindahkan seluruh method Quiz ke dalam class.
-- Menghapus fungsi `create_quiz_tab()`.
-- MainWindow sekarang menggunakan objek `QuizTab` secara langsung.
-
-**Hasil**
-- Perilaku aplikasi tetap sama.
-- Struktur kode menjadi lebih modular.
-- Quiz siap dipindahkan ke folder `tabs/` pada milestone berikutnya.
-
-**Git Commit**
-refactor: convert create_quiz_tab into QuizTab class
-
-**Lessons Learned**
-
-- Perubahan dari fungsi menjadi class dapat dilakukan tanpa mengubah perilaku aplikasi.
-- Memisahkan tanggung jawab antar class membuat proses refactoring berikutnya menjadi lebih mudah.
-- Refactoring bertahap lebih aman dibanding melakukan banyak perubahan sekaligus.
-
----
-
-## Milestone 1.5 – Extract QuizTab
-
-**Tanggal**
-14 Juli 2026
-
-**Status**
-✅ Selesai
-
-**Tujuan**
-Memindahkan implementasi `QuizTab` ke modul terpisah agar setiap tab memiliki file sendiri dan `MainWindow` hanya bertanggung jawab mengelola aplikasi.
-
-**Perubahan**
-- Membuat file `tabs/quiz_tab.py`.
-- Memindahkan class `QuizTab` dari `main.py`.
-- Menyesuaikan seluruh import yang diperlukan.
-- Mengubah `MainWindow` agar menggunakan `QuizTab` dari package `tabs`.
-- Memastikan seluruh fitur Quiz tetap berjalan dengan baik setelah pemindahan.
-
-**Hasil**
-- Semua tab utama kini memiliki implementasi yang terpisah.
-- Struktur proyek menjadi lebih modular dan mudah dipelihara.
-- `main.py` menjadi lebih ringkas.
-
-**Lessons Learned**
-- Refactoring bertahap membuat proses pemindahan file menjadi sederhana.
-- Setelah sebuah komponen menjadi class mandiri, proses modularisasi hampir tidak memerlukan perubahan logika.
-
-**Git Commit**
-refactor: move QuizTab into tabs package
-
----
-
-## 2026-07-23
-
-### Milestone
-
-Core Runtime Specification Frozen
-
-### Completed
-
-- BaseScriptPack Interface
+- BaseScriptPack interface
 - Script Registry
 - Script Loader
 - Script Validator
 - Core Engine API
-- Specification Traceability Workflow
-- Traceability Matrix
+- Traceability workflow
 
-### Architecture Decisions
+Architecture Decisions
 
 - BaseScriptPack no longer exposes `get_manifest()`.
-- Registry is the single source of truth for manifest metadata.
-- Core Engine is the only public entry point for applications.
-- Every implementation must reference its originating specification.
-
-### Next Phase
-
-Begin implementation of the Core Engine.
+- Registry is the single source of truth for ScriptPack metadata.
+- Core Engine is the only public API.
+- Every implementation must reference AN-STD-001.
 
 ---
 
-Temporary Repository Decision
+## Milestone A2
 
-During the initial Core Engine implementation,
-the repository may keep Python packages at the repository root.
+### Core Exception Hierarchy
 
-Migration to the final src/ package layout will occur
-after the public package namespace has been finalized.
+Status
 
----
-
-2026-07-23
-
-Architecture Decision
-
-Introduce core/exceptions.py before validator.py.
-
-Reason:
-Provide a unified exception hierarchy for the Core Engine and
-avoid duplicated exception definitions across modules.
-
----
-
-## Sprint B1
+✅ Completed
 
 Completed
 
-- AN-STD-002 Version 1.0
-- Python Module Template finalized
+- CoreEngineError
+- ValidationError
+- RegistryError
+- LoaderError
+- EngineError
 
-Next Sprint
+Purpose
 
-- validator.py
+Provide a unified exception hierarchy across the Core Engine.
 
 ---
 
+## Milestone A3
+
+### ScriptPack Loading Pipeline
+
+Status
+
+✅ Completed
+
+Completed
+
+- Manifest loading
+- Validation
+- Dynamic module loading
+- Registry integration
+- Engine initialization
+
+Verification
+
+Javanese ScriptPack integration test PASSED.
+
+---
+
+## Milestone A4
+
+### Character Model v1.0 Finalized
+
+Status
+
+✅ Completed
+
+Summary
+
+The Character data model has been simplified.
+
+Changes
+
+- Removed redundant `category` field.
+- Removed redundant `version` field.
+- Character category is inferred from the repository filename.
+- ScriptPack version is defined exclusively in `manifest.json`.
+- Character repository structure simplified.
+
+Verification
+
+Javanese migration completed successfully.
+
+Integration Test PASSED.
+
+---
+
+# Documentation Milestones
+
+Status
+
+✅ Completed
+
+Completed
+
+- README.md
+- START_HERE.md
+- CONTRIBUTING.md
+- TRACEABILITY.md
+- PROJECT_WORKFLOW.md
+
+Current Focus
+
+AN-STD-001 review and refinement.
+
+---
+
+# ScriptPack Milestones
+
+## Javanese ScriptPack
+
+Status
+
+✅ Operational
+
+Completed
+
+- Manifest
+- Character Repository
+- ScriptPack implementation
+- Core Engine integration
+- Integration test
+
+Current Character Model
+
+```
+order
+id
+glyph
+unicode
+latin
+name
+enabled
+```
+
+---
+
+## Sample ScriptPack
+
+Status
+
+🟡 Planned
+
+Purpose
+
+Provide the minimal official implementation of the ScriptPack specification.
+
+---
+
+# Current Status
+
+Foundation Progress
+
+| Component | Status |
+|-----------|--------|
+| Core Engine | ✅ |
+| Documentation | ✅ |
+| Character Model | ✅ |
+| Javanese ScriptPack | ✅ |
+| Foundation Cleanup | 🔄 |
+| Sample ScriptPack | ⏳ |
+| Architecture Validation | ⏳ |
+
+---
+
+# Next Milestone
+
+Foundation Freeze
+
+Objectives
+
+- Complete PROJECT_LOG cleanup.
+- Commit Character Model v1.0 migration.
+- Implement Sample ScriptPack.
+- Validate Core Engine using multiple ScriptPacks.
+- Freeze Foundation v1.0.

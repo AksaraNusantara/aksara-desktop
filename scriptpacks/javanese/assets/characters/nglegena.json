@@ -1,11 +1,9 @@
 {
-    "category": "nglegena",
-    "version": "1.0.0",
     "characters": [
         {
             "order": 1,
             "id": "ha",
-            "glyph": "?",
+            "glyph": "ꦲ",
             "unicode": "U+A9B2",
             "latin": "ha",
             "name": "Aksara Ha",
@@ -14,7 +12,7 @@
         {
             "order": 2,
             "id": "na",
-            "glyph": "?",
+            "glyph": "ꦤ",
             "unicode": "U+A9A4",
             "latin": "na",
             "name": "Aksara Na",
@@ -23,7 +21,7 @@
         {
             "order": 3,
             "id": "ca",
-            "glyph": "?",
+            "glyph": "ꦕ",
             "unicode": "U+A995",
             "latin": "ca",
             "name": "Aksara Ca",
@@ -32,7 +30,7 @@
         {
             "order": 4,
             "id": "ra",
-            "glyph": "?",
+            "glyph": "ꦫ",
             "unicode": "U+A9AB",
             "latin": "ra",
             "name": "Aksara Ra",
@@ -41,7 +39,7 @@
         {
             "order": 5,
             "id": "ka",
-            "glyph": "?",
+            "glyph": "ꦏ",
             "unicode": "U+A98F",
             "latin": "ka",
             "name": "Aksara Ka",
