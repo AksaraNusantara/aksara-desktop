@@ -1,85 +1,173 @@
 # Aksara Nusantara
-### Desktop Edition
 
-> **Belajar. Menulis. Melestarikan.**  
-> *Learn. Write. Preserve.*
-
-Aksara Nusantara Desktop adalah aplikasi desktop open source yang dikembangkan untuk membantu masyarakat mempelajari, menulis, dan melestarikan berbagai aksara tradisional Indonesia melalui teknologi modern.
-
-The project aims to preserve Indonesia's rich writing systems by providing free and open educational tools for everyone.
+> **Learn. Preserve. Extend.**
+>
+> *An Open Source Platform for Traditional Script Preservation.*
 
 ---
 
-## 🌏 Vision
+## Overview
 
-Indonesia is home to dozens of traditional writing systems that represent centuries of history, literature, philosophy, and culture.
+**Aksara Nusantara** is an open-source platform designed to preserve, study, and extend the traditional writing systems of Indonesia through a modern and extensible software architecture.
 
-Unfortunately, many of these scripts are becoming less familiar to younger generations.
+Instead of supporting only a single script, Aksara Nusantara introduces a **ScriptPack Architecture**, allowing each writing system to be developed, maintained, and distributed independently while sharing the same Core Engine.
 
-**Aksara Nusantara** exists to help preserve this cultural heritage through open-source software, educational resources, and community collaboration.
+The Desktop Edition is the first reference implementation of this platform.
 
-We believe technology should not replace culture.
+---
+
+# Vision
+
+Indonesia is home to dozens of traditional writing systems representing centuries of history, literature, philosophy, and culture.
+
+Many of these scripts are becoming less familiar to younger generations.
+
+Aksara Nusantara exists to help preserve this cultural heritage through:
+
+* Open-source software
+* Educational resources
+* Community collaboration
+* Standardized ScriptPack architecture
+
+Technology should not replace culture.
 
 Technology should help preserve it.
 
 ---
 
-## ✨ Features
+# Project Architecture
 
-Current features include:
+```text
+                     Aksara Nusantara Platform
 
-- 📖 Alphabet learning
-- 🃏 Flashcards
-- ❓ Interactive Quiz
-- 🔤 Latin ⇄ Javanese Transliteration
-- 🔊 Text-to-Speech
-- 💾 Learning Progress Tracking
-- 🖥️ Desktop application powered by PySide6 (Qt)
+                               �
 
-More features will be added in future releases.
+               +-------------------------------+
+
+               �                               �
+
+          Core Engine                    ScriptPacks
+
+               �                               �
+
+               �                 Javanese ScriptPack
+
+               �                 Balinese ScriptPack
+
+               �                 Sundanese ScriptPack
+
+               �                 ...
+
+               �
+
+        Desktop Edition
+
+        Future Mobile Edition
+
+        Future Web Edition
+```
+
+The Core Engine provides generic services.
+
+Every writing system is implemented as an independent ScriptPack.
 
 ---
 
-## 🚧 Current Status
+# Core Features
+
+Current platform capabilities include:
+
+* ScriptPack Architecture
+* Core Engine
+* ScriptPack Validator
+* ScriptPack Loader
+* ScriptPack Registry
+* Character Repository
+* Asset Management
+* Transliteration Framework
+* Audio Support Framework
+* Extensible Design
+
+The Desktop Edition additionally provides:
+
+* Alphabet Learning
+* Flashcards
+* Interactive Quiz
+* Transliteration
+* Progress Tracking
+
+---
+
+# Current Development Status
 
 Project Status
 
-🟠 Active Development
+?? Active Development
 
 Current Version
 
-**v0.1 (Pre-release)**
+**v0.1 (Foundation)**
 
 Current Milestone
 
-**Milestone 1 — Foundation**
+**Foundation v0.1**
 
-Implemented:
+Completed
 
-- ✅ Alphabet Learning
-- ✅ Flashcards
-- ✅ Quiz
-- ✅ Transliteration
-- ✅ Progress Saving
-- ✅ Documentation
+* Core Engine
+* ScriptPack Architecture
+* Validator
+* Loader
+* Registry
+* Integration Test
+* Documentation Framework
+
+In Progress
+
+* Documentation Synchronization
+* Reference ScriptPack
+
+Planned
+
+* Desktop Integration
+* Additional ScriptPacks
 
 ---
 
-## 📷 Screenshot
+# Repository Structure
 
-Coming Soon
+```text
+core/
+    Core Engine
+
+scriptpacks/
+    ScriptPack implementations
+
+docs/
+    Specifications
+    Standards
+    Development documentation
+
+assets/
+    Shared project assets
+
+main.py
+requirements.txt
+README.md
+LICENSE
+```
 
 ---
 
-## 🚀 Getting Started
+# Getting Started
 
-### Requirements
+## Requirements
 
-- Python 3.12+
-- PySide6
-- Windows / Linux
+* Python 3.12+
+* PySide6
+* Windows or Linux
 
-### Clone Repository
+Clone the repository:
 
 ```bash
 git clone https://github.com/AksaraNusantara/aksara-desktop.git
@@ -87,7 +175,7 @@ git clone https://github.com/AksaraNusantara/aksara-desktop.git
 cd aksara-desktop
 ```
 
-### Create Virtual Environment
+Create a virtual environment:
 
 ```bash
 python -m venv .venv
@@ -99,19 +187,19 @@ Windows
 .venv\Scripts\activate
 ```
 
-Linux / macOS
+Linux
 
 ```bash
 source .venv/bin/activate
 ```
 
-### Install Dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Run
+Run:
 
 ```bash
 python main.py
@@ -119,99 +207,75 @@ python main.py
 
 ---
 
-## 📂 Project Structure
+# Documentation
 
-```
-assets/
-data/
-docs/
-fonts/
-progress/
-tabs/
-ui/
-utils/
-widgets/
+Project documentation is available in the **docs/** directory.
 
-main.py
-requirements.txt
-README.md
-LICENSE
-```
+Important documents include:
+
+* START_HERE.md
+* PROJECT_WORKFLOW.md
+* CHANGELOG.md
+* CONTRIBUTING.md
+* TRACEABILITY.md
+* SCRIPTPACK_INTERFACE_SPECIFICATION.md
 
 ---
 
-## 📚 Documentation
+# Roadmap
 
-Additional documentation can be found inside the `docs` directory.
+## Foundation
 
-- CHANGELOG.md
-- PROJECT_LOG.md
-- ROADMAP.md
-- TODO.md
-- MANIFESTO.md
-- THIRD_PARTY_NOTICES.md
+* Complete documentation
+* Reference ScriptPack
+* Desktop integration
 
----
+## Platform
 
-## 🛣️ Roadmap
+* Multiple ScriptPacks
+* Theme system
+* Audio framework
+* Character repository
 
-Current roadmap includes:
+## Ecosystem
 
-- Improve Hanacaraka learning experience
-- Additional Javanese writing rules
-- Unicode utilities
-- Font management
-- More quizzes
-- Better transliteration engine
-- Audio improvements
-
-Future ecosystem goals:
-
-- Desktop Edition
-- Android Edition
-- Web Edition
-- Unicode Tools
-- Dataset Project
-- Font Project
-- Community Portal
+* Android Edition
+* Web Edition
+* Marketplace
+* Community ScriptPacks
+* Dataset Projects
+* Font Projects
 
 ---
 
-## 🤝 Contributing
+# Contributing
 
 Contributions are welcome.
 
-Whether you are a developer, teacher, linguist, student, designer, or simply interested in preserving Indonesian traditional scripts, your contribution is greatly appreciated.
+Whether you are a developer, linguist, educator, designer, student, or simply interested in preserving Indonesia's traditional writing systems, your contribution is greatly appreciated.
 
-Contribution guidelines will be available in a future release.
+Please read **CONTRIBUTING.md** before submitting pull requests.
 
 ---
 
-## 📜 License
+# License
 
 This project is licensed under the MIT License.
 
-See the LICENSE file for details.
-
-Third-party software licenses are available in:
-
-THIRD_PARTY_NOTICES.md
+See the **LICENSE** file for details.
 
 ---
 
-## 🌱 About Aksara Nusantara
+# About the Project
 
-Aksara Desktop is the first application developed as part of the **Aksara Nusantara Ecosystem**.
+Aksara Nusantara is not only a desktop application.
 
-The long-term vision is to build a complete open-source ecosystem dedicated to preserving, learning, researching, and developing Indonesia's traditional writing systems.
+It is an extensible platform for preserving traditional writing systems through open standards and reusable software components.
 
-Future ecosystem projects include educational applications, datasets, Unicode tools, fonts, documentation, and community resources.
+The long-term objective is to build an ecosystem where new writing systems can be added simply by creating new ScriptPacks, without modifying the Core Engine.
 
 ---
 
-> *Technology preserves knowledge.  
-> People preserve culture.*
-
-**Belajar. Menulis. Melestarikan.**
-
-*Learn. Write. Preserve.*
+> **Technology preserves knowledge.**
+>
+> **People preserve culture.**
