@@ -51,6 +51,7 @@ from typing import Any
 
 from core.exceptions import LoaderError
 from core.scriptpack import BaseScriptPack
+from core.models import LoadedScriptPack
 
 
 class ScriptPackLoader:
@@ -67,7 +68,7 @@ class ScriptPackLoader:
     def load(
         self,
         package_path: Path
-    ) -> BaseScriptPack:
+    ) -> LoadedScriptPack:
         """
         Load a validated ScriptPack.
 
@@ -91,6 +92,13 @@ class ScriptPackLoader:
         module = self._import_module(
             package_path,
             manifest,
+        )
+
+        instance = self._create_instance(module)
+
+        return LoadedScriptPack(
+            manifest=manifest,
+            instance=instance,
         )
 
         return self._create_instance(module)

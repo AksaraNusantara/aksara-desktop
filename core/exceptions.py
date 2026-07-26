@@ -14,7 +14,7 @@ Purpose:
 
 Supports:
     AN-STD-001
-    Section 14 — Script Validation
+    Section 14 - Script Validation
 
 References:
     docs/standards/SCRIPTPACK_INTERFACE_SPECIFICATION.md

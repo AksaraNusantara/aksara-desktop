@@ -1,0 +1,51 @@
+{
+    "category": "nglegena",
+    "version": "1.0.0",
+    "characters": [
+        {
+            "order": 1,
+            "id": "ha",
+            "glyph": "?",
+            "unicode": "U+A9B2",
+            "latin": "ha",
+            "name": "Aksara Ha",
+            "enabled": true
+        },
+        {
+            "order": 2,
+            "id": "na",
+            "glyph": "?",
+            "unicode": "U+A9A4",
+            "latin": "na",
+            "name": "Aksara Na",
+            "enabled": true
+        },
+        {
+            "order": 3,
+            "id": "ca",
+            "glyph": "?",
+            "unicode": "U+A995",
+            "latin": "ca",
+            "name": "Aksara Ca",
+            "enabled": true
+        },
+        {
+            "order": 4,
+            "id": "ra",
+            "glyph": "?",
+            "unicode": "U+A9AB",
+            "latin": "ra",
+            "name": "Aksara Ra",
+            "enabled": true
+        },
+        {
+            "order": 5,
+            "id": "ka",
+            "glyph": "?",
+            "unicode": "U+A98F",
+            "latin": "ka",
+            "name": "Aksara Ka",
+            "enabled": true
+        }
+    ]
+}

@@ -52,3 +52,25 @@ Semua perubahan penting pada proyek Aksara Nusantara didokumentasikan di sini.
 - `QuizTab` dipindahkan ke `tabs/quiz_tab.py`.
 - Struktur `MainWindow` disederhanakan dengan menghapus implementasi Quiz dari file utama.
 - Seluruh tab utama kini menggunakan pendekatan modular.
+
+Version : v0.4.0-dev
+
+Highlights
+
+• Core Engine completed
+
+• Validator implemented
+
+• Loader implemented
+
+• Registry implemented
+
+• ScriptPack architecture completed
+
+• Manifest becomes Single Source of Truth
+
+• LoadedScriptPack introduced
+
+• First ScriptPack (Javanese) successfully loaded
+
+• First end-to-end Integration Test PASSED

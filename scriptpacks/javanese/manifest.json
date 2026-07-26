@@ -1,0 +1,15 @@
+{
+    "identifier": "javanese",
+    "name": "Javanese Script",
+    "description": "Official Javanese ScriptPack for Aksara Nusantara.",
+    "version": "1.0.0",
+    "specification": "1.0",
+    "author": "Aksara Nusantara Project",
+    "license": "MIT",
+    "entry_point": "script.py",
+    "language": "jv",
+    "writing_system": "Hanacaraka",
+    "unicode_blocks": [
+        "Javanese"
+    ]
+}

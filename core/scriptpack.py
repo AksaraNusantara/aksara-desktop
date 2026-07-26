@@ -11,7 +11,7 @@ Purpose:
 
 Implements:
     AN-STD-001
-    Section 11 — BaseScriptPack Interface
+    Section 11 - BaseScriptPack Interface
 
 References:
     docs/standards/SCRIPTPACK_INTERFACE_SPECIFICATION.md
@@ -44,18 +44,6 @@ class BaseScriptPack(ABC):
     Aksara Nusantara Core Engine.
     """
     
-    @abstractmethod
-    def get_script_information(self) -> dict:
-        """
-        Return metadata describing the ScriptPack.
-
-        Returns
-        -------
-        dict
-            Script metadata as defined by the ScriptPack Specification.
-        """
-        pass
-
     @abstractmethod
     def get_characters(self):
         """

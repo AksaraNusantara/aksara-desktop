@@ -53,14 +53,14 @@ import inspect
 from core.exceptions import ValidationError
 from core.scriptpack import BaseScriptPack
 
-REQUIRED_MANIFEST_FIELDS = (
-    "id",
+REQUIRED_MANIFEST_FIELDS: tuple[str, ...] = (
+    "identifier",
     "name",
     "version",
+    "specification",
     "author",
     "entry_point",
 )
-
 
 class ScriptPackValidator:
     """
@@ -87,49 +87,50 @@ class ScriptPackValidator:
             If validation fails.
         """
         self._validate_directory(package_path)
-
         manifest = self._validate_manifest(package_path)
-
         self._validate_required_fields(manifest)
-
+        self._validate_entry_point(
+            package_path,
+            manifest,
+        )
         self._validate_interface(package_path)
 
         return True
 
-def _validate_directory(self, package_path: Path) -> None:
+    def _validate_directory(self, package_path: Path) -> None:
     	"""
     	Validate the ScriptPack directory structure.
 
     	Parameters
     	----------
     	package_path:
-        	Path to the ScriptPack directory.
+    	        Path to the ScriptPack directory.
 
     	Raises
     	------
     	ValidationError
-        	If the directory structure is invalid.
+    	    	If the directory structure is invalid.
     	"""
     	if not package_path.exists():
-        	raise ValidationError(
-            	f"ScriptPack directory does not exist: {package_path}"
-        	)
+    	    	raise ValidationError(
+    	    	f"ScriptPack directory does not exist: {package_path}"
+    	)
 
     	if not package_path.is_dir():
-        	raise ValidationError(
-            	f"ScriptPack path is not a directory: {package_path}"
-        	)
+    	    	raise ValidationError(
+    	    	f"ScriptPack path is not a directory: {package_path}"
+    	    	)
 
     	required_files = (
-        	"manifest.json",
-        	"script.py",
+    	    	"manifest.json",
+    	    	"script.py",
     	)
 
     	for filename in required_files:
-        	if not (package_path / filename).exists():
-            	raise ValidationError(
-                	f"Missing required file: {filename}"
-            	)
+    	    	if not (package_path / filename).exists():
+    	    	    	raise ValidationError(
+    	    	    	    	f"Missing required file: {filename}"
+    	    	    	)
 
     def _validate_manifest(self, package_path: Path) -> dict[str, Any]:
         """
@@ -191,6 +192,22 @@ def _validate_directory(self, package_path: Path) -> None:
                 raise ValidationError(
                     f"Missing required manifest field: '{field}'."
                 )
+
+    def _validate_entry_point(
+        self,
+        package_path: Path,
+        manifest: dict,
+    ) -> None:
+        """
+        Validate the ScriptPack entry point.
+        """
+
+        entry_point = package_path / manifest["entry_point"]
+
+        if not entry_point.is_file():
+            raise ValidationError(
+                f"Entry point not found: '{manifest['entry_point']}'."
+            )
 
     def _validate_interface(self, package_path: Path) -> None:
         """

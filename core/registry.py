@@ -63,7 +63,8 @@ class ScriptPackRegistry:
 
     def register(
         self,
-        scriptpack: BaseScriptPack
+        identifier: str,
+        scriptpack: BaseScriptPack,
     ) -> None:
         """
         Register a validated ScriptPack.
@@ -78,8 +79,7 @@ class ScriptPackRegistry:
         RegistryError
             If the ScriptPack is already registered.
         """
-        identifier = scriptpack.get_script_information()["id"]
-
+        
         if identifier in self._registry:
             raise RegistryError(
                 f"ScriptPack '{identifier}' is already registered."
@@ -146,7 +146,7 @@ class ScriptPackRegistry:
         self,
         identifier: str
     ) -> bool:
-        raise NotImplementedError
+         return identifier in self._registry
 
     def list(self) -> list[str]:
         """

@@ -46,8 +46,6 @@ from pathlib import Path
 # Local Project Imports
 # =============================================================================
 
-from pathlib import Path
-
 from core.loader import ScriptPackLoader
 from core.registry import ScriptPackRegistry
 from core.scriptpack import BaseScriptPack
@@ -100,8 +98,12 @@ class CoreEngine:
 
         for package in packages:
             self._validator.validate(package)
-            scriptpack = self._loader.load(package)
-            self._registry.register(scriptpack)
+            loaded = self._loader.load(package)
+            identifier = loaded.manifest["identifier"]
+            self._registry.register(
+                identifier,
+                loaded.instance,
+            )
 
     def _discover(
         self,
