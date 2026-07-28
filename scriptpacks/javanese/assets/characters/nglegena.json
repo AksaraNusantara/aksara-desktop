@@ -1,49 +1,162 @@
-{
-    "characters": [
-        {
-            "order": 1,
-            "id": "ha",
-            "glyph": "ꦲ",
-            "unicode": "U+A9B2",
-            "latin": "ha",
-            "name": "Aksara Ha",
-            "enabled": true
-        },
-        {
-            "order": 2,
-            "id": "na",
-            "glyph": "ꦤ",
-            "unicode": "U+A9A4",
-            "latin": "na",
-            "name": "Aksara Na",
-            "enabled": true
-        },
-        {
-            "order": 3,
-            "id": "ca",
-            "glyph": "ꦕ",
-            "unicode": "U+A995",
-            "latin": "ca",
-            "name": "Aksara Ca",
-            "enabled": true
-        },
-        {
-            "order": 4,
-            "id": "ra",
-            "glyph": "ꦫ",
-            "unicode": "U+A9AB",
-            "latin": "ra",
-            "name": "Aksara Ra",
-            "enabled": true
-        },
-        {
-            "order": 5,
-            "id": "ka",
-            "glyph": "ꦏ",
-            "unicode": "U+A98F",
-            "latin": "ka",
-            "name": "Aksara Ka",
-            "enabled": true
-        }
-    ]
-}
+[
+    {
+        "id": "ha",
+        "name": "Ha",
+        "glyph": "ꦲ",
+        "latin": "ha",
+        "unicode": "U+A9B2",
+        "description": "Represents the consonant 'ha' in the Javanese script."
+    },
+    {
+        "id": "na",
+        "name": "Na",
+        "glyph": "ꦤ",
+        "latin": "na",
+        "unicode": "U+A9A4",
+        "description": "Represents the consonant 'na' in the Javanese script."
+    },
+    {
+        "id": "ca",
+        "name": "Ca",
+        "glyph": "ꦕ",
+        "latin": "ca",
+        "unicode": "U+A995",
+        "description": "Represents the consonant 'ca' in the Javanese script."
+    },
+    {
+        "id": "ra",
+        "name": "Ra",
+        "glyph": "ꦫ",
+        "latin": "ra",
+        "unicode": "U+A9AB",
+        "description": "Represents the consonant 'ra' in the Javanese script."
+    },
+    {
+        "id": "ka",
+        "name": "Ka",
+        "glyph": "ꦏ",
+        "latin": "ka",
+        "unicode": "U+A98F",
+        "description": "Represents the consonant 'ka' in the Javanese script."
+    },
+    {
+        "id": "da",
+        "name": "Da",
+        "glyph": "ꦢ",
+        "latin": "da",
+        "unicode": "U+A9A2",
+        "description": "Represents the consonant 'da' in the Javanese script."
+    },
+    {
+        "id": "ta",
+        "name": "Ta",
+        "glyph": "ꦠ",
+        "latin": "ta",
+        "unicode": "U+A9A0",
+        "description": "Represents the consonant 'ta' in the Javanese script."
+    },
+    {
+        "id": "sa",
+        "name": "Sa",
+        "glyph": "ꦱ",
+        "latin": "sa",
+        "unicode": "U+A9B1",
+        "description": "Represents the consonant 'sa' in the Javanese script."
+    },
+    {
+        "id": "wa",
+        "name": "Wa",
+        "glyph": "ꦮ",
+        "latin": "wa",
+        "unicode": "U+A9AE",
+        "description": "Represents the consonant 'wa' in the Javanese script."
+    },
+    {
+        "id": "la",
+        "name": "La",
+        "glyph": "ꦭ",
+        "latin": "la",
+        "unicode": "U+A9AD",
+        "description": "Represents the consonant 'la' in the Javanese script."
+    },
+    {
+        "id": "pa",
+        "name": "Pa",
+        "glyph": "ꦥ",
+        "latin": "pa",
+        "unicode": "U+A9A5",
+        "description": "Represents the consonant 'pa' in the Javanese script."
+    },
+    {
+        "id": "dha",
+        "name": "Dha",
+        "glyph": "ꦝ",
+        "latin": "dha",
+        "unicode": "U+A99D",
+        "description": "Represents the consonant 'dha' in the Javanese script."
+    },
+    {
+        "id": "ja",
+        "name": "Ja",
+        "glyph": "ꦗ",
+        "latin": "ja",
+        "unicode": "U+A997",
+        "description": "Represents the consonant 'ja' in the Javanese script."
+    },
+    {
+        "id": "ya",
+        "name": "Ya",
+        "glyph": "ꦪ",
+        "latin": "ya",
+        "unicode": "U+A9AA",
+        "description": "Represents the consonant 'ya' in the Javanese script."
+    },
+    {
+        "id": "nya",
+        "name": "Nya",
+        "glyph": "ꦚ",
+        "latin": "nya",
+        "unicode": "U+A99A",
+        "description": "Represents the consonant 'nya' in the Javanese script."
+    },
+    {
+        "id": "ma",
+        "name": "Ma",
+        "glyph": "ꦩ",
+        "latin": "ma",
+        "unicode": "U+A9A9",
+        "description": "Represents the consonant 'ma' in the Javanese script."
+    },
+    {
+        "id": "ga",
+        "name": "Ga",
+        "glyph": "ꦒ",
+        "latin": "ga",
+        "unicode": "U+A992",
+        "description": "Represents the consonant 'ga' in the Javanese script."
+    },
+    {
+        "id": "ba",
+        "name": "Ba",
+        "glyph": "ꦧ",
+        "latin": "ba",
+        "unicode": "U+A9A7",
+        "description": "Represents the consonant 'ba' in the Javanese script."
+    },
+    {
+        "id": "tha",
+        "name": "Tha",
+        "glyph": "ꦛ",
+        "latin": "tha",
+        "unicode": "U+A99B",
+        "description": "Represents the consonant 'tha' in the Javanese script."
+    },
+    {
+        "id": "nga",
+        "name": "Nga",
+        "glyph": "ꦔ",
+        "latin": "nga",
+        "unicode": "U+A994",
+        "description": "Represents the consonant 'nga' in the Javanese script."
+    }
+]

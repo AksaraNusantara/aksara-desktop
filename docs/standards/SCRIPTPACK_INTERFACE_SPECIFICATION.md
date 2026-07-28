@@ -12,6 +12,7 @@
 | Title        | ScriptPack Interface Specification |
 | Status       | Foundation v1.0 (Frozen)           |
 | Version      | 1.0                                |
+| Stability    | Frozen                             |
 | Owner        | Aksara Nusantara Project           |
 | License      | MIT                                |
 | Last Updated | 2026-07-26                         |
@@ -785,6 +786,8 @@ The Character Model defines the minimum information required to represent a writ
 
 Character definitions SHALL remain independent from application-specific logic.
 
+The Character Model serves as the canonical representation of writing-system data exchanged between ScriptPacks and the Core Engine.
+
 ---
 
 ## 16.2 Character Repository
@@ -797,21 +800,32 @@ A ScriptPack MAY organize character data using one or more resource files.
 
 The storage format is implementation-defined, provided it can be exposed through the BaseScriptPack interface.
 
+The Foundation Reference ScriptPacks use JSON as the canonical storage format for character repositories.
+
+Alternative storage formats MAY be used by third-party ScriptPacks provided they remain compatible with the BaseScriptPack interface.
+
 ---
 
 ## 16.3 Minimum Character Attributes
 
-Each character SHOULD provide the following information when applicable.
+Each character SHALL provide the minimum attributes defined below.
 
-| Attribute   | Description                |
-| ----------- | -------------------------- |
-| glyph       | Native script character    |
-| latin       | Latin transliteration      |
-| unicode     | Unicode code point         |
-| category    | Character classification   |
-| description | Human-readable description |
+Additional attributes MAY be introduced by individual ScriptPacks provided they do not break compatibility with this Character Model.
 
-Future revisions MAY extend this model.
+| Attribute   | Required | Description                         |
+| ------------|----------|-------------------------------------|
+| id          | Yes      | Unique character identifier         |
+| name        | Yes      | Human-readable character name       |
+| glyph       | Yes      | Native script character             |
+| latin       | Yes      | Latin transliteration               |
+| unicode     | Yes      | Unicode code point                  |
+| description | No       | Human-readable description          |
+
+Character classification SHALL be determined by the repository in which the character is stored (for example, `nglegena.json`, `sandhangan.json`, or `pasangan.json`).
+
+Therefore, character definitions SHALL NOT include a `category` attribute.
+
+Future revisions MAY extend this model while preserving backward compatibility.
 
 ---
 
@@ -1047,15 +1061,15 @@ Application
 
 # Appendix E — Foundation Reference Implementation
 
-| Component           | Status |
-| ------------------- | ------ |
-| BaseScriptPack      | ✅      |
-| Registry            | ✅      |
-| Loader              | ✅      |
-| Validator           | ✅      |
-| Core Engine         | ✅      |
-| Javanese ScriptPack | ✅      |
-| Integration Test    | ✅ PASS |
+| Component                     | Status |
+| ----------------------------- | ------ |
+| BaseScriptPack                | ✅      |
+| Registry                      | ✅      |
+| Loader                        | ✅      |
+| Validator                     | ✅      |
+| Core Engine                   | ✅      |
+| Javanese Reference ScriptPack | ✅      |
+| Integration Test              | ✅ PASS |
 
 ---
 

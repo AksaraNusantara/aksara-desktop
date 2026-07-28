@@ -47,22 +47,8 @@ from core.scriptpack import BaseScriptPack
 
 class SampleScriptPack(BaseScriptPack):
     """
-    Official ScriptPack template.
-
-    Copy this class when creating a new ScriptPack.
+    Official implementation of the Sample ScriptPack.
     """
-    @property
-    def identifier(self) -> str:
-        return "sample"
-
-    @property
-    def name(self) -> str:
-        return "Sample Template"
-
-    @property
-    def version(self) -> str:
-        return "1.0.0"
-
     def get_characters(self):
         """
         Return all enabled Sample characters.
@@ -80,35 +66,16 @@ class SampleScriptPack(BaseScriptPack):
 
             with json_file.open(
                 "r",
-                encoding="utf-8"
+                encoding="utf-8",
             ) as fp:
 
-                data = json.load(fp)
+                repository = json.load(fp)
 
-            characters.extend(data["characters"])
+            if not isinstance(repository, list):
+                raise ValueError(
+                    f"{json_file.name} must contain a JSON array."
+                )
+
+            characters.extend(repository)
 
         return characters
-
-    def transliterate(
-        self,
-        text: str,
-    ) -> str:
-        """
-        Transliterate text.
-
-        This method SHALL be implemented by
-        concrete ScriptPacks.
-        """
-        raise NotImplementedError
-
-    def get_audio(
-        self,
-        identifier: str,
-    ):
-        """
-        Return audio resource.
-
-        Reserved for future implementation.
-        """
-        raise NotImplementedError
-

@@ -35,14 +35,10 @@ SPDX-License-Identifier: MIT
 # Standard Library
 # =============================================================================
 
-from pathlib import Path
+from __future__ import annotations
+
 import json
-
-# =============================================================================
-# Third-party Packages
-# =============================================================================
-
-# None
+from pathlib import Path
 
 # =============================================================================
 # Local Project Imports
@@ -51,25 +47,21 @@ import json
 from core.scriptpack import BaseScriptPack
 
 
+# -----------------------------------------------------------------------------
+# Implements:
+#
+# AN-STD-001
+# Official Javanese ScriptPack
+# -----------------------------------------------------------------------------
 class JavaneseScriptPack(BaseScriptPack):
     """
-    Official Javanese ScriptPack.
+    Official implementation of the Javanese ScriptPack.
     """
-    @property
-    def identifier(self) -> str:
-        return "javanese"
-
-    @property
-    def name(self) -> str:
-        return "Javanese Script"
-
-    @property
-    def version(self) -> str:
-        return "1.0.0"
 
     def get_characters(self) -> list[dict]:
         """
-        Return all enabled Javanese characters.
+        Return all character definitions provided by
+        the Javanese ScriptPack.
         """
 
         character_directory = (
@@ -78,41 +70,23 @@ class JavaneseScriptPack(BaseScriptPack):
             / "characters"
         )
 
+
         characters: list[dict] = []
 
         for json_file in sorted(character_directory.glob("*.json")):
 
             with json_file.open(
                 "r",
-                encoding="utf-8"
+                encoding="utf-8",
             ) as fp:
 
-                data = json.load(fp)
+                repository = json.load(fp)
 
-            characters.extend(data["characters"])
+            if not isinstance(repository, list):
+                raise ValueError(
+                    f"{json_file.name} must contain a JSON array."
+                )
+
+            characters.extend(repository)
 
         return characters
-
-    def transliterate(
-        self,
-        text: str,
-    ) -> str:
-        """
-        Transliterate text.
-
-        This method SHALL be implemented by
-        concrete ScriptPacks.
-        """
-        raise NotImplementedError
-
-    def get_audio(
-        self,
-        identifier: str,
-    ):
-        """
-        Return audio resource.
-
-        Reserved for future implementation.
-        """
-        raise NotImplementedError
-

@@ -23,7 +23,11 @@ SPDX-License-Identifier: MIT
 
 ===============================================================================
 """
-from abc import ABC, abstractmethod
+
+from __future__ import annotations
+
+from abc import ABC
+from abc import abstractmethod
 
 
 # -----------------------------------------------------------------------------
@@ -43,10 +47,11 @@ class BaseScriptPack(ABC):
     This class defines the minimum contract required by the
     Aksara Nusantara Core Engine.
     """
-    
+
     @abstractmethod
-    def get_characters(self):
+    def get_characters(self) -> list[dict]:
         """
-        Return the complete collection of characters provided by the ScriptPack.
+        Return the complete collection of characters provided
+        by the ScriptPack.
         """
-        pass
+        raise NotImplementedError

@@ -1,306 +1,524 @@
 # PROJECT_WORKFLOW.md
 
-> Single Source of Truth for Aksara Nusantara Development
+> **Project:** Aksara Nusantara
+>
+> **Document Version:** 1.1
+>
+> **Status:** Active
+>
+> **Last Updated:** 2026-07
+>
+> **Maintainer:** Aksara Nusantara Project
 
 ---
 
-# Project
+# 1. Purpose
 
-**Aksara Nusantara**
+This document describes the overall development workflow of the
+Aksara Nusantara ecosystem.
 
-Open Source Platform for Learning, Preserving, and Extending Traditional Scripts through the ScriptPack architecture.
+It serves as the primary navigation document for the project,
+allowing contributors to understand:
+
+- current project phase
+- current sprint
+- completed milestones
+- upcoming milestones
+- implementation workflow
+- development policies
+
+This document intentionally provides a high-level overview.
+Technical specifications are documented separately.
 
 ---
 
-# Current Milestone
+# 2. Current Project Status
 
-## Foundation v0.1
+## Current Phase
 
-Status:
+**Phase D — AksaraDesktop Revival**
 
-?? In Progress
+---
+
+## Current Sprint
+
+**Sprint AD-1**
 
 Goal:
 
-Deliver a stable and documented platform foundation before desktop application development continues.
+Bring AksaraDesktop back to life using the new Core Engine and
+the official Javanese ScriptPack.
 
 ---
 
-# Current Sprint
+## Current Milestone
 
-## Sprint D0 — Documentation Audit
+?? **First Character Loaded**
 
-Current Objectives
+Target:
 
-- Audit all active documentation.
-- Remove obsolete architecture references.
-- Synchronize documentation with the implemented Core Engine.
-- Prepare documentation for Foundation v0.1.
-
-Current Mode
-
-Engineering
+The application successfully displays the first Javanese character
+loaded through the complete Core Engine pipeline.
 
 ---
 
-# Current Project Status
+## Foundation Status
 
-| Component | Status |
-|-----------|--------|
-| Repository Structure | ? Complete |
-| Project Architecture | ? Complete |
-| Core Engine | ? Complete |
-| ScriptPack Architecture | ? Complete |
-| Validator | ? Complete |
-| Loader | ? Complete |
-| Registry | ? Complete |
-| Integration Test | ? PASS |
-| Documentation Audit | ?? In Progress |
-| First Living ScriptPack | ? Planned |
-| Desktop Integration | ? Planned |
+? Foundation v1.0 Frozen
+
+The Foundation architecture has been completed and SHALL remain
+stable unless a future major version requires architectural changes.
 
 ---
 
-# Development Roadmap
+# 3. Project Roadmap
 
-## Sprint D
+```
+Phase A
+Foundation Design
+        ¦
+        ?
+Phase B
+Core Engine
+        ¦
+        ?
+Phase C
+ScriptPack Ecosystem
+        ¦
+        ?
 
-Documentation
+==========================
+FOUNDATION v1.0 FROZEN
+==========================
 
-- Documentation Audit
-- Documentation Cleanup
-- Documentation Synchronization
-
----
-
-## Sprint E
-
-Standards
-
-- Finalize AN-STD-001
-- Freeze ScriptPack Specification
-- Documentation Verification
-
----
-
-## Sprint F
-
-First Living ScriptPack
-
-- Character Repository
-- Audio Repository
-- Theme Support
-- Transliteration
-- Quiz Resources
-
----
-
-## Sprint G
-
-Desktop Integration
-
-- Core Engine Integration
-- PySide6 Integration
-- Learning Modules
+        ¦
+        ?
+Phase D
+AksaraDesktop Revival
+        ¦
+        ?
+Phase E
+Learning Modules
+        ¦
+        ?
+Phase F
+Plugin Ecosystem
+        ¦
+        ?
+Phase G
+Marketplace
+```
 
 ---
 
-## Sprint H
+# 4. Completed Milestones
 
-Ecosystem
+## Milestone F1
 
-- Marketplace Preparation
-- Additional ScriptPacks
-- Community Contribution Workflow
+Foundation v1.0 Frozen
 
----
-
-# Milestones
-
-## M1 — Foundation v0.1
-
-Deliverables
+Completed Components:
 
 - Core Engine
-- ScriptPack Architecture
-- Validator
-- Loader
 - Registry
-- Integration Test
-- Documentation
-- First Living ScriptPack
+- Validator
+- Exception Hierarchy
+- BaseScriptPack
+- ScriptPack Specification
+- Character Repository Specification
+- Character Style Guide
+- Reference Template
+- Sample ScriptPack
+- Javanese ScriptPack
+- Foundation Validation
 
-Status
+Status:
 
-?? In Progress
+? COMPLETE
 
 ---
 
-## M2 — Desktop Application
+# 5. Current Sprint (AD-1)
+
+Objective
+
+Reconnect the desktop application to the new Foundation.
 
 Deliverables
 
-- GUI Integration
-- Learning Modules
-- User Experience Improvements
-
-Status
-
-? Planned
-
----
-
-## M3 — ScriptPack Ecosystem
-
-Deliverables
-
-- Multiple ScriptPacks
-- Marketplace
-- Community Contributions
-- Plugin Distribution
-
-Status
-
-? Planned
+- CoreEngine.initialize()
+- MainWindow
+- ScriptPack loading
+- Character Repository loading
+- Character Browser
+- First Character Loaded
 
 ---
 
-# Documentation Status
+# 6. Development Workflow
 
-| Document | Status |
-|----------|--------|
-| README.md | ?? Review Required |
-| PROJECT_WORKFLOW.md | ?? Current |
-| START_HERE.md | ?? Review Required |
-| CHANGELOG.md | ?? Current |
-| TRACEABILITY.md | ?? Current |
-| AN-STD-001 | ?? Revision Required |
-| CONTRIBUTING.md | ?? Review Required |
+Every new feature SHALL follow the workflow below.
 
----
-
-# Development Lifecycle
-
-Every major feature SHALL follow the lifecycle below.
-
-```text
+```
 Idea
 
-?
+    ¦
 
-Discussion
-
-?
-
-Architecture
-
-?
+    ?
 
 Specification
 
-?
+    ¦
 
-Review
+    ?
 
-?
+Reference Implementation
 
-Freeze
+    ¦
 
-?
+    ?
 
-Traceability
+Reference Dataset
 
-?
+    ¦
+
+    ?
+
+Validation
+
+    ¦
+
+    ?
+
+Integration Test
+
+    ¦
+
+    ?
+
+Production
+```
+
+No implementation SHALL bypass this workflow.
+
+---
+
+# 7. ScriptPack Development Workflow
+
+Every ScriptPack SHALL follow the same lifecycle.
+
+```
+Create ScriptPack
+
+        ¦
+
+        ?
+
+script.json
+
+        ¦
+
+        ?
+
+Character Repository
+
+        ¦
+
+        ?
+
+Validation
+
+        ¦
+
+        ?
+
+Integration Test
+
+        ¦
+
+        ?
+
+Production Ready
+```
+
+---
+
+# 8. Character Repository Workflow
+
+Character repositories SHALL follow a consistent structure.
+
+```
+Character Definition
+
+        ¦
+
+        ?
+
+JSON Validation
+
+        ¦
+
+        ?
+
+Repository Validation
+
+        ¦
+
+        ?
+
+Core Engine Loading
+
+        ¦
+
+        ?
+
+UI Integration
+```
+
+Character repositories SHALL comply with:
+
+- CHARACTER_STYLE_GUIDE.md
+- SCRIPTPACK_INTERFACE_SPECIFICATION.md
+
+---
+
+# 9. Reference Implementation Policy
+
+Whenever a specification changes,
+the following components SHALL be updated together.
+
+1. Specification
+2. Template
+3. Sample ScriptPack
+4. Production ScriptPack
+5. Reference Dataset
+6. Tests
+7. Documentation
+
+No implementation SHALL intentionally diverge from the
+current specification.
+
+---
+
+# 10. Validation Policy
+
+Every architectural component SHALL provide validation.
+
+Validation levels include:
+
+- Unit Test
+- Foundation Validation
+- Integration Test
+
+A feature SHALL NOT be considered complete until all
+relevant validation passes successfully.
+
+---
+
+# 11. Documentation Policy
+
+Documentation SHALL evolve together with the source code.
+
+Whenever a structural change occurs,
+the following SHALL be reviewed.
+
+- README
+- PROJECT_WORKFLOW
+- CHANGELOG
+- Specifications
+- Style Guides
+
+Documentation SHALL NOT become outdated.
+
+---
+
+# 12. Git Workflow
+
+Recommended workflow.
+
+```
+Specification
+
+        ¦
+
+        ?
 
 Implementation
 
-?
+        ¦
 
-Testing
+        ?
 
-?
+Validation
 
-Documentation
+        ¦
 
-?
+        ?
 
-Release
+Commit
+
+        ¦
+
+        ?
+
+Documentation Review
 ```
 
-Implementation SHALL follow approved specifications.
+Every commit SHOULD represent one logical change.
 
 ---
 
-# Development Constitution
+# 13. Current Backlog
 
-1. One Sprint = One Deliverable.
-2. Specification Before Implementation.
-3. Traceability Before Coding.
-4. Test Before Commit.
-5. Documentation Is Part of Development.
-6. One Conversation = One Sprint.
-7. Small Commits, Clear History.
+Priority
 
----
+## High
 
-# Documentation Policy
-
-Active documentation SHALL always reflect the current architecture.
-
-Historical information belongs in:
-
-- CHANGELOG.md
-- PROJECT_LOG.md
-
-Active documentation SHALL NOT contain obsolete workflows or deprecated architecture.
+- Character Browser
+- MainWindow integration
+- CoreEngine.initialize()
+- Character rendering
+- ScriptPack selector
 
 ---
 
-# Parking Lot
+## Medium
 
-Future ideas intentionally postponed.
+- Flashcard module
+- Quiz module
+- Search
+- Character details
+
+---
+
+## Low
 
 - Marketplace
-- Plugin Repository
-- Cloud Sync
-- AI Features
-- OCR
-- Mobile Version
-- Web Version
+- Plugin Manager
+- Theme system
 
 ---
 
-# Definition of Done
+# 14. Future Milestones
 
-Foundation v0.1 is complete when all of the following are finished.
+## AD-1
 
-- Core Engine
-- ScriptPack API
-- Validator
-- Loader
-- Registry
-- Integration Test
-- Documentation
-- Reference ScriptPack
+?? First Character Loaded
 
 ---
 
-# Development Rules
+## AD-2
 
-Every implementation SHALL be:
-
-- traceable;
-- documented;
-- reviewable;
-- testable;
-- maintainable.
-
-If implementation cannot be traced to an approved specification, development SHOULD stop until the specification has been reviewed.
+Character Browser Completed
 
 ---
 
-Last Updated
+## AD-3
 
-Sprint D0
+Flashcard System
 
-Documentation Audit
+---
+
+## AD-4
+
+Quiz System
+
+---
+
+## AD-5
+
+Transliteration Engine
+
+---
+
+## AD-6
+
+ScriptPack Marketplace
+
+---
+
+# 15. Guiding Principles
+
+The project follows several fundamental principles.
+
+- Foundation First
+- Specification Before Implementation
+- Validation Before Release
+- Documentation as Code
+- Simplicity Over Complexity
+- One Source of Truth
+- Backward compatibility is optional during Foundation development
+- Consistency across all ScriptPacks
+
+---
+
+# 16. Definition of Done
+
+A task is considered complete only when:
+
+- implementation finished
+- validation passed
+- integration test passed
+- documentation updated
+- specification synchronized
+- reference implementation synchronized
+- reference dataset synchronized
+
+Only then may the task be marked as completed.
+
+---
+
+# 17. Next Immediate Goal
+
+Current target:
+
+?? **First Character Loaded**
+
+Pipeline:
+
+```
+MainWindow
+
+    ¦
+
+    ?
+
+CoreEngine.initialize()
+
+    ¦
+
+    ?
+
+Registry
+
+    ¦
+
+    ?
+
+Javanese ScriptPack
+
+    ¦
+
+    ?
+
+Character Repository
+
+    ¦
+
+    ?
+
+Character Browser
+
+    ¦
+
+    ?
+
+?
+```
+
+This milestone marks the successful completion of the Foundation
+integration into AksaraDesktop.
+
+---
+
+End of Document
