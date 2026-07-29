@@ -34,6 +34,7 @@ from PySide6.QtWidgets import QToolBar
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from .workspace import Workspace
 
 class MainWindow(QMainWindow):
     """
@@ -55,8 +56,6 @@ class MainWindow(QMainWindow):
 
         super().__init__()
 
-        self._central_widget: QWidget | None = None
-        self._central_layout: QVBoxLayout | None = None
         self._status_bar: QStatusBar | None = None
         self._main_toolbar: QToolBar | None = None
 
@@ -110,14 +109,4 @@ class MainWindow(QMainWindow):
         Create the central workspace.
         """
 
-        self._central_widget = QWidget()
-
-        self._central_layout = QVBoxLayout(self._central_widget)
-
-        welcome_label = QLabel("Welcome to Aksara Nusantara")
-
-        welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self._central_layout.addWidget(welcome_label)
-
-        self.setCentralWidget(self._central_widget)
+        self.setCentralWidget(Workspace())
