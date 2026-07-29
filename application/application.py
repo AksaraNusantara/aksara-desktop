@@ -8,9 +8,9 @@ coordinating the application lifecycle.
 
 Responsibilities
 ----------------
-- Application bootstrap
-- Runtime lifecycle
-- Application shutdown
+- Application bootstrap.
+- Runtime lifecycle.
+- Application shutdown.
 
 References
 ----------
@@ -20,24 +20,27 @@ APPLICATION_ARCHITECTURE.md
 """
 
 from __future__ import annotations
+
 from ui.main_window import MainWindow
 
 
 class Application:
     """
-    Coordinates the application lifecycle.
+    Application lifecycle coordinator.
 
     The Application class is responsible for bootstrapping the
     application and coordinating its lifecycle.
 
-    It does not implement business logic and should not contain
-    user interface logic.
+    It SHALL NOT implement business logic.
     """
 
     def __init__(self) -> None:
-        """Initialize the application."""
+        """
+        Initialize the Application.
+        """
 
         self._initialized: bool = False
+        self._main_window: MainWindow | None = None
 
     @property
     def initialized(self) -> bool:
@@ -49,11 +52,20 @@ class Application:
         bool
             True if the application has been initialized.
         """
+
         return self._initialized
 
     @property
     def main_window(self) -> MainWindow | None:
-        """Return the main application window."""
+        """
+        Return the application's main window.
+
+        Returns
+        -------
+        MainWindow | None
+            The application's main window.
+        """
+
         return self._main_window
 
     def initialize(self) -> None:
@@ -67,26 +79,13 @@ class Application:
         if self._initialized:
             return
 
-        # Future initialization steps:
-        #
-        # - Initialize Foundation
-        # - Create ApplicationContext
-        # - Create ApplicationState
-        # - Create WorkspaceManager
-        # - Create MainWindow
-        #
-        # For now, simply mark the application as initialized.
+        self._main_window = MainWindow()
 
         self._initialized = True
 
-    def run(self) -> int:
+    def run(self) -> None:
         """
         Run the application.
-
-        Returns
-        -------
-        int
-            Application exit code.
 
         Raises
         ------
@@ -99,24 +98,16 @@ class Application:
                 "Application has not been initialized."
             )
 
-        # Event loop will be started in a later implementation.
+        assert self._main_window is not None
 
-        return 0
+        self._main_window.show()
 
     def shutdown(self) -> None:
         """
         Shutdown the application.
-
-        Releases resources owned by the Application.
         """
 
         if not self._initialized:
             return
-
-        # Future shutdown steps:
-        #
-        # - Save configuration
-        # - Shutdown services
-        # - Release resources
 
         self._initialized = False

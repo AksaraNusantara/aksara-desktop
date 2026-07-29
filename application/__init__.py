@@ -1,6 +1,13 @@
 """
 Application Layer.
-
-This package implements the Application Layer of the
-Aksara Nusantara platform.
 """
+
+print(">> application.__init__ START")
+
+from .application import Application
+
+print(">> application.__init__ END")
+
+__all__ = [
+    "Application",
+]

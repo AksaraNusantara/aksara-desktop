@@ -1,135 +1,45 @@
-# -*- coding: utf-8 -*-
+"""
+Application entry point.
+
+This module is the executable entry point of the
+Aksara Nusantara desktop application.
+
+Responsibilities
+----------------
+- Create the Qt application.
+- Bootstrap the Application layer.
+- Start the Qt event loop.
+"""
+
+from __future__ import annotations
 
 import sys
-from pathlib import Path
-import json
-from datetime import datetime
 
-from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                               QHBoxLayout, QGridLayout, QLabel, QTabWidget,
-                               QScrollArea, QFrame, QPushButton, QRadioButton,
-                               QButtonGroup, QMessageBox, QTextEdit, QComboBox)
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QColor
+from PySide6.QtWidgets import QApplication
 
-from gtts import gTTS
-import os
-from playsound3 import playsound
+from application import Application
 
-# Fix Import
-current_dir = Path(__file__).parent
-sys.path.insert(0, str(current_dir))
 
-from data.aksara_jawa import HONOCOROKO_DATA
-from ui.aksara_card import AksaraCard
-from tabs.flashcard_tab import FlashcardTab
-from tabs.transliterasi_tab import TransliterasiTab
-from tabs.quiz_tab import QuizTab
-from tabs.alphabet_tab import AlphabetTab
-from utils.paths import FONTS_DIR
+def main() -> int:
+    """
+    Execute the application.
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Belajar Honocoroko - Aksara Jawa")
-        self.resize(1250, 820)
-        
-        self.javanese_font = self.load_embedded_font()
-        self.current_level = 1
-        self.progress = None
-        self.load_progress()
-        self.current_theme = "default"
-        
-        self.apply_theme("default")  # tema awal
+    Returns
+    -------
+    int
+        Application exit code.
+    """
 
-        # Load Progress
-        self.progress = self.load_progress()
+    qt_app = QApplication(sys.argv)
 
-        # Menu Bar
-        menubar = self.menuBar()
-        theme_menu = menubar.addMenu("🎨 Tema")
-        
-        action_default = theme_menu.addAction("Default (Dark Mode)")
-        action_krem = theme_menu.addAction("Krem")
-        action_classic = theme_menu.addAction("Klasik Jawa")
-        action_high_contrast = theme_menu.addAction("High Contrast")
-        
-        action_default.triggered.connect(lambda: self.apply_theme("default"))
-        action_krem.triggered.connect(lambda: self.apply_theme("krem"))
-        action_classic.triggered.connect(lambda: self.apply_theme("classic"))
-        action_high_contrast.triggered.connect(lambda: self.apply_theme("high_contrast"))
-        
-        tabs = QTabWidget()
-        self.setCentralWidget(tabs)
-        
-        tabs.addTab(AlphabetTab(self.javanese_font), "📖 Aksara Lengkap")
-        tabs.addTab(FlashcardTab(self.javanese_font), "🃏 Flashcard")
-        tabs.addTab(QuizTab(self.javanese_font, self.progress), "❓ Quiz")
-        tabs.addTab(TransliterasiTab(self.javanese_font), "🔄 Transliterasi")
+    app = Application()
 
-    def apply_theme(self, theme_name):
-        self.current_theme = theme_name
-        palette = QPalette()
-        
-        if theme_name == "krem":
-            palette.setColor(QPalette.ColorRole.Window, QColor(245, 235, 220))
-            palette.setColor(QPalette.ColorRole.WindowText, QColor(60, 40, 20))
-            palette.setColor(QPalette.ColorRole.Button, QColor(205, 133, 63))
-        elif theme_name == "classic":
-            palette.setColor(QPalette.ColorRole.Window, QColor(139, 69, 19))   # Saddle Brown
-            palette.setColor(QPalette.ColorRole.WindowText, QColor(255, 248, 220))
-            palette.setColor(QPalette.ColorRole.Button, QColor(205, 133, 63))
-        elif theme_name == "high_contrast":
-            palette.setColor(QPalette.ColorRole.Window, QColor(255, 255, 255))
-            palette.setColor(QPalette.ColorRole.WindowText, QColor(0, 0, 0))
-            palette.setColor(QPalette.ColorRole.Button, QColor(0, 100, 0))
-        else:  # default
-            palette.setColor(QPalette.ColorRole.Window, QColor(40, 40, 40))
-            palette.setColor(QPalette.ColorRole.WindowText, QColor(240, 240, 240))
-            palette.setColor(QPalette.ColorRole.Button, QColor(80, 80, 80))
-        
-        self.setPalette(palette)
-        print(f"Tema diubah ke: {theme_name}")
+    app.initialize()
 
-    def load_embedded_font(self):
-        font_path = FONTS_DIR / "NotoSansJavanese-Regular.ttf"
-        if font_path.exists():
-            font_id = QFontDatabase.addApplicationFont(str(font_path))
-            if font_id != -1:
-                font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-                print(f"✅ Font Jawa ter-load: {font_family}")
-                return QFont(font_family, 55)
-        print("⚠️ Menggunakan font default")
-        return QFont("Arial", 55)
-    
-    def apply_javanese_theme(self):
-        palette = QPalette()
-        palette.setColor(QPalette.ColorRole.Window, QColor(245, 235, 220))      # Krem
-        palette.setColor(QPalette.ColorRole.WindowText, QColor(60, 40, 20))
-        palette.setColor(QPalette.ColorRole.Button, QColor(205, 133, 63))       # Coklat kayu
-        self.setPalette(palette)
-    
-    # ==================== SAVE & LOAD PROGRESS ====================
-    def load_progress(self):
-        try:
-            filename = f"progress_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.json"
-            with open(filename, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                return data
-        except:
-            return {"high_score": 0, "total_played": 0}
-    
-    def save_progress(self):
-        try:
-            filename = f"progress_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.json"
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump(self.progress, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            print("Gagal save progress:", e)
-    
+    app.run()
+
+    return qt_app.exec()
+
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+    raise SystemExit(main())
