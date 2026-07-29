@@ -20,6 +20,7 @@ APPLICATION_ARCHITECTURE.md
 """
 
 from __future__ import annotations
+from ui.main_window import MainWindow
 
 
 class Application:
@@ -49,6 +50,11 @@ class Application:
             True if the application has been initialized.
         """
         return self._initialized
+
+    @property
+    def main_window(self) -> MainWindow | None:
+        """Return the main application window."""
+        return self._main_window
 
     def initialize(self) -> None:
         """
