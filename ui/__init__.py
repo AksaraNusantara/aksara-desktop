@@ -5,10 +5,10 @@ This package contains the graphical user interface components of
 the Aksara Nusantara desktop application.
 """
 
+from .central_workspace import CentralWorkspace
 from .main_window import MainWindow
-from .workspace import Workspace
 
 __all__ = [
+    "CentralWorkspace",
     "MainWindow",
-    "Workspace",
 ]

@@ -1,5 +1,5 @@
 """
-workspace.py
+central_workspace.py
 
 Central application workspace.
 
@@ -9,8 +9,8 @@ Aksara Nusantara desktop application.
 Responsibilities
 ----------------
 - Host the application's primary content.
-- Provide a stable container for feature modules.
-- Own the central layout.
+- Own the application's tab container.
+- Provide a stable entry point for feature modules.
 
 This module SHALL NOT implement business logic.
 
@@ -22,29 +22,36 @@ APPLICATION_ARCHITECTURE.md
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QTabWidget
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
+from .tabs.home_tab import HomeTab
 
-class Workspace(QWidget):
+
+class CentralWorkspace(QWidget):
     """
     Central application workspace.
 
-    The Workspace class owns the application's central content
-    area. Feature modules such as Flashcard, Quiz, and
-    Transliteration will be hosted inside this widget.
+    The CentralWorkspace class owns the application's
+    central content area.
+
+    Feature modules such as Home, Flashcard, Quiz,
+    and Transliteration SHALL be hosted inside the
+    internal QTabWidget.
+
+    Business logic SHALL NOT be implemented in this class.
     """
 
     def __init__(self) -> None:
         """
-        Initialize the workspace.
+        Initialize the central workspace.
         """
 
         super().__init__()
 
         self._layout: QVBoxLayout | None = None
+        self._tab_widget: QTabWidget | None = None
 
         self._initialize_ui()
 
@@ -55,8 +62,11 @@ class Workspace(QWidget):
 
         self._layout = QVBoxLayout(self)
 
-        welcome_label = QLabel("Welcome to Aksara Nusantara")
+        self._tab_widget = QTabWidget()
 
-        welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._tab_widget.addTab(
+            HomeTab(),
+            "Home",
+        )
 
-        self._layout.addWidget(welcome_label)
+        self._layout.addWidget(self._tab_widget)

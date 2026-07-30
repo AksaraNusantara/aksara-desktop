@@ -34,7 +34,7 @@ from PySide6.QtWidgets import QToolBar
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
-from .workspace import Workspace
+from .central_workspace import CentralWorkspace
 
 class MainWindow(QMainWindow):
     """
@@ -109,4 +109,6 @@ class MainWindow(QMainWindow):
         Create the central workspace.
         """
 
-        self.setCentralWidget(Workspace())
+        self.setCentralWidget(
+            CentralWorkspace()
+        )
