@@ -77,6 +77,32 @@ class CoreEngine:
         self._loader = ScriptPackLoader()
         self._registry = ScriptPackRegistry()
 
+        #
+        # Runtime state.
+        #
+
+        self._active_scriptpack: BaseScriptPack | None = None
+
+    @property
+    def active_scriptpack(self) -> BaseScriptPack | None:
+        """
+        Return the currently active ScriptPack.
+
+        Returns
+        -------
+        BaseScriptPack | None
+            Active ScriptPack instance, or None if no
+            ScriptPack has been activated.
+        """
+        return self._active_scriptpack
+
+    @property
+    def has_active_scriptpack(self) -> bool:
+        """
+        Return True if a ScriptPack is active.
+        """
+        return self._active_scriptpack is not None
+
     def initialize(
         self,
         scriptpacks_directory: Path,
@@ -165,6 +191,37 @@ class CoreEngine:
         Loaded ScriptPack implementation.
         """
         return self._registry.get(identifier)
+
+    def activate(
+        self,
+        identifier: str,
+    ) -> BaseScriptPack:
+        """
+        Activate a registered ScriptPack.
+
+        Parameters
+        ----------
+        identifier:
+            ScriptPack identifier.
+
+        Returns
+        -------
+        BaseScriptPack
+            Activated ScriptPack instance.
+        """
+
+        scriptpack = self.get(identifier)
+
+        self._active_scriptpack = scriptpack
+
+        return scriptpack
+
+    def deactivate(self) -> None:
+        """
+        Deactivate the current ScriptPack.
+        """
+
+        self._active_scriptpack = None
 
     def get_characters(
         self,
