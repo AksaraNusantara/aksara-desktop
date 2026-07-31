@@ -26,35 +26,27 @@ APPLICATION_ARCHITECTURE.md
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtWidgets import QStatusBar
 from PySide6.QtWidgets import QToolBar
-from PySide6.QtWidgets import QVBoxLayout
-from PySide6.QtWidgets import QWidget
 
+from core.engine import CoreEngine
 from .central_workspace import CentralWorkspace
+
 
 class MainWindow(QMainWindow):
     """
     Main application window.
-
-    The MainWindow class represents the graphical shell of the
-    Aksara Nusantara desktop application.
-
-    It is responsible for presenting the application's user
-    interface and coordinating visual components.
-
-    Business logic SHALL NOT be implemented in this class.
     """
 
-    def __init__(self) -> None:
-        """
-        Initialize the main window.
-        """
+    def __init__(
+        self,
+        engine: CoreEngine,
+    ) -> None:
 
         super().__init__()
+
+        self._engine = engine
 
         self._status_bar: QStatusBar | None = None
         self._main_toolbar: QToolBar | None = None
@@ -62,9 +54,6 @@ class MainWindow(QMainWindow):
         self._initialize_ui()
 
     def _initialize_ui(self) -> None:
-        """
-        Initialize the user interface.
-        """
 
         self.setWindowTitle("Aksara Nusantara")
         self.resize(1280, 720)
@@ -75,9 +64,6 @@ class MainWindow(QMainWindow):
         self._create_central_workspace()
 
     def _create_menu_bar(self) -> None:
-        """
-        Create the main menu bar.
-        """
 
         menu_bar = self.menuBar()
 
@@ -85,18 +71,12 @@ class MainWindow(QMainWindow):
         menu_bar.addMenu("&Help")
 
     def _create_tool_bar(self) -> None:
-        """
-        Create the main tool bar.
-        """
 
         self._main_toolbar = QToolBar("Main Toolbar")
 
         self.addToolBar(self._main_toolbar)
 
     def _create_status_bar(self) -> None:
-        """
-        Create the status bar.
-        """
 
         self._status_bar = QStatusBar()
 
@@ -105,10 +85,9 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self._status_bar)
 
     def _create_central_workspace(self) -> None:
-        """
-        Create the central workspace.
-        """
 
         self.setCentralWidget(
-            CentralWorkspace()
+            CentralWorkspace(
+                self._engine
+            )
         )

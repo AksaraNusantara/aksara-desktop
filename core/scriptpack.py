@@ -55,3 +55,17 @@ class BaseScriptPack(ABC):
         by the ScriptPack.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def register_assets(self) -> None:
+        """
+        Register all runtime assets required by this ScriptPack.
+
+        This method is invoked by the Core Engine after the
+        ScriptPack has been successfully loaded and registered.
+
+        Implementations may register fonts, preload images,
+        initialize audio resources, or perform any other
+        runtime asset initialization required before use.
+        """
+        raise NotImplementedError

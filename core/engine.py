@@ -104,6 +104,11 @@ class CoreEngine:
                 identifier,
                 loaded.instance,
             )
+            #
+            # Register runtime assets owned by the ScriptPack.
+            #
+
+            loaded.instance.register_assets()
 
     def _discover(
         self,
@@ -160,3 +165,13 @@ class CoreEngine:
         Loaded ScriptPack implementation.
         """
         return self._registry.get(identifier)
+
+    def get_characters(
+        self,
+        identifier: str,
+    ) -> list[dict]:
+        """
+        Return all characters from a ScriptPack.
+        """
+
+        return self.get(identifier).get_characters()

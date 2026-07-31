@@ -1,123 +1,373 @@
-# -*- coding: utf-8 -*-
 """
+===============================================================================
+
 Aksara Nusantara
 
-aksara_tab.py
+Module:
+    ui.tabs.flashcard_tab
 
-Flashcard learning module.
+Module Type:
+    User Interface
+
+Purpose:
+    Provides the Flashcard learning interface.
+
+Responsibilities:
+    - Display characters provided by the Core Engine.
+    - Navigate between available characters.
+    - Present character information.
+
+The FlashcardTab SHALL NOT implement business logic.
+
+All character data SHALL be retrieved through the Core Engine.
+
+References:
+    APPLICATION_ARCHITECTURE.md
+
+    docs/standards/PYTHON_MODULE_TEMPLATE.md
+
+    docs/development/TRACEABILITY.md
+
+Copyright (c) Aksara Nusantara Project
+
+SPDX-License-Identifier: MIT
+
+===============================================================================
 """
 
-from PySide6.QtWidgets import (QFrame, QWidget, QLabel,
-                               QVBoxLayout, QHBoxLayout, QPushButton)
+# =============================================================================
+# Standard Library
+# =============================================================================
+
+from __future__ import annotations
+
+# =============================================================================
+# Third-party Packages
+# =============================================================================
+
 from PySide6.QtCore import Qt
+
+from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QPushButton
+from PySide6.QtWidgets import QHBoxLayout
+from PySide6.QtWidgets import QVBoxLayout
+from PySide6.QtWidgets import QWidget
+
 from PySide6.QtGui import QFont
 
-from data.aksara_jawa import HONOCOROKO_DATA
+# =============================================================================
+# Local Project Imports
+# =============================================================================
+
+from core.engine import CoreEngine
+
+
+
+# =============================================================================
+# FlashcardTab
+# =============================================================================
 
 class FlashcardTab(QWidget):
-    def __init__(self, javanese_font):
-        super().__init__()
-        self.javanese_font = javanese_font
-        self.current_index = 0
-        self.is_flipped = False
-        self.cards = HONOCOROKO_DATA.copy()
-        self.init_ui()
-        self.show_current_card()
-    
-    def init_ui(self):
-        layout = QVBoxLayout(self)
-        
-        title = QLabel("Flashcard Honocoroko")
-        title.setFont(QFont("Arial", 20, QFont.Weight.Bold))
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title)
-        
-        self.card_frame = QFrame()
-        self.card_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.card_frame.setMinimumHeight(320)
-        card_layout = QVBoxLayout(self.card_frame)
-        
-        self.main_label = QLabel()
-        self.main_label.setFont(self.javanese_font)
-        self.main_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        card_layout.addWidget(self.main_label)
-        
-        self.answer_label = QLabel()
-        self.answer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        card_layout.addWidget(self.answer_label)
-        
-        layout.addWidget(self.card_frame)
-        
-        # Tombol Suara
-        sound_layout = QHBoxLayout()
-        self.btn_sound = QPushButton("🔊 Dengar Pengucapan")
-        self.btn_sound.clicked.connect(self.play_sound)
-        sound_layout.addWidget(self.btn_sound)
-        layout.addLayout(sound_layout)
-        
-        # Tombol Navigasi
-        btn_layout = QHBoxLayout()
-        self.btn_prev = QPushButton("← Previous")
-        self.btn_flip = QPushButton("Show Answer")
-        self.btn_next = QPushButton("Next →")
-        self.btn_shuffle = QPushButton("Shuffle")
-        
-        self.btn_prev.clicked.connect(self.prev_card)
-        self.btn_flip.clicked.connect(self.flip_card)
-        self.btn_next.clicked.connect(self.next_card)
-        self.btn_shuffle.clicked.connect(self.shuffle_cards)
-        
-        btn_layout.addWidget(self.btn_prev)
-        btn_layout.addWidget(self.btn_flip)
-        btn_layout.addWidget(self.btn_next)
-        btn_layout.addWidget(self.btn_shuffle)
-        layout.addLayout(btn_layout)
-    
-    def show_current_card(self):
-        aksara, nama, latin = self.cards[self.current_index]
-        self.main_label.setText(aksara)
-        self.answer_label.setText("")
-        self.is_flipped = False
-        self.btn_flip.setText("Show Answer")
-    
-    def flip_card(self):
-        if not self.is_flipped:
-            _, nama, latin = self.cards[self.current_index]
-            self.answer_label.setText(f"<b>{nama}</b> — {latin}")
-            self.btn_flip.setText("Hide Answer")
-            self.is_flipped = True
-        else:
-            self.answer_label.setText("")
-            self.btn_flip.setText("Show Answer")
-            self.is_flipped = False
-    
-    def next_card(self):
-        self.current_index = (self.current_index + 1) % len(self.cards)
-        self.show_current_card()
-    
-    def prev_card(self):
-        self.current_index = (self.current_index - 1) % len(self.cards)
-        self.show_current_card()
-    
-    def shuffle_cards(self):
-        random.shuffle(self.cards)
-        self.current_index = 0
-        self.show_current_card()
-    
-    def play_sound(self):
-        aksara, nama, latin = self.cards[self.current_index]
-        text = f"{nama}, {latin}"
-        
-        try:
-            from gtts import gTTS
-            import os
-            from playsound3 import playsound   # ← ini yang benar
-            
-            tts = gTTS(text=text, lang='id')
-            filename = "temp_pronounce.mp3"
-            tts.save(filename)
-            playsound(filename)
-            os.remove(filename)
-        except Exception as e:
-            QMessageBox.warning(self, "Error Suara", f"Tidak bisa memutar suara:\n{str(e)}")
+    """
+    Flashcard learning interface.
 
+    The FlashcardTab presents characters supplied by the
+    Core Engine.
+
+    The widget SHALL NOT access ScriptPack assets directly.
+    """
+
+    def __init__(
+        self,
+        engine: CoreEngine,
+    ) -> None:
+        """
+        Initialize the Flashcard tab.
+
+        Parameters
+        ----------
+        engine:
+            Shared Core Engine instance.
+        """
+
+        super().__init__()
+
+        self._engine = engine
+
+        self._characters: list[dict] = []
+
+        self._current_index = 0
+
+        self._glyph_label: QLabel | None = None
+        self._latin_label: QLabel | None = None
+        self._unicode_label: QLabel | None = None
+        self._description_label: QLabel | None = None
+        self._counter_label: QLabel | None = None
+
+        self._previous_button: QPushButton | None = None
+        self._next_button: QPushButton | None = None
+
+        self._initialize_ui()
+
+        self._load_characters()
+
+        self._show_current_character()
+
+    # -------------------------------------------------------------------------
+    # UI
+    # -------------------------------------------------------------------------
+
+    def _initialize_ui(
+        self,
+    ) -> None:
+        """
+        Initialize the Flashcard user interface.
+        """
+
+        root_layout = QVBoxLayout(self)
+
+        root_layout.setContentsMargins(
+            24,
+            24,
+            24,
+            24,
+        )
+
+        root_layout.setSpacing(20)
+
+        #
+        # Character Glyph
+        #
+
+        self._glyph_label = QLabel()
+
+        self._glyph_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        self._glyph_label = QLabel()
+
+        self._glyph_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        font = QFont(
+            "Noto Sans Javanese",
+            72,
+        )
+
+        self._glyph_label.setFont(font)
+
+        root_layout.addWidget(
+            self._glyph_label
+        )
+
+        #
+        # Latin
+        #
+
+        self._latin_label = QLabel()
+
+        self._latin_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        self._latin_label.setStyleSheet(
+            """
+            font-size:22pt;
+            font-weight:bold;
+            """
+        )
+
+        root_layout.addWidget(
+            self._latin_label
+        )
+
+        #
+        # Unicode
+        #
+
+        self._unicode_label = QLabel()
+
+        self._unicode_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        root_layout.addWidget(
+            self._unicode_label
+        )
+
+        #
+        # Description
+        #
+
+        self._description_label = QLabel()
+
+        self._description_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        self._description_label.setWordWrap(True)
+
+        root_layout.addWidget(
+            self._description_label
+        )
+
+        root_layout.addStretch()
+
+        #
+        # Footer
+        #
+
+        footer_layout = QHBoxLayout()
+
+        self._previous_button = QPushButton(
+            "◀ Previous"
+        )
+
+        self._counter_label = QLabel()
+
+        self._counter_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        self._next_button = QPushButton(
+            "Next ▶"
+        )
+
+        footer_layout.addWidget(
+            self._previous_button
+        )
+
+        footer_layout.addStretch()
+
+        footer_layout.addWidget(
+            self._counter_label
+        )
+
+        footer_layout.addStretch()
+
+        footer_layout.addWidget(
+            self._next_button
+        )
+
+        root_layout.addLayout(
+            footer_layout
+        )
+
+        self._previous_button.clicked.connect(
+            self._previous_character
+        )
+
+        self._next_button.clicked.connect(
+            self._next_character
+        )
+
+    # -------------------------------------------------------------------------
+    # Data
+    # -------------------------------------------------------------------------
+
+    def _load_characters(self) -> None:
+        """
+        Load character data from the Core Engine.
+
+        Raises
+        ------
+        RuntimeError
+            If the requested ScriptPack contains no characters.
+        """
+
+        self._characters = self._engine.get_characters(
+            "javanese"
+        )
+
+        if not self._characters:
+            raise RuntimeError(
+                "The Javanese ScriptPack contains no characters."
+            )
+
+    # -------------------------------------------------------------------------
+    # Presentation
+    # -------------------------------------------------------------------------
+
+    def _show_current_character(self) -> None:
+        """
+        Display the currently selected character.
+        """
+
+        if not self._characters:
+            return
+
+        character = self._characters[self._current_index]
+
+        assert self._glyph_label is not None
+        assert self._latin_label is not None
+        assert self._unicode_label is not None
+        assert self._description_label is not None
+        assert self._counter_label is not None
+
+        self._glyph_label.setText(
+            character["glyph"]
+        )
+
+        self._latin_label.setText(
+            character["latin"]
+        )
+
+        self._unicode_label.setText(
+            character["unicode"]
+        )
+
+        self._description_label.setText(
+            character["description"]
+        )
+
+        self._counter_label.setText(
+            f"{self._current_index + 1} / {len(self._characters)}"
+        )
+
+        self._update_navigation()
+
+    # -------------------------------------------------------------------------
+    # Navigation
+    # -------------------------------------------------------------------------
+
+    def _next_character(self) -> None:
+        """
+        Display the next character.
+        """
+
+        if self._current_index >= len(self._characters) - 1:
+            return
+
+        self._current_index += 1
+
+        self._show_current_character()
+
+    def _previous_character(self) -> None:
+        """
+        Display the previous character.
+        """
+
+        if self._current_index <= 0:
+            return
+
+        self._current_index -= 1
+
+        self._show_current_character()
+
+    def _update_navigation(self) -> None:
+        """
+        Update navigation button states.
+        """
+
+        assert self._previous_button is not None
+        assert self._next_button is not None
+
+        self._previous_button.setEnabled(
+            self._current_index > 0
+        )
+
+        self._next_button.setEnabled(
+            self._current_index < len(self._characters) - 1
+        )

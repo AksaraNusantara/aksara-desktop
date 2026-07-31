@@ -10,6 +10,7 @@ Responsibilities
 ----------------
 - Application bootstrap.
 - Runtime lifecycle.
+- Core Engine lifecycle.
 - Application shutdown.
 
 References
@@ -21,77 +22,112 @@ APPLICATION_ARCHITECTURE.md
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from PySide6.QtGui import QFontDatabase
+
+from core.engine import CoreEngine
 from ui.main_window import MainWindow
 
 
 class Application:
     """
     Application lifecycle coordinator.
-
-    The Application class is responsible for bootstrapping the
-    application and coordinating its lifecycle.
-
-    It SHALL NOT implement business logic.
     """
 
     def __init__(self) -> None:
-        """
-        Initialize the Application.
-        """
 
         self._initialized: bool = False
+
+        self._engine = CoreEngine()
+
         self._main_window: MainWindow | None = None
+
+    def _load_fonts(self) -> None:
+        """
+        Register bundled application fonts.
+        """
+
+        font_directory = (
+            Path(__file__).parent.parent
+            / "assets"
+            / "fonts"
+        )
+
+        print(f"Font directory : {font_directory}")
+
+        font_files = sorted(
+            font_directory.glob("*.ttf")
+        )
+
+        print(f"Found fonts    : {font_files}")
+
+        for font_file in font_files:
+
+            font_id = QFontDatabase.addApplicationFont(
+                str(font_file)
+            )
+
+            if font_id == -1:
+                raise RuntimeError(
+                    f"Failed to load font: {font_file.name}"
+                )
+
+            families = QFontDatabase.applicationFontFamilies(
+                font_id
+            )
+
+            print(f"Loaded : {font_file.name}")
+            print(f"Family : {families}")
 
     @property
     def initialized(self) -> bool:
         """
-        Return the initialization state.
-
-        Returns
-        -------
-        bool
-            True if the application has been initialized.
+        Return the application initialization state.
         """
-
         return self._initialized
 
     @property
+    def engine(self) -> CoreEngine:
+        """
+        Return the application's Core Engine.
+        """
+        return self._engine
+
+    @property
     def main_window(self) -> MainWindow | None:
-        """
-        Return the application's main window.
-
-        Returns
-        -------
-        MainWindow | None
-            The application's main window.
-        """
-
         return self._main_window
 
     def initialize(self) -> None:
-        """
-        Initialize the application.
-
-        This method performs all startup tasks required before the
-        application can run.
-        """
 
         if self._initialized:
             return
 
-        self._main_window = MainWindow()
+        #
+        # Register bundled fonts.
+        #
+
+        self._load_fonts()
+
+        #
+        # Initialize Core Engine.
+        #
+
+        self._engine.initialize(
+            Path("scriptpacks")
+        )
+
+        #
+        # Create Main Window.
+        #
+
+        self._main_window = MainWindow(
+            self._engine
+        )
 
         self._initialized = True
 
     def run(self) -> None:
-        """
-        Run the application.
-
-        Raises
-        ------
-        RuntimeError
-            If the application has not been initialized.
-        """
 
         if not self._initialized:
             raise RuntimeError(
@@ -103,9 +139,6 @@ class Application:
         self._main_window.show()
 
     def shutdown(self) -> None:
-        """
-        Shutdown the application.
-        """
 
         if not self._initialized:
             return

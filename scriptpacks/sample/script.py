@@ -79,3 +79,12 @@ class SampleScriptPack(BaseScriptPack):
             characters.extend(repository)
 
         return characters
+
+    def register_assets(self) -> None:
+        """
+        Register runtime assets required by this ScriptPack.
+
+        TODO:
+            Font registration will be implemented in AD-1.2.
+        """
+        pass
