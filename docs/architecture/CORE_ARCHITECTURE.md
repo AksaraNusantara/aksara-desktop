@@ -1518,161 +1518,7 @@ Ownership of LoadedScriptPack SHALL belong to the Registry after successful regi
 
 ---
 
-## 4.5 Runtime Representation
-
-### 4.5.1 LoadedScriptPack
-
-| Item | Value |
-|------|-------|
-| Category | Runtime Model |
-| Owner | Registry |
-| Lifetime | During Runtime |
-| Primary Responsibility | Represent a loaded ScriptPack |
-| Created By | Loader |
-| Used By | Registry, Core Engine |
-
----
-
-### Purpose
-
-LoadedScriptPack is the canonical runtime representation of a ScriptPack within the Foundation.
-
-Rather than exposing implementation modules directly, the Foundation exchanges runtime representations between internal services.
-
-This abstraction provides a stable and implementation-independent model for managing ScriptPacks during runtime.
-
-Applications SHALL NOT interact directly with LoadedScriptPack.
-
-All application interaction SHALL occur through the Core Engine.
-
----
-
-### Responsibilities
-
-LoadedScriptPack SHALL encapsulate:
-
-- validated ScriptPack metadata;
-- the instantiated BaseScriptPack implementation;
-- runtime information required by the Foundation.
-
-LoadedScriptPack SHALL remain immutable from the perspective of Foundation services unless explicitly modified through controlled runtime operations.
-
----
-
-### Runtime Lifecycle
-
-A LoadedScriptPack progresses through the following lifecycle.
-
-```
-
-Filesystem
-
-â†“
-
-Loader
-
-â†“
-
-LoadedScriptPack Created
-
-â†“
-
-Validation Complete
-
-â†“
-
-Registry Ownership
-
-â†“
-
-Runtime Access
-
-â†“
-
-Runtime Shutdown
-
-```text
-
-Runtime representations SHALL exist only while the Foundation runtime is active.
-
----
-
-### Collaboration
-
-LoadedScriptPack collaborates with:
-
-- Loader
-- Registry
-- Core Engine
-
-LoadedScriptPack SHALL NOT communicate with:
-
-- Applications
-- User Interface components
-- Concrete ScriptPack implementations
-
-LoadedScriptPack is a passive runtime model.
-
-It contains runtime information but performs no runtime coordination.
-
----
-
-### Runtime Ownership
-
-Ownership of LoadedScriptPack SHALL be transferred as follows.
-
-```
-
-Loader
-
-â†“
-
-Registry
-
-â†“
-
-Foundation Runtime
-
-```text
-
-Ownership SHALL NOT return to the Loader after successful registration.
-
----
-
-### Design Considerations
-
-The Foundation intentionally separates runtime representation from ScriptPack implementation.
-
-This separation provides several architectural advantages.
-
-- Runtime services exchange a consistent object model.
-- ScriptPack implementations remain isolated.
-- Runtime metadata remains independent from implementation logic.
-- Future runtime information may be added without modifying the ScriptPack contract.
-
----
-
-### Requirement IDs
-
-CA-RM-001
-
-LoadedScriptPack SHALL represent every successfully loaded ScriptPack.
-
-CA-RM-002
-
-LoadedScriptPack SHALL encapsulate runtime metadata and the ScriptPack instance.
-
-CA-RM-003
-
-Runtime services SHALL exchange LoadedScriptPack objects rather than implementation modules.
-
-CA-RM-004
-
-Ownership of LoadedScriptPack SHALL belong to the Registry after successful registration.
-
----
-
-# 5. Foundation Runtime Pipeline
+## 5. Foundation Runtime Pipeline
 
 ## 5.1 Overview
 
@@ -2086,215 +1932,7 @@ The Extension API establishes the boundary between the Foundation and ScriptPack
 |    (BaseScriptPack)       |
 +---------------------------+
              ?
-             ¦
-+---------------------------+
-|      ScriptPack           |
-|    Implementation         |
-+---------------------------+
-```
-
-All ScriptPack implementations SHALL communicate with the Foundation through this boundary.
-
----
-
-## 7.3 Design Principles
-
-The Extension API is governed by the following principles.
-
-### Contract-Based Integration
-
-ScriptPacks SHALL integrate exclusively through the published architectural contract.
-
----
-
-### Implementation Independence
-
-The Foundation SHALL remain independent of implementation-specific behavior.
-
----
-
-### Replaceability
-
-Any compliant ScriptPack MAY be replaced by another compliant implementation without requiring changes to the Foundation.
-
----
-
-### Compatibility
-
-The Extension API SHALL preserve compatibility within a Foundation major version.
-
----
-
-### Extensibility
-
-Future versions MAY extend the contract through additive changes.
-
-Existing contract members SHALL NOT be removed without a major version increment.
-
----
-
-## 7.4 Required Capabilities
-
-Every ScriptPack SHALL provide the capabilities defined by the BaseScriptPack contract.
-
-These capabilities include:
-
-- Script metadata;
-- writing system information;
-- character access;
-- transliteration services;
-- optional runtime services defined by future specifications.
-
-The exact programming interface is specified separately in the ScriptPack Interface Specification.
-
-This document defines only the architectural requirements.
-
----
-
-## 7.5 Foundation Responsibilities
-
-The Foundation SHALL:
-
-- discover ScriptPacks;
-- validate contract compliance;
-- manage runtime lifecycle;
-- provide runtime services.
-
-The Foundation SHALL NOT:
-
-- modify ScriptPack implementations;
-- alter ScriptPack assets;
-- depend upon implementation-specific extensions.
-
----
-
-## 7.6 ScriptPack Responsibilities
-
-Each ScriptPack SHALL:
-
-- implement the BaseScriptPack contract;
-- provide complete metadata;
-- remain self-contained;
-- preserve runtime integrity.
-
-ScriptPacks SHOULD avoid dependencies on Foundation internals beyond the published Extension API.
-
----
-
-## 7.7 Version Compatibility
-
-The Foundation SHALL verify compatibility between the Extension API version and the ScriptPack implementation.
-
-ScriptPacks declaring incompatible versions SHALL be rejected during initialization.
-
-Compatibility requirements are defined by the ScriptPack Interface Specification.
-
----
-
-## 7.8 Extension Lifecycle
-
-The Foundation manages the lifecycle of every ScriptPack.
-
-```
-Develop
-
-?
-
-Package
-
-?
-
-Install
-
-?
-
-Discover
-
-?
-
-Load
-
-?
-
-Validate
-
-?
-
-Register
-
-?
-
-Runtime
-
-?
-
-Unload (Future)
-```
-
-ScriptPack developers SHALL remain responsible only for the implementation.
-
-Runtime lifecycle management belongs exclusively to the Foundation.
-
----
-
-## 7.9 Error Handling
-
-Errors occurring within ScriptPack implementations SHALL be reported using the Foundation Exception Model whenever possible.
-
-The Foundation SHALL prevent invalid ScriptPacks from affecting runtime stability.
-
----
-
-## 7.10 Requirement IDs
-
-CA-EXT-001
-
-ScriptPacks SHALL integrate exclusively through the Extension API.
-
-CA-EXT-002
-
-Every ScriptPack SHALL implement BaseScriptPack.
-
-CA-EXT-003
-
-The Foundation SHALL validate Extension API compatibility.
-
-CA-EXT-004
-
-ScriptPack implementations SHALL remain independent of Foundation internals.
-
-CA-EXT-005
-
-Breaking Extension API changes SHALL require a major Foundation version.
-
----
-
-# 7. Extension API
-
-## 7.1 Overview
-
-The Extension API defines the architectural contract through which independently developed ScriptPacks integrate with the Foundation.
-
-Unlike the Runtime API, which serves application developers, the Extension API serves ScriptPack developers.
-
-The Extension API enables the Foundation to support independently developed writing systems while preserving architectural consistency and runtime stability.
-
-The Extension API SHALL remain independent of any specific writing system.
-
----
-
-## 7.2 Architectural Boundary
-
-The Extension API establishes the boundary between the Foundation and ScriptPack implementations.
-
-```
-+---------------------------+
-|        Foundation         |
-|      Extension API        |
-|    (BaseScriptPack)       |
-+---------------------------+
-             ?
-             ¦
+             ï¿½
 +---------------------------+
 |      ScriptPack           |
 |    Implementation         |
@@ -2732,7 +2370,7 @@ Application-specific functionality SHALL remain outside the Foundation.
 
 ---
 
-# Appendix A — Normative Glossary
+# Appendix A ï¿½ Normative Glossary
 
 ## A.1 Scope
 
@@ -2926,7 +2564,7 @@ The Runtime Service responsible for verifying that a ScriptPack satisfies the ar
 
 ---
 
-# Appendix B — Architecture Decision References
+# Appendix B ï¿½ Architecture Decision References
 
 ## B.1 Scope
 
@@ -3014,7 +2652,7 @@ The absence of an ADR from this appendix does not prohibit the creation of addit
 
 ---
 
-# Appendix C — Architectural Diagrams
+# Appendix C ï¿½ Architectural Diagrams
 
 ## C.1 Scope
 
@@ -3238,7 +2876,7 @@ Future architectural components SHALL extend the Foundation without breaking exi
 
 ---
 
-# Appendix D — Design Rationale
+# Appendix D ï¿½ Design Rationale
 
 ## D.1 Scope
 
@@ -3385,7 +3023,7 @@ Documentation is considered part of the architecture rather than a description w
 
 ---
 
-# Appendix E — Document Status and Revision History
+# Appendix E ï¿½ Document Status and Revision History
 
 ## E.1 Scope
 

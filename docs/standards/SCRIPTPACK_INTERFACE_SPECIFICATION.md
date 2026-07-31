@@ -115,7 +115,7 @@ The following terminology is used throughout this specification.
 
 | Term                 | Definition                                                                                                  |
 | -------------------- | ----------------------------------------------------------------------------------------------------------- |
-| Core Engine          | Platform component responsible for discovering, validating, loading, and managing ScriptPacks.              |
+| Core Engine          | Platform component responsible for discovering, loading, validating, registering, and activating ScriptPacks.              |
 | ScriptPack           | Independent package implementing support for a writing system.                                              |
 | Metadata             | Information describing a ScriptPack, loaded from `manifest.json`.                                           |
 | Character Repository | Collection of character definitions contained within a ScriptPack.                                          |
@@ -541,9 +541,11 @@ Future versions MAY define additional optional interfaces.
 
 ## 12.1 Purpose
 
-The Script Registry maintains all successfully loaded ScriptPacks.
+The Script Registry maintains the collection of Available ScriptPacks.
 
-The registry acts as the single source of truth for loaded ScriptPack instances.
+Successfully validated and registered ScriptPacks become Available ScriptPacks.
+
+The Registry acts as the single source of truth for Available ScriptPacks and does not manage ScriptPack activation.
 
 ---
 
@@ -1080,3 +1082,4 @@ This document defines the Foundation v1.0 ScriptPack architecture for the Aksara
 Future revisions SHALL preserve backward compatibility whenever practical while allowing the platform to evolve.
 
 This specification serves as the normative reference for all Foundation-compliant ScriptPack implementations.
+
