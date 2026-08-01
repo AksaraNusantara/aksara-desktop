@@ -232,3 +232,54 @@ class CoreEngine:
         """
 
         return self.get(identifier).get_characters()
+
+    def get_active_characters(
+        self,
+    ) -> list[dict]:
+        """
+        Return characters from the active ScriptPack.
+
+        Returns
+        -------
+        list[dict]
+            Character definitions from the active ScriptPack.
+
+        Raises
+        ------
+        RuntimeError
+            If no ScriptPack has been activated.
+        """
+
+        if self._active_scriptpack is None:
+            raise RuntimeError(
+                "No active ScriptPack."
+            )
+
+        return self._active_scriptpack.get_characters()
+
+    def is_active(
+        self,
+        identifier: str,
+    ) -> bool:
+        """
+        Determine whether the specified ScriptPack is active.
+
+        Parameters
+        ----------
+        identifier:
+            ScriptPack identifier.
+
+        Returns
+        -------
+        bool
+            True if the specified ScriptPack is currently
+            active; otherwise False.
+        """
+
+        if self._active_scriptpack is None:
+            return False
+
+        return (
+            self._active_scriptpack.metadata["identifier"]
+            == identifier
+        )
