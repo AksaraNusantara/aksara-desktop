@@ -24,8 +24,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PySide6.QtGui import QFontDatabase
-
 from core.engine import CoreEngine
 from ui.main_window import MainWindow
 
@@ -42,43 +40,6 @@ class Application:
         self._engine = CoreEngine()
 
         self._main_window: MainWindow | None = None
-
-    def _load_fonts(self) -> None:
-        """
-        Register bundled application fonts.
-        """
-
-        font_directory = (
-            Path(__file__).parent.parent
-            / "assets"
-            / "fonts"
-        )
-
-        print(f"Font directory : {font_directory}")
-
-        font_files = sorted(
-            font_directory.glob("*.ttf")
-        )
-
-        print(f"Found fonts    : {font_files}")
-
-        for font_file in font_files:
-
-            font_id = QFontDatabase.addApplicationFont(
-                str(font_file)
-            )
-
-            if font_id == -1:
-                raise RuntimeError(
-                    f"Failed to load font: {font_file.name}"
-                )
-
-            families = QFontDatabase.applicationFontFamilies(
-                font_id
-            )
-
-            print(f"Loaded : {font_file.name}")
-            print(f"Family : {families}")
 
     @property
     def initialized(self) -> bool:
@@ -102,12 +63,6 @@ class Application:
 
         if self._initialized:
             return
-
-        #
-        # Register bundled fonts.
-        #
-
-        self._load_fonts()
 
         #
         # Initialize Core Engine.

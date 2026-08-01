@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from PySide6.QtGui import QFontDatabase
 
 # =============================================================================
 # Local Project Imports
@@ -94,8 +95,41 @@ class JavaneseScriptPack(BaseScriptPack):
     def register_assets(self) -> None:
         """
         Register runtime assets required by this ScriptPack.
-
-        TODO:
-            Font registration will be implemented in AD-1.2.
         """
-        pass
+        #
+        # Register every TrueType font bundled with this ScriptPack.
+        #
+
+        font_directory = (
+            Path(__file__).parent
+            / "assets"
+            / "fonts"
+        )
+
+        if not font_directory.is_dir():
+            raise FileNotFoundError(
+                f"Font directory not found: {font_directory}"
+            )
+
+        #
+        # Register every TrueType font bundled with this ScriptPack.
+        #
+        for font_file in sorted(font_directory.glob("*.ttf")):
+
+            font_id = QFontDatabase.addApplicationFont(
+                str(font_file)
+            )
+
+            if font_id == -1:
+                raise RuntimeError(
+                    f"Failed to register font: {font_file.name}"
+                )
+
+            families = QFontDatabase.applicationFontFamilies(
+                    font_id
+                )
+
+            print(
+                f"[ScriptPack] Registered font: "
+                f"{font_file.name} -> {families}"
+            )
