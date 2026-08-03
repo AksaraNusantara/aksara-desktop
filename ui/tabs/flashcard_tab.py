@@ -10,23 +10,23 @@ Module Type:
     User Interface
 
 Purpose:
-    Provides the Flashcard learning interface.
+    Provides the Flashcard learning module.
 
 Responsibilities:
-    - Display characters provided by the Core Engine.
-    - Navigate between available characters.
-    - Present character information.
+    - Display characters from the active ScriptPack.
+    - Navigate through character definitions.
+    - Present learning information.
+    - React to ScriptPack activation events.
 
-The FlashcardTab SHALL NOT implement business logic.
-
-All character data SHALL be retrieved through the Core Engine.
+The FlashcardTab SHALL NOT access ScriptPack assets directly.
+All character data SHALL be obtained through the Core Engine.
 
 References:
     APPLICATION_ARCHITECTURE.md
 
-    docs/standards/PYTHON_MODULE_TEMPLATE.md
+    docs/governance/ENGINEERING_PRINCIPLES.md
 
-    docs/development/TRACEABILITY.md
+    docs/standards/PYTHON_MODULE_TEMPLATE.md
 
 Copyright (c) Aksara Nusantara Project
 
@@ -35,46 +35,31 @@ SPDX-License-Identifier: MIT
 ===============================================================================
 """
 
-# =============================================================================
-# Standard Library
-# =============================================================================
-
 from __future__ import annotations
 
-# =============================================================================
-# Third-party Packages
-# =============================================================================
-
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+from PySide6.QtGui import QKeyEvent
+from PySide6.QtGui import QMouseEvent
 
+from PySide6.QtWidgets import QGridLayout
+from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QPushButton
-from PySide6.QtWidgets import QHBoxLayout
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
-from PySide6.QtGui import QFont
-
-# =============================================================================
-# Local Project Imports
-# =============================================================================
-
 from core.engine import CoreEngine
 
+from ui.widgets.learning_module import LearningModule
 
 
-# =============================================================================
-# FlashcardTab
-# =============================================================================
-
-class FlashcardTab(QWidget):
+class FlashcardTab(LearningModule):
     """
-    Flashcard learning interface.
+    Flashcard learning module.
 
-    The FlashcardTab presents characters supplied by the
-    Core Engine.
-
-    The widget SHALL NOT access ScriptPack assets directly.
+    This class displays the characters provided by the
+    currently active ScriptPack.
     """
 
     def __init__(
@@ -82,7 +67,7 @@ class FlashcardTab(QWidget):
         engine: CoreEngine,
     ) -> None:
         """
-        Initialize the Flashcard tab.
+        Initialize the Flashcard module.
 
         Parameters
         ----------
@@ -90,221 +75,289 @@ class FlashcardTab(QWidget):
             Shared Core Engine instance.
         """
 
-        super().__init__()
-
-        self._engine = engine
-
         self._characters: list[dict] = []
 
         self._current_index = 0
 
+        self._script_value: QLabel | None = None
+
+        self._category_value: QLabel | None = None
+
         self._glyph_label: QLabel | None = None
+
         self._latin_label: QLabel | None = None
-        self._unicode_label: QLabel | None = None
+
         self._description_label: QLabel | None = None
-        self._counter_label: QLabel | None = None
+
+        self._progress_label: QLabel | None = None
+
+        self._listen_button: QPushButton | None = None
 
         self._previous_button: QPushButton | None = None
+
         self._next_button: QPushButton | None = None
 
-        self._initialize_ui()
+        super().__init__(
+            engine,
+            "Flashcard",
+        )
 
-        self._load_characters()
+        self.setFocusPolicy(
+            Qt.FocusPolicy.StrongFocus,
+        )
 
-        self._show_current_character()
-
-    # -------------------------------------------------------------------------
-    # UI
-    # -------------------------------------------------------------------------
-
-    def _initialize_ui(
+    def _create_content_page(
         self,
-    ) -> None:
+    ) -> QWidget:
         """
-        Initialize the Flashcard user interface.
+        Create the Flashcard content page.
+
+        Returns
+        -------
+        QWidget
+            Flashcard content widget.
         """
 
-        root_layout = QVBoxLayout(self)
+        page = QWidget()
 
-        root_layout.setContentsMargins(
-            24,
-            24,
-            24,
-            24,
+        layout = QVBoxLayout(page)
+
+        layout.setContentsMargins(
+            40,
+            30,
+            40,
+            30,
         )
 
-        root_layout.setSpacing(20)
+        layout.setSpacing(20)
 
-        #
-        # Character Glyph
-        #
+        header_layout = QGridLayout()
+
+        header_layout.addWidget(
+            QLabel("Current Script"),
+            0,
+            0,
+        )
+
+        self._script_value = QLabel("-")
+
+        header_layout.addWidget(
+            self._script_value,
+            0,
+            1,
+        )
+
+        header_layout.addWidget(
+            QLabel("Current Category"),
+            1,
+            0,
+        )
+
+        self._category_value = QLabel("-")
+
+        header_layout.addWidget(
+            self._category_value,
+            1,
+            1,
+        )
+
+        header_layout.setColumnStretch(
+            1,
+            1,
+        )
+
+        layout.addLayout(
+            header_layout,
+        )
+
+        layout.addStretch()
 
         self._glyph_label = QLabel()
 
         self._glyph_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+            Qt.AlignmentFlag.AlignCenter,
         )
 
-        self._glyph_label = QLabel()
-
-        self._glyph_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+        self._glyph_label.setFont(
+            QFont(
+                "Noto Sans Javanese",
+                84,
+            )
         )
 
-        font = QFont(
-            "Noto Sans Javanese",
-            72,
+        layout.addWidget(
+            self._glyph_label,
         )
-
-        self._glyph_label.setFont(font)
-
-        root_layout.addWidget(
-            self._glyph_label
-        )
-
-        #
-        # Latin
-        #
 
         self._latin_label = QLabel()
 
         self._latin_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+            Qt.AlignmentFlag.AlignCenter,
         )
 
-        self._latin_label.setStyleSheet(
-            """
-            font-size:22pt;
-            font-weight:bold;
-            """
+        latin_font = QFont()
+
+        latin_font.setPointSize(
+            18,
         )
 
-        root_layout.addWidget(
-            self._latin_label
+        latin_font.setBold(
+            True,
         )
 
-        #
-        # Unicode
-        #
-
-        self._unicode_label = QLabel()
-
-        self._unicode_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+        self._latin_label.setFont(
+            latin_font,
         )
 
-        root_layout.addWidget(
-            self._unicode_label
+        layout.addWidget(
+            self._latin_label,
         )
-
-        #
-        # Description
-        #
 
         self._description_label = QLabel()
 
         self._description_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+            Qt.AlignmentFlag.AlignCenter,
         )
 
-        self._description_label.setWordWrap(True)
-
-        root_layout.addWidget(
-            self._description_label
+        self._description_label.setWordWrap(
+            True,
         )
 
-        root_layout.addStretch()
+        self._description_label.setMaximumWidth(
+            520,
+        )
 
-        #
-        # Footer
-        #
+        layout.addWidget(
+            self._description_label,
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
 
-        footer_layout = QHBoxLayout()
+        layout.addStretch()
+
+        self._listen_button = QPushButton(
+            "🔊 Listen",
+        )
+
+        self._listen_button.setEnabled(
+            False,
+        )
+
+        self._listen_button.setMinimumWidth(
+            160,
+        )
+
+        self._listen_button.setToolTip(
+            (
+                "Audio support is not available "
+                "for the current ScriptPack."
+            )
+        )
+
+        layout.addWidget(
+            self._listen_button,
+            alignment=Qt.AlignmentFlag.AlignCenter,
+        )
+
+        navigation_layout = QHBoxLayout()
 
         self._previous_button = QPushButton(
-            "◀ Previous"
-        )
-
-        self._counter_label = QLabel()
-
-        self._counter_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
+            "◀ Previous",
         )
 
         self._next_button = QPushButton(
-            "Next ▶"
+            "Next ▶",
         )
 
-        footer_layout.addWidget(
-            self._previous_button
+        self._previous_button.setMinimumWidth(
+            120,
         )
 
-        footer_layout.addStretch()
-
-        footer_layout.addWidget(
-            self._counter_label
-        )
-
-        footer_layout.addStretch()
-
-        footer_layout.addWidget(
-            self._next_button
-        )
-
-        root_layout.addLayout(
-            footer_layout
+        self._next_button.setMinimumWidth(
+            120,
         )
 
         self._previous_button.clicked.connect(
-            self._previous_character
+            self._show_previous,
         )
 
         self._next_button.clicked.connect(
-            self._next_character
+            self._show_next,
         )
 
-    # -------------------------------------------------------------------------
-    # Data
-    # -------------------------------------------------------------------------
-
-    def _load_characters(self) -> None:
-        """
-        Load character data from the Core Engine.
-
-        Raises
-        ------
-        RuntimeError
-            If the requested ScriptPack contains no characters.
-        """
-
-        self._characters = self._engine.get_characters(
-            "javanese"
+        navigation_layout.addWidget(
+            self._previous_button,
         )
 
-        if not self._characters:
-            raise RuntimeError(
-                "The Javanese ScriptPack contains no characters."
-            )
+        navigation_layout.addStretch()
 
-    # -------------------------------------------------------------------------
-    # Presentation
-    # -------------------------------------------------------------------------
+        navigation_layout.addWidget(
+            self._next_button,
+        )
 
-    def _show_current_character(self) -> None:
+        layout.addLayout(
+            navigation_layout,
+        )
+
+        self._progress_label = QLabel()
+
+        self._progress_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter,
+        )
+
+        layout.addWidget(
+            self._progress_label,
+        )
+
+        layout.addStretch()
+
+        return page
+
+    def on_scriptpack_activated(
+        self,
+    ) -> None:
         """
-        Display the currently selected character.
+        Refresh the Flashcard after a ScriptPack
+        has been activated.
+        """
+
+        self._characters = (
+            self._engine.get_characters()
+        )
+
+        self._current_index = 0
+
+        self._refresh_ui()
+
+        self.setFocus()
+
+    def _refresh_ui(
+        self,
+    ) -> None:
+        """
+        Refresh the current Flashcard.
         """
 
         if not self._characters:
             return
 
-        character = self._characters[self._current_index]
+        scriptpack = (
+            self._engine.get_active_scriptpack()
+        )
 
-        assert self._glyph_label is not None
-        assert self._latin_label is not None
-        assert self._unicode_label is not None
-        assert self._description_label is not None
-        assert self._counter_label is not None
+        if scriptpack is None:
+            return
+
+        character = self._characters[
+            self._current_index
+        ]
+
+        self._script_value.setText(
+            scriptpack.metadata["name"]
+        )
+
+        self._category_value.setText(
+            self._engine.get_current_dataset_name().title()
+        )
 
         self._glyph_label.setText(
             character["glyph"]
@@ -314,60 +367,105 @@ class FlashcardTab(QWidget):
             character["latin"]
         )
 
-        self._unicode_label.setText(
-            character["unicode"]
-        )
-
         self._description_label.setText(
             character["description"]
         )
 
-        self._counter_label.setText(
-            f"{self._current_index + 1} / {len(self._characters)}"
+        self._progress_label.setText(
+            (
+                f"Character "
+                f"{self._current_index + 1}"
+                f" of "
+                f"{len(self._characters)}"
+            )
         )
 
         self._update_navigation()
 
-    # -------------------------------------------------------------------------
-    # Navigation
-    # -------------------------------------------------------------------------
-
-    def _next_character(self) -> None:
+    def _update_navigation(
+        self,
+    ) -> None:
         """
-        Display the next character.
+        Update the navigation buttons.
         """
-
-        if self._current_index >= len(self._characters) - 1:
-            return
-
-        self._current_index += 1
-
-        self._show_current_character()
-
-    def _previous_character(self) -> None:
-        """
-        Display the previous character.
-        """
-
-        if self._current_index <= 0:
-            return
-
-        self._current_index -= 1
-
-        self._show_current_character()
-
-    def _update_navigation(self) -> None:
-        """
-        Update navigation button states.
-        """
-
-        assert self._previous_button is not None
-        assert self._next_button is not None
 
         self._previous_button.setEnabled(
             self._current_index > 0
         )
 
         self._next_button.setEnabled(
-            self._current_index < len(self._characters) - 1
+            self._current_index
+            < len(self._characters) - 1
         )
+
+    def _show_previous(
+        self,
+    ) -> None:
+        """
+        Display the previous character.
+        """
+
+        if self._current_index == 0:
+            return
+
+        self._current_index -= 1
+
+        self._refresh_ui()
+
+    def _show_next(
+        self,
+    ) -> None:
+        """
+        Display the next character.
+        """
+
+        if self._current_index >= (
+            len(self._characters) - 1
+        ):
+            return
+
+        self._current_index += 1
+
+        self._refresh_ui()
+
+    def keyPressEvent(
+        self,
+        event: QKeyEvent,
+    ) -> None:
+        """
+        Handle keyboard navigation.
+
+        Parameters
+        ----------
+        event:
+            Key press event.
+        """
+
+        match event.key():
+
+            case Qt.Key.Key_Left:
+                self._show_previous()
+
+            case Qt.Key.Key_Right:
+                self._show_next()
+
+            case _:
+                super().keyPressEvent(
+                    event,
+                )
+
+    def mousePressEvent(
+        self,
+        event: QMouseEvent,
+    ) -> None:
+        """
+        Acquire keyboard focus when the user
+        clicks inside the Flashcard module.
+        """
+
+        self.setFocus()
+
+        super().mousePressEvent(
+            event,
+        )
+

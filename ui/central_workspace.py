@@ -79,6 +79,8 @@ class CentralWorkspace(QWidget):
         super().__init__()
         self._engine = engine
         self._tab_widget: QTabWidget | None = None
+        self._home_tab: HomeTab | None = None
+        self._flashcard_tab: FlashcardTab | None = None
         self._initialize_ui()
 
     def _initialize_ui(self) -> None:
@@ -95,22 +97,35 @@ class CentralWorkspace(QWidget):
 
         self._tab_widget = QTabWidget()
 
-        home_tab = HomeTab(
-            self._engine,
-        )
-
-        flashcard_tab = FlashcardTab(
+        self._home_tab = HomeTab(
             self._engine,
         )
 
         self._tab_widget.addTab(
-            home_tab,
+            self._home_tab,
             "Home",
         )
 
+        self._flashcard_tab = FlashcardTab(
+            self._engine,
+        )
+
         self._tab_widget.addTab(
-            flashcard_tab,
+            self._flashcard_tab,
             "Flashcard",
         )
 
+        self._flashcard_tab.open_home_requested.connect(
+            self._show_home_tab,
+        )
+
         layout.addWidget(self._tab_widget)
+
+    def _show_home_tab(self) -> None:
+        """
+        Display the Home tab.
+        """
+
+        self._tab_widget.setCurrentWidget(
+            self._home_tab,
+        )

@@ -70,6 +70,39 @@ class BaseScriptPack(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def get_characters(self) -> list[dict]:
+        """
+        Return the characters provided by this ScriptPack.
+
+        Returns
+        -------
+        list[dict]
+            Character definitions currently exposed by the
+            ScriptPack.
+        """
+
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_dataset_name(self) -> str:
+        """
+        Return the name of the currently loaded character dataset.
+
+        Returns
+        -------
+        str
+            Dataset name without its file extension.
+
+            Examples
+            --------
+            - nglegena
+            - sandhangan
+            - pasangan
+        """
+
+        raise NotImplementedError
+
     @property
     def metadata(self) -> dict[str, object]:
         """

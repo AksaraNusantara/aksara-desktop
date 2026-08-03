@@ -88,3 +88,10 @@ class SampleScriptPack(BaseScriptPack):
             Font registration will be implemented in AD-1.2.
         """
         pass
+
+    def get_dataset_name(self) -> str:
+        """
+        Return the current dataset name.
+        """
+
+        return "sample"

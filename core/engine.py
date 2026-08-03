@@ -35,6 +35,7 @@ SPDX-License-Identifier: MIT
 # =============================================================================
 
 from pathlib import Path
+from collections.abc import Callable
 
 # =============================================================================
 # Third-party Packages
@@ -76,6 +77,8 @@ class CoreEngine:
         self._validator = ScriptPackValidator()
         self._loader = ScriptPackLoader()
         self._registry = ScriptPackRegistry()
+
+        self._listeners: list[Callable[[], None]] = []
 
         #
         # Runtime state.
@@ -214,6 +217,8 @@ class CoreEngine:
 
         self._active_scriptpack = scriptpack
 
+        self._notify_listeners()
+
         return scriptpack
 
     def deactivate(self) -> None:
@@ -223,15 +228,40 @@ class CoreEngine:
 
         self._active_scriptpack = None
 
-    def get_characters(
-        self,
-        identifier: str,
-    ) -> list[dict]:
+    def get_active_scriptpack(self) -> BaseScriptPack | None:
         """
-        Return all characters from a ScriptPack.
+        Return the currently active ScriptPack.
+
+        Returns
+        -------
+        BaseScriptPack | None
+            The active ScriptPack instance if one has been
+            activated; otherwise, ``None``.
         """
 
-        return self.get(identifier).get_characters()
+        return self._active_scriptpack
+
+    def get_characters(self) -> list[dict]:
+        """
+        Return the characters provided by the active ScriptPack.
+
+        Returns
+        -------
+        list[dict]
+            A list of character definitions.
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is currently active.
+        """
+
+        if self._active_scriptpack is None:
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        return self._active_scriptpack.get_characters()
 
     def get_active_characters(
         self,
@@ -283,3 +313,50 @@ class CoreEngine:
             self._active_scriptpack.metadata["identifier"]
             == identifier
         )
+
+    def get_current_dataset_name(self) -> str:
+        """
+        Return the name of the currently loaded character dataset.
+
+        Returns
+        -------
+        str
+            Dataset name (for example ``nglegena``).
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is currently active.
+        """
+
+        if self._active_scriptpack is None:
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        return self._active_scriptpack.get_dataset_name()
+
+    def register_listener(
+        self,
+        callback: Callable[[], None],
+    ) -> None:
+        """
+        Register a listener that will be notified whenever
+        the active ScriptPack changes.
+
+        Parameters
+        ----------
+        callback:
+            Callable invoked after the active ScriptPack
+            changes.
+        """
+
+        self._listeners.append(callback)
+
+    def _notify_listeners(self) -> None:
+        """
+        Notify every registered listener.
+        """
+
+        for callback in self._listeners:
+            callback()

@@ -12,58 +12,28 @@ Module Type:
 Purpose:
     Official implementation of the Javanese ScriptPack.
 
-Implements:
-    AN-STD-001
-
-Writing System:
-    Hanacaraka
-
-Language:
-    Javanese (jv)
-
-References:
-    docs/standards/SCRIPTPACK_INTERFACE_SPECIFICATION.md
-
-Copyright (c) Aksara Nusantara Project
-
-SPDX-License-Identifier: MIT
-
 ===============================================================================
 """
-
-# =============================================================================
-# Standard Library
-# =============================================================================
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from PySide6.QtGui import QFontDatabase
 
-# =============================================================================
-# Local Project Imports
-# =============================================================================
+from PySide6.QtGui import QFontDatabase
 
 from core.scriptpack import BaseScriptPack
 
 
-# -----------------------------------------------------------------------------
-# Implements:
-#
-# AN-STD-001
-# Official Javanese ScriptPack
-# -----------------------------------------------------------------------------
 class JavaneseScriptPack(BaseScriptPack):
-    """
-    Official implementation of the Javanese ScriptPack.
-    """
+    """Official implementation of the Javanese ScriptPack."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._dataset_name: str = ""
 
     def get_characters(self) -> list[dict]:
-        """
-        Return all character definitions provided by
-        the Javanese ScriptPack.
-        """
+        """Return character definitions from the current dataset(s)."""
 
         character_directory = (
             Path(__file__).parent
@@ -71,16 +41,23 @@ class JavaneseScriptPack(BaseScriptPack):
             / "characters"
         )
 
-
         characters: list[dict] = []
 
-        for json_file in sorted(character_directory.glob("*.json")):
+        json_files = sorted(character_directory.glob("*.json"))
+
+        if not json_files:
+            raise FileNotFoundError(
+                f"No character datasets found in: {character_directory}"
+            )
+
+        for json_file in json_files:
+
+            self._dataset_name = json_file.stem
 
             with json_file.open(
                 "r",
                 encoding="utf-8",
             ) as fp:
-
                 repository = json.load(fp)
 
             if not isinstance(repository, list):
@@ -92,13 +69,13 @@ class JavaneseScriptPack(BaseScriptPack):
 
         return characters
 
+    def get_dataset_name(self) -> str:
+        """Return the active dataset name."""
+
+        return self._dataset_name
+
     def register_assets(self) -> None:
-        """
-        Register runtime assets required by this ScriptPack.
-        """
-        #
-        # Register every TrueType font bundled with this ScriptPack.
-        #
+        """Register runtime assets required by this ScriptPack."""
 
         font_directory = (
             Path(__file__).parent
@@ -111,9 +88,6 @@ class JavaneseScriptPack(BaseScriptPack):
                 f"Font directory not found: {font_directory}"
             )
 
-        #
-        # Register every TrueType font bundled with this ScriptPack.
-        #
         for font_file in sorted(font_directory.glob("*.ttf")):
 
             font_id = QFontDatabase.addApplicationFont(

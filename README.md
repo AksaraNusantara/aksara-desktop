@@ -4,277 +4,248 @@
 >
 > *An Open Source Platform for Traditional Script Preservation.*
 
----
+------------------------------------------------------------------------
 
 ## Overview
 
-**Aksara Nusantara** is an open-source platform designed to preserve, study, and extend the traditional writing systems of Indonesia through a modern and extensible software architecture.
+**Aksara Nusantara** is an open-source platform for preserving,
+studying, and extending the traditional writing systems of Indonesia
+through a modular software architecture.
 
-Instead of supporting only a single script, Aksara Nusantara introduces a **ScriptPack Architecture**, allowing each writing system to be developed, maintained, and distributed independently while sharing the same Core Engine.
+The project is built around a **Core Engine** and a standardized
+**ScriptPack Architecture**. Each writing system is implemented as an
+independent ScriptPack while sharing the same engine, making the
+platform extensible without modifying its foundation.
 
-The Desktop Edition is the first reference implementation of this platform.
+The Desktop Edition is the first reference implementation of the
+platform.
 
----
+------------------------------------------------------------------------
 
 # Vision
 
-Indonesia is home to dozens of traditional writing systems representing centuries of history, literature, philosophy, and culture.
+Indonesia is home to dozens of traditional writing systems representing
+centuries of history, literature, philosophy, and culture.
 
-Many of these scripts are becoming less familiar to younger generations.
+Aksara Nusantara exists to help preserve this heritage through:
 
-Aksara Nusantara exists to help preserve this cultural heritage through:
+-   Open-source software
+-   Educational resources
+-   Community collaboration
+-   Standardized ScriptPack architecture
 
-* Open-source software
-* Educational resources
-* Community collaboration
-* Standardized ScriptPack architecture
+> Technology should help preserve culture---not replace it.
 
-Technology should not replace culture.
-
-Technology should help preserve it.
-
----
+------------------------------------------------------------------------
 
 # Project Architecture
 
-```text
-                     Aksara Nusantara Platform
+``` text
+                    Aksara Nusantara Platform
 
-                               �
-
-               +-------------------------------+
-
-               �                               �
-
-          Core Engine                    ScriptPacks
-
-               �                               �
-
-               �                 Javanese ScriptPack
-
-               �                 Balinese ScriptPack
-
-               �                 Sundanese ScriptPack
-
-               �                 ...
-
-               �
-
-        Desktop Edition
-
-        Future Mobile Edition
-
-        Future Web Edition
+                           Core Engine
+                                │
+      ┌─────────────────────────┼─────────────────────────┐
+      │                         │                         │
+ ScriptPack API          Desktop Edition          Future Editions
+      │                         │              (Mobile / Web / CLI)
+      │
+ ├── Javanese
+ ├── Balinese
+ ├── Rejang
+ └── Community ScriptPacks
 ```
 
-The Core Engine provides generic services.
+------------------------------------------------------------------------
 
-Every writing system is implemented as an independent ScriptPack.
+# Current Features
 
----
+## Core Platform
 
-# Core Features
+-   Core Engine
+-   ScriptPack Architecture
+-   ScriptPack Loader
+-   ScriptPack Registry
+-   ScriptPack Validator
+-   Character Repository
+-   Asset Management
+-   Transliteration Framework
+-   Audio Framework
 
-Current platform capabilities include:
+## Desktop Edition
 
-* ScriptPack Architecture
-* Core Engine
-* ScriptPack Validator
-* ScriptPack Loader
-* ScriptPack Registry
-* Character Repository
-* Asset Management
-* Transliteration Framework
-* Audio Support Framework
-* Extensible Design
+-   HomeTab
+-   ScriptPack Management
+-   ScriptPack Activation
+-   Runtime Asset Registration
+-   Core Engine Integration
 
-The Desktop Edition additionally provides:
+------------------------------------------------------------------------
 
-* Alphabet Learning
-* Flashcards
-* Interactive Quiz
-* Transliteration
-* Progress Tracking
+# Development Status
 
----
+**Project Status**
 
-# Current Development Status
+Active Development
 
-Project Status
+**Current Version**
 
-?? Active Development
+v0.1 Foundation
 
-Current Version
+**Current Milestone**
 
-**v0.1 (Foundation)**
+**Milestone M1 -- Core Engine Integration**
 
-Current Milestone
+### Completed
 
-**Foundation v0.1**
+-   Core Engine
+-   ScriptPack Architecture
+-   Loader
+-   Registry
+-   Validator
+-   Reference Javanese ScriptPack
+-   Desktop Integration
+-   HomeTab
+-   ScriptPack Management Interface
 
-Completed
+### In Progress
 
-* Core Engine
-* ScriptPack Architecture
-* Validator
-* Loader
-* Registry
-* Integration Test
-* Documentation Framework
+-   Flashcard Module
 
-In Progress
+### Planned
 
-* Documentation Synchronization
-* Reference ScriptPack
+-   Quiz Module
+-   Transliteration Module
+-   Progress Tracking
+-   Additional ScriptPacks
 
-Planned
-
-* Desktop Integration
-* Additional ScriptPacks
-
----
+------------------------------------------------------------------------
 
 # Repository Structure
 
-```text
+``` text
+application/
 core/
-    Core Engine
-
-scriptpacks/
-    ScriptPack implementations
-
 docs/
-    Specifications
-    Standards
-    Development documentation
-
-assets/
-    Shared project assets
-
+scriptpacks/
+ui/
 main.py
 requirements.txt
 README.md
 LICENSE
 ```
 
----
+Each ScriptPack owns its own assets (fonts, characters, audio, images).
+Shared runtime behavior belongs in the Core Engine.
+
+------------------------------------------------------------------------
 
 # Getting Started
 
 ## Requirements
 
-* Python 3.12+
-* PySide6
-* Windows or Linux
+-   Python 3.12+
+-   PySide6
 
-Clone the repository:
-
-```bash
+``` bash
 git clone https://github.com/AksaraNusantara/aksara-desktop.git
-
 cd aksara-desktop
-```
-
-Create a virtual environment:
-
-```bash
 python -m venv .venv
 ```
 
 Windows
 
-```bash
+``` bash
 .venv\Scripts\activate
 ```
 
 Linux
 
-```bash
+``` bash
 source .venv/bin/activate
 ```
 
 Install dependencies:
 
-```bash
+``` bash
 pip install -r requirements.txt
 ```
 
 Run:
 
-```bash
+``` bash
 python main.py
 ```
 
----
+------------------------------------------------------------------------
 
 # Documentation
 
-Project documentation is available in the **docs/** directory.
+Project documentation is located in the `docs/` directory.
 
-Important documents include:
+Recommended reading order:
 
-* START_HERE.md
-* PROJECT_WORKFLOW.md
-* CHANGELOG.md
-* CONTRIBUTING.md
-* TRACEABILITY.md
-* SCRIPTPACK_INTERFACE_SPECIFICATION.md
+1.  START_HERE.md
+2.  PROJECT_CHARTER.md
+3.  ENGINEERING_PRINCIPLES.md
+4.  CORE_ARCHITECTURE.md
+5.  SCRIPTPACK_INTERFACE_SPECIFICATION.md
+6.  PROJECT_WORKFLOW.md
 
----
+------------------------------------------------------------------------
 
 # Roadmap
 
-## Foundation
+## Milestone M1
 
-* Complete documentation
-* Reference ScriptPack
-* Desktop integration
+-   Core Engine Integration ✅
+-   HomeTab ✅
 
-## Platform
+## Milestone M2
 
-* Multiple ScriptPacks
-* Theme system
-* Audio framework
-* Character repository
+-   Flashcard Module
+-   Quiz Module
+-   Transliteration
 
-## Ecosystem
+## Milestone M3
 
-* Android Edition
-* Web Edition
-* Marketplace
-* Community ScriptPacks
-* Dataset Projects
-* Font Projects
+-   Additional ScriptPacks
+-   Theme System
+-   Audio Expansion
 
----
+## Long-term Vision
+
+-   Android Edition
+-   Web Edition
+-   Community Marketplace
+-   ScriptPack Ecosystem
+
+------------------------------------------------------------------------
 
 # Contributing
 
-Contributions are welcome.
-
-Whether you are a developer, linguist, educator, designer, student, or simply interested in preserving Indonesia's traditional writing systems, your contribution is greatly appreciated.
+Contributions from developers, linguists, educators, designers, and
+cultural communities are welcome.
 
 Please read **CONTRIBUTING.md** before submitting pull requests.
 
----
+------------------------------------------------------------------------
 
 # License
 
-This project is licensed under the MIT License.
+Released under the MIT License.
 
-See the **LICENSE** file for details.
+See **LICENSE** for details.
 
----
+------------------------------------------------------------------------
 
-# About the Project
+# About
 
-Aksara Nusantara is not only a desktop application.
+Aksara Nusantara is more than a desktop application.
 
-It is an extensible platform for preserving traditional writing systems through open standards and reusable software components.
-
-The long-term objective is to build an ecosystem where new writing systems can be added simply by creating new ScriptPacks, without modifying the Core Engine.
-
----
+It is an extensible platform for preserving traditional writing systems
+through open standards, reusable software components, and an open
+ScriptPack ecosystem.
 
 > **Technology preserves knowledge.**
 >

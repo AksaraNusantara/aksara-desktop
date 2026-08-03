@@ -127,3 +127,67 @@ to the application layer.
 | GUI | No | Optional | Yes |
 | Core Engine | No | Yes | No |
 | ScriptPack | No | No | No |
+
+---
+
+---
+
+# 10. Event-Driven UI Synchronization
+
+## Principle
+
+User interface modules SHALL NOT communicate directly with one another.
+
+Instead, changes to shared application state SHALL be propagated through
+the Core Engine using an event notification mechanism.
+
+This principle preserves loose coupling between UI components while
+keeping the Core Engine independent from any specific user interface
+framework.
+
+## Rationale
+
+The HomeTab is responsible for activating a ScriptPack.
+
+Learning modules such as Flashcard, Quiz, and Transliteration SHALL NOT
+be notified directly by the HomeTab.
+
+Instead, the Core Engine SHALL notify all registered listeners whenever
+the active ScriptPack changes.
+
+This architecture provides the following benefits:
+
+- Eliminates direct dependencies between UI modules.
+- Preserves the Single Responsibility Principle.
+- Enables automatic synchronization across all learning modules.
+- Keeps the Core Engine independent from Qt or any GUI framework.
+- Simplifies future expansion of the platform.
+
+## Example Flow
+
+```text
+HomeTab
+    │
+    ▼
+CoreEngine.activate()
+    │
+    ▼
+Core Engine
+    │
+Notify Registered Listeners
+    │
+    ├── Flashcard
+    ├── Quiz
+    ├── Transliteration
+    ├── Writing Practice
+    └── Future Learning Modules
+```
+
+## Engineering Rule
+
+Learning modules SHALL register themselves as listeners to the Core
+Engine during initialization.
+
+The Core Engine SHALL remain unaware of the existence of individual UI
+modules and SHALL only notify registered listeners through the public
+observer interface.
