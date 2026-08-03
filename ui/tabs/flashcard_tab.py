@@ -364,7 +364,7 @@ class FlashcardTab(LearningModule):
         )
 
         self._latin_label.setText(
-            character["latin"]
+            character["latin"].capitalize()
         )
 
         self._description_label.setText(

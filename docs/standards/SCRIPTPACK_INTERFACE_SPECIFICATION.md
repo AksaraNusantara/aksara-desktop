@@ -817,7 +817,6 @@ Additional attributes MAY be introduced by individual ScriptPacks provided they 
 | Attribute   | Required | Description                         |
 | ------------|----------|-------------------------------------|
 | id          | Yes      | Unique character identifier         |
-| name        | Yes      | Human-readable character name       |
 | glyph       | Yes      | Native script character             |
 | latin       | Yes      | Latin transliteration               |
 | unicode     | Yes      | Unicode code point                  |

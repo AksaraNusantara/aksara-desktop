@@ -1,7 +1,6 @@
 [
     {
         "id": "ha",
-        "name": "Ha",
         "glyph": "ꦲ",
         "latin": "ha",
         "unicode": "U+A9B2",
@@ -9,7 +8,6 @@
     },
     {
         "id": "na",
-        "name": "Na",
         "glyph": "ꦤ",
         "latin": "na",
         "unicode": "U+A9A4",
@@ -17,7 +15,6 @@
     },
     {
         "id": "ca",
-        "name": "Ca",
         "glyph": "ꦕ",
         "latin": "ca",
         "unicode": "U+A995",
@@ -25,7 +22,6 @@
     },
     {
         "id": "ra",
-        "name": "Ra",
         "glyph": "ꦫ",
         "latin": "ra",
         "unicode": "U+A9AB",
@@ -33,7 +29,6 @@
     },
     {
         "id": "ka",
-        "name": "Ka",
         "glyph": "ꦏ",
         "latin": "ka",
         "unicode": "U+A98F",
@@ -41,7 +36,6 @@
     },
     {
         "id": "da",
-        "name": "Da",
         "glyph": "ꦢ",
         "latin": "da",
         "unicode": "U+A9A2",
@@ -49,7 +43,6 @@
     },
     {
         "id": "ta",
-        "name": "Ta",
         "glyph": "ꦠ",
         "latin": "ta",
         "unicode": "U+A9A0",
@@ -57,7 +50,6 @@
     },
     {
         "id": "sa",
-        "name": "Sa",
         "glyph": "ꦱ",
         "latin": "sa",
         "unicode": "U+A9B1",
@@ -65,7 +57,6 @@
     },
     {
         "id": "wa",
-        "name": "Wa",
         "glyph": "ꦮ",
         "latin": "wa",
         "unicode": "U+A9AE",
@@ -73,7 +64,6 @@
     },
     {
         "id": "la",
-        "name": "La",
         "glyph": "ꦭ",
         "latin": "la",
         "unicode": "U+A9AD",
@@ -81,7 +71,6 @@
     },
     {
         "id": "pa",
-        "name": "Pa",
         "glyph": "ꦥ",
         "latin": "pa",
         "unicode": "U+A9A5",
@@ -89,7 +78,6 @@
     },
     {
         "id": "dha",
-        "name": "Dha",
         "glyph": "ꦝ",
         "latin": "dha",
         "unicode": "U+A99D",
@@ -97,7 +85,6 @@
     },
     {
         "id": "ja",
-        "name": "Ja",
         "glyph": "ꦗ",
         "latin": "ja",
         "unicode": "U+A997",
@@ -105,7 +92,6 @@
     },
     {
         "id": "ya",
-        "name": "Ya",
         "glyph": "ꦪ",
         "latin": "ya",
         "unicode": "U+A9AA",
@@ -113,7 +99,6 @@
     },
     {
         "id": "nya",
-        "name": "Nya",
         "glyph": "ꦚ",
         "latin": "nya",
         "unicode": "U+A99A",
@@ -121,7 +106,6 @@
     },
     {
         "id": "ma",
-        "name": "Ma",
         "glyph": "ꦩ",
         "latin": "ma",
         "unicode": "U+A9A9",
@@ -129,7 +113,6 @@
     },
     {
         "id": "ga",
-        "name": "Ga",
         "glyph": "ꦒ",
         "latin": "ga",
         "unicode": "U+A992",
@@ -137,7 +120,6 @@
     },
     {
         "id": "ba",
-        "name": "Ba",
         "glyph": "ꦧ",
         "latin": "ba",
         "unicode": "U+A9A7",
@@ -145,7 +127,6 @@
     },
     {
         "id": "tha",
-        "name": "Tha",
         "glyph": "ꦛ",
         "latin": "tha",
         "unicode": "U+A99B",
@@ -153,7 +134,6 @@
     },
     {
         "id": "nga",
-        "name": "Nga",
         "glyph": "ꦔ",
         "latin": "nga",
         "unicode": "U+A994",
