@@ -69,3 +69,31 @@ class BaseScriptPack(ABC):
         runtime asset initialization required before use.
         """
         raise NotImplementedError
+
+    @property
+    def metadata(self) -> dict[str, object]:
+        """
+        Return the ScriptPack metadata.
+
+        Returns
+        -------
+        dict[str, object]
+            Metadata loaded from the ScriptPack manifest.
+        """
+        return self._metadata
+
+    @metadata.setter
+    def metadata(
+        self,
+        metadata: dict[str, object],
+    ) -> None:
+        """
+        Set the ScriptPack metadata.
+
+        Parameters
+        ----------
+        metadata:
+            Metadata loaded from the ScriptPack manifest.
+        """
+        self._metadata = metadata
+

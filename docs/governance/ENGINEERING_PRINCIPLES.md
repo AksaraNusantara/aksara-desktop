@@ -75,3 +75,55 @@ Every decision should make the project easier to maintain in the future.
 Open source and sustainability can coexist.
 
 We believe projects can remain open while generating income through education, services, documentation, and support—not by restricting freedom.
+
+---
+
+# 9. Output Responsibility
+
+Every layer is responsible only for its own output.
+
+### Principles
+
+- The Application layer is responsible for application startup,
+  logging configuration, diagnostics, and user-visible output.
+
+- The GUI layer is responsible only for visual presentation and
+  user interaction. It must not write directly to the console.
+
+- The Core Engine may expose diagnostic information through the
+  project's logging infrastructure, but must never write directly
+  to standard output during normal operation.
+
+- ScriptPacks are pure providers of data and assets. They must not
+  produce console output, logging messages, or user-visible
+  notifications during normal operation.
+
+### Rationale
+
+A component should never assume how it will be used.
+
+The same ScriptPack may be loaded by:
+
+- Desktop applications
+- Command-line tools
+- Automated tests
+- Future web applications
+- Third-party software
+
+Because of this, ScriptPacks should communicate only through:
+
+- return values,
+- exceptions,
+- or well-defined public interfaces.
+
+The responsibility for presenting or recording information belongs
+to the application layer.
+
+### Layer Responsibilities
+
+| Layer | Console Output | Logging | User Interface |
+|-------|:--------------:|:-------:|:--------------:|
+| Application | Yes | Yes | Yes |
+| GUI | No | Optional | Yes |
+| Core Engine | No | Yes | No |
+| ScriptPack | No | No | No |

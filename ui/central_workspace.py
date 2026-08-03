@@ -94,15 +94,22 @@ class CentralWorkspace(QWidget):
         layout = QVBoxLayout(self)
 
         self._tab_widget = QTabWidget()
+
+        home_tab = HomeTab(
+            self._engine,
+        )
+
+        flashcard_tab = FlashcardTab(
+            self._engine,
+        )
+
         self._tab_widget.addTab(
-            HomeTab(),
+            home_tab,
             "Home",
         )
 
         self._tab_widget.addTab(
-            FlashcardTab(
-                self._engine,
-            ),
+            flashcard_tab,
             "Flashcard",
         )
 

@@ -124,12 +124,3 @@ class JavaneseScriptPack(BaseScriptPack):
                 raise RuntimeError(
                     f"Failed to register font: {font_file.name}"
                 )
-
-            families = QFontDatabase.applicationFontFamilies(
-                    font_id
-                )
-
-            print(
-                f"[ScriptPack] Registered font: "
-                f"{font_file.name} -> {families}"
-            )

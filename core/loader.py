@@ -95,6 +95,8 @@ class ScriptPackLoader:
         )
 
         instance = self._create_instance(module)
+        
+        instance.metadata = manifest
 
         return LoadedScriptPack(
             manifest=manifest,
