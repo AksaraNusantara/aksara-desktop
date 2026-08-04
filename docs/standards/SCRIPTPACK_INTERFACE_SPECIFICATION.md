@@ -531,7 +531,32 @@ def metadata(self) -> dict[str, Any]:
 
 def get_characters(self) -> list[Character]:
     ...
+
+def get_available_datasets(
+    self,
+) -> list[tuple[str, str]]:
+    ...
+
+def set_current_dataset(
+    self,
+    dataset_name: str,
+) -> None:
+    ...
+
+def get_current_dataset(
+    self,
+) -> str:
+    ...
+
+def get_dataset_display_name(
+    self,
+) -> str:
+    ...
 ```
+
+Dataset management SHALL remain the responsibility of the ScriptPack.
+
+The Core Engine SHALL interact with learning datasets exclusively through this interface.
 
 Future versions MAY define additional optional interfaces.
 
@@ -770,13 +795,24 @@ Discovery SHALL ignore non-directory entries.
 
 A conforming Core Engine SHALL provide:
 
-| Service      | Purpose                           |
-| ------------ | --------------------------------- |
-| initialize() | Load all ScriptPacks              |
-| list()       | List loaded ScriptPacks           |
-| get()        | Retrieve ScriptPack by identifier |
+| Service                            | Purpose                                         |
+| ---------------------------------- | ----------------------------------------------- |
+| initialize()                       | Load all ScriptPacks                            |
+| list()                             | List loaded ScriptPacks                         |
+| get()                              | Retrieve ScriptPack by identifier               |
+| activate()                         | Activate a ScriptPack                           |
+| get_characters()                   | Retrieve characters from the active dataset     |
+| get_available_datasets()           | Enumerate learning datasets                     |
+| set_current_dataset()              | Change the active learning dataset              |
+| get_current_dataset()              | Retrieve the active dataset identifier          |
+| get_current_dataset_display_name() | Retrieve the display name of the active dataset |
 
 Future revisions MAY extend the public API while preserving backward compatibility.
+
+Dataset management services SHALL remain implementation-independent.
+
+The Core Engine SHALL delegate dataset semantics entirely to the active
+ScriptPack implementation.
 
 ---
 
@@ -799,6 +835,12 @@ Character definitions SHALL be provided by the ScriptPack.
 The Core Engine SHALL treat the repository as read-only.
 
 A ScriptPack MAY organize character data using one or more resource files.
+
+The Foundation Reference ScriptPacks organize character definitions as learning datasets.
+
+Each learning dataset SHALL be stored in a dedicated resource file.
+
+Each dataset represents one logical learning unit, such as Nglegena, Pasangan, Murda, or Sandhangan.
 
 The storage format is implementation-defined, provided it can be exposed through the BaseScriptPack interface.
 
