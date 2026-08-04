@@ -51,6 +51,7 @@ from core.loader import ScriptPackLoader
 from core.registry import ScriptPackRegistry
 from core.scriptpack import BaseScriptPack
 from core.validator import ScriptPackValidator
+from core.exceptions import EngineError
 
 
 class CoreEngine:
@@ -256,10 +257,9 @@ class CoreEngine:
             If no ScriptPack is currently active.
         """
 
-        scriptpack = self.get_active_scriptpack()
-
-        if scriptpack is None:
-            return []
+        scriptpack = (
+            self._require_active_scriptpack()
+        )
 
         return scriptpack.get_characters()
 
@@ -373,10 +373,9 @@ class CoreEngine:
             List of (internal_name, display_name).
         """
 
-        scriptpack = self.get_active_scriptpack()
-
-        if scriptpack is None:
-            return []
+        scriptpack = (
+            self._require_active_scriptpack()
+        )
 
         return scriptpack.get_available_datasets()
 
@@ -393,10 +392,9 @@ class CoreEngine:
             Internal dataset identifier.
         """
 
-        scriptpack = self.get_active_scriptpack()
-
-        if scriptpack is None:
-            return
+        scriptpack = (
+            self._require_active_scriptpack()
+        )
 
         scriptpack.set_current_dataset(
             dataset_name,
@@ -409,10 +407,9 @@ class CoreEngine:
         Return the active dataset identifier.
         """
 
-        scriptpack = self.get_active_scriptpack()
-
-        if scriptpack is None:
-            return ""
+        scriptpack = (
+            self._require_active_scriptpack()
+        )
 
         return scriptpack.get_current_dataset()
 
@@ -423,9 +420,32 @@ class CoreEngine:
         Return the display name of the active dataset.
         """
 
-        scriptpack = self.get_active_scriptpack()
-
-        if scriptpack is None:
-            return ""
+        scriptpack = (
+            self._require_active_scriptpack()
+        )
 
         return scriptpack.get_dataset_display_name()
+
+    def _require_active_scriptpack(
+        self,
+    ) -> BaseScriptPack:
+        """
+        Return the active ScriptPack.
+
+        Returns
+        -------
+        BaseScriptPack
+            The active ScriptPack.
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is active.
+        """
+
+        if self._active_scriptpack is None:
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        return self._active_scriptpack

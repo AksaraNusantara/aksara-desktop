@@ -1,0 +1,142 @@
+[
+    {
+        "id": "ha",
+        "glyph": "꧀ꦲ",
+        "latin": "h",
+        "unicode": "U+A9C0 U+A9B2",
+        "description": "Represents the pasangan form of HA."
+    },
+    {
+        "id": "na",
+        "glyph": "꧀ꦤ",
+        "latin": "n",
+        "unicode": "U+A9C0 U+A9A4",
+        "description": "Represents the pasangan form of NA."
+    },
+    {
+        "id": "ca",
+        "glyph": "꧀ꦕ",
+        "latin": "c",
+        "unicode": "U+A9C0 U+A995",
+        "description": "Represents the pasangan form of CA."
+    },
+    {
+        "id": "ra",
+        "glyph": "꧀ꦫ",
+        "latin": "r",
+        "unicode": "U+A9C0 U+A9AB",
+        "description": "Represents the pasangan form of RA."
+    },
+    {
+        "id": "ka",
+        "glyph": "꧀ꦏ",
+        "latin": "k",
+        "unicode": "U+A9C0 U+A98F",
+        "description": "Represents the pasangan form of KA."
+    },
+    {
+        "id": "da",
+        "glyph": "꧀ꦢ",
+        "latin": "d",
+        "unicode": "U+A9C0 U+A9A2",
+        "description": "Represents the pasangan form of DA."
+    },
+    {
+        "id": "ta",
+        "glyph": "꧀ꦠ",
+        "latin": "t",
+        "unicode": "U+A9C0 U+A9A0",
+        "description": "Represents the pasangan form of TA."
+    },
+    {
+        "id": "sa",
+        "glyph": "꧀ꦱ",
+        "latin": "s",
+        "unicode": "U+A9C0 U+A9B1",
+        "description": "Represents the pasangan form of SA."
+    },
+    {
+        "id": "wa",
+        "glyph": "꧀ꦮ",
+        "latin": "w",
+        "unicode": "U+A9C0 U+A9AE",
+        "description": "Represents the pasangan form of WA."
+    },
+    {
+        "id": "la",
+        "glyph": "꧀ꦭ",
+        "latin": "l",
+        "unicode": "U+A9C0 U+A9AD",
+        "description": "Represents the pasangan form of LA."
+    },
+    {
+        "id": "pa",
+        "glyph": "꧀ꦥ",
+        "latin": "p",
+        "unicode": "U+A9C0 U+A9A5",
+        "description": "Represents the pasangan form of PA."
+    },
+    {
+        "id": "dha",
+        "glyph": "꧀ꦝ",
+        "latin": "dh",
+        "unicode": "U+A9C0 U+A99D",
+        "description": "Represents the pasangan form of DHA."
+    },
+    {
+        "id": "ja",
+        "glyph": "꧀ꦗ",
+        "latin": "j",
+        "unicode": "U+A9C0 U+A997",
+        "description": "Represents the pasangan form of JA."
+    },
+    {
+        "id": "ya",
+        "glyph": "꧀ꦪ",
+        "latin": "y",
+        "unicode": "U+A9C0 U+A9AA",
+        "description": "Represents the pasangan form of YA."
+    },
+    {
+        "id": "nya",
+        "glyph": "꧀ꦚ",
+        "latin": "ny",
+        "unicode": "U+A9C0 U+A99A",
+        "description": "Represents the pasangan form of NYA."
+    },
+    {
+        "id": "ma",
+        "glyph": "꧀ꦩ",
+        "latin": "m",
+        "unicode": "U+A9C0 U+A9A9",
+        "description": "Represents the pasangan form of MA."
+    },
+    {
+        "id": "ga",
+        "glyph": "꧀ꦒ",
+        "latin": "g",
+        "unicode": "U+A9C0 U+A992",
+        "description": "Represents the pasangan form of GA."
+    },
+    {
+        "id": "ba",
+        "glyph": "꧀ꦧ",
+        "latin": "b",
+        "unicode": "U+A9C0 U+A9A7",
+        "description": "Represents the pasangan form of BA."
+    },
+    {
+        "id": "tha",
+        "glyph": "꧀ꦛ",
+        "latin": "th",
+        "unicode": "U+A9C0 U+A99B",
+        "description": "Represents the pasangan form of THA."
+    },
+    {
+        "id": "nga",
+        "glyph": "꧀ꦔ",
+        "latin": "ng",
+        "unicode": "U+A9C0 U+A994",
+        "description": "Represents the pasangan form of NGA."
+    }
+]

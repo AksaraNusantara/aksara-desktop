@@ -98,39 +98,35 @@ class ScriptPackValidator:
         return True
 
     def _validate_directory(self, package_path: Path) -> None:
-    	"""
-    	Validate the ScriptPack directory structure.
+        """
+        Validate the ScriptPack directory structure.
 
-    	Parameters
-    	----------
-    	package_path:
-    	        Path to the ScriptPack directory.
+        Parameters
+        ----------
+        package_path:
+            Path to the ScriptPack directory.
 
-    	Raises
-    	------
-    	ValidationError
-    	    	If the directory structure is invalid.
-    	"""
-    	if not package_path.exists():
-    	    	raise ValidationError(
-    	    	f"ScriptPack directory does not exist: {package_path}"
-    	)
+        Raises
+        ------
+        ValidationError
+            If the directory structure is invalid.
+        """
+        if not package_path.exists():
+            raise ValidationError(f"ScriptPack directory does not exist: {package_path}")
 
-    	if not package_path.is_dir():
-    	    	raise ValidationError(
-    	    	f"ScriptPack path is not a directory: {package_path}"
-    	    	)
+        if not package_path.is_dir():
+            raise ValidationError(f"ScriptPack path is not a directory: {package_path}")
 
-    	required_files = (
-    	    	"manifest.json",
-    	    	"script.py",
-    	)
+        required_files = (
+            "manifest.json",
+            "script.py",
+        )
 
-    	for filename in required_files:
-    	    	if not (package_path / filename).exists():
-    	    	    	raise ValidationError(
-    	    	    	    	f"Missing required file: {filename}"
-    	    	    	)
+        for filename in required_files:
+            if not (package_path / filename).exists():
+                raise ValidationError(
+                    f"Missing required file: {filename}"
+                )
 
     def _validate_manifest(self, package_path: Path) -> dict[str, Any]:
         """

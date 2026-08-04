@@ -49,6 +49,7 @@ from PySide6.QtWidgets import QPushButton
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QComboBox
+from PySide6.QtWidgets import QSizePolicy
 
 from core.engine import CoreEngine
 
@@ -230,9 +231,10 @@ class FlashcardTab(LearningModule):
             True,
         )
 
-        self._description_label.setMaximumWidth(
-            520,
-        )
+#        self._description_label.setMaximumWidth(
+#            520,
+#        )
+        self._description_label.setMinimumHeight(80)
 
         layout.addWidget(
             self._description_label,
@@ -393,6 +395,13 @@ class FlashcardTab(LearningModule):
             character["latin"].capitalize()
         )
 
+        self._description_label.setWordWrap(True)
+
+        self._description_label.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Preferred,
+        )
+        
         self._description_label.setText(
             character["description"]
         )
