@@ -1,0 +1,37 @@
+[
+    {
+        "id": "wulu",
+        "glyph": "ꦶ",
+        "latin": "i",
+        "unicode": "U+A9B6",
+        "description": "Changes the inherent vowel to 'i'."
+    },
+    {
+        "id": "suku",
+        "glyph": "ꦸ",
+        "latin": "u",
+        "unicode": "U+A9B8",
+        "description": "Changes the inherent vowel to 'u'."
+    },
+    {
+        "id": "pepet",
+        "glyph": "ꦼ",
+        "latin": "eu",
+        "unicode": "U+A9BC",
+        "description": "Changes the inherent vowel to 'eu' (pepet)."
+    },
+    {
+        "id": "taling",
+        "glyph": "ꦺ",
+        "latin": "e",
+        "unicode": "U+A9BA",
+        "description": "Changes the inherent vowel to 'e'."
+    },
+    {
+        "id": "taling_tarung",
+        "glyph": "ꦺꦴ",
+        "latin": "o",
+        "unicode": "U+A9BA U+A9B4",
+        "description": "Changes the inherent vowel to 'o' using the taling and tarung combination."
+    }
+]

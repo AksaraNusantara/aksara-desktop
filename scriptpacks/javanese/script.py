@@ -30,7 +30,7 @@ class JavaneseScriptPack(BaseScriptPack):
 
     def __init__(self) -> None:
         super().__init__()
-        self._dataset_name: str = ""
+        self._dataset_name = "nglegena"
 
     def get_characters(self) -> list[dict]:
         """Return character definitions from the current dataset(s)."""
@@ -50,27 +50,116 @@ class JavaneseScriptPack(BaseScriptPack):
                 f"No character datasets found in: {character_directory}"
             )
 
-        for json_file in json_files:
+        json_file = (
+            character_directory
+            / f"{self._dataset_name}.json"
+        )
 
-            self._dataset_name = json_file.stem
+        if not json_file.exists():
+            raise FileNotFoundError(
+                f"Dataset not found: {json_file.name}"
+            )
 
-            with json_file.open(
-                "r",
-                encoding="utf-8",
-            ) as fp:
-                repository = json.load(fp)
+        with json_file.open(
+            "r",
+            encoding="utf-8",
+        ) as fp:
+            repository = json.load(fp)
 
-            if not isinstance(repository, list):
-                raise ValueError(
-                    f"{json_file.name} must contain a JSON array."
-                )
+        if not isinstance(
+            repository,
+            list,
+        ):
+            raise ValueError(
+                f"{json_file.name} must contain a JSON array."
+            )
 
-            characters.extend(repository)
-
-        return characters
+        return repository
+#
+#        return characters
 
     def get_dataset_name(self) -> str:
         """Return the active dataset name."""
+
+        return self._dataset_name
+
+    def get_available_datasets(
+        self,
+    ) -> list[tuple[str, str]]:
+        """
+        Return available learning datasets.
+        """
+
+        return [
+            (
+                "nglegena",
+                "Nglegena",
+            ),
+            (
+                "sandhangan_swara",
+                "Sandhangan Swara",
+            ),
+            (
+                "sandhangan_panyigeg",
+                "Sandhangan Panyigeg Wanda",
+            ),
+            (
+                "sandhangan_wyanjana",
+                "Sandhangan Wyanjana",
+            ),
+            (
+                "pasangan",
+                "Pasangan",
+            ),
+            (
+                "murda",
+                "Murda",
+            ),
+            (
+                "rekan",
+                "Rekan",
+            ),
+            (
+                "swara",
+                "Swara",
+            ),
+            (
+                "angka",
+                "Angka",
+            ),
+            (
+                "pada",
+                "Pada",
+            ),
+        ]
+
+    def set_current_dataset(
+        self,
+        dataset_name: str,
+    ) -> None:
+        """
+        Set the active learning dataset.
+        """
+
+        available = {
+            name
+            for name, _
+            in self.get_available_datasets()
+        }
+
+        if dataset_name not in available:
+            raise ValueError(
+                f"Unknown dataset: {dataset_name}"
+            )
+
+        self._dataset_name = dataset_name
+
+    def get_current_dataset(
+        self,
+    ) -> str:
+        """
+        Return the active dataset.
+        """
 
         return self._dataset_name
 
@@ -98,3 +187,30 @@ class JavaneseScriptPack(BaseScriptPack):
                 raise RuntimeError(
                     f"Failed to register font: {font_file.name}"
                 )
+
+    def get_dataset_display_name(
+        self,
+    ) -> str:
+        """
+        Return the display name of the active dataset.
+        """
+
+        for (
+            internal,
+            display,
+        ) in self.get_available_datasets():
+
+            if internal == self._dataset_name:
+                return display
+
+        return self._dataset_name
+
+#    def get_current_dataset_display_name(
+#        self,
+#    ) -> str:
+#
+#        return (
+#            self.get_active_scriptpack()
+#            .get_dataset_display_name()
+#        )
+#

@@ -48,6 +48,7 @@ from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QPushButton
 from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QComboBox
 
 from core.engine import CoreEngine
 
@@ -83,6 +84,8 @@ class FlashcardTab(LearningModule):
 
         self._category_value: QLabel | None = None
 
+        self._lesson_selector: QComboBox | None = None
+
         self._glyph_label: QLabel | None = None
 
         self._latin_label: QLabel | None = None
@@ -100,6 +103,10 @@ class FlashcardTab(LearningModule):
         super().__init__(
             engine,
             "Flashcard",
+        )
+
+        self._lesson_selector.currentIndexChanged.connect(
+            self._lesson_changed,
         )
 
         self.setFocusPolicy(
@@ -148,15 +155,15 @@ class FlashcardTab(LearningModule):
         )
 
         header_layout.addWidget(
-            QLabel("Current Category"),
+            QLabel("Lesson"),
             1,
             0,
         )
 
-        self._category_value = QLabel("-")
+        self._lesson_selector = QComboBox()
 
         header_layout.addWidget(
-            self._category_value,
+            self._lesson_selector,
             1,
             1,
         )
@@ -324,6 +331,21 @@ class FlashcardTab(LearningModule):
             self._engine.get_characters()
         )
 
+        self._lesson_selector.blockSignals(True)
+
+        self._lesson_selector.clear()
+
+        for internal, display in (
+            self._engine.get_available_datasets()
+        ):
+
+            self._lesson_selector.addItem(
+                display,
+                internal,
+            )
+
+        self._lesson_selector.blockSignals(False)
+
         self._current_index = 0
 
         self._refresh_ui()
@@ -355,9 +377,13 @@ class FlashcardTab(LearningModule):
             scriptpack.metadata["name"]
         )
 
-        self._category_value.setText(
-            self._engine.get_current_dataset_name().title()
+        self._lesson_selector.blockSignals(True)
+
+        self._lesson_selector.setCurrentText(
+            self._engine.get_current_dataset_display_name()
         )
+
+        self._lesson_selector.blockSignals(False)
 
         self._glyph_label.setText(
             character["glyph"]
@@ -469,3 +495,29 @@ class FlashcardTab(LearningModule):
             event,
         )
 
+    def _lesson_changed(
+        self,
+        index: int,
+    ) -> None:
+        """
+        Handle lesson selection.
+        """
+
+        if index < 0:
+            return
+
+        dataset = (
+            self._lesson_selector.currentData()
+        )
+
+        self._engine.set_current_dataset(
+            dataset,
+        )
+
+        self._characters = (
+            self._engine.get_characters()
+        )
+
+        self._current_index = 0
+
+        self._refresh_ui()

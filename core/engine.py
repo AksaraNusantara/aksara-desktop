@@ -256,12 +256,12 @@ class CoreEngine:
             If no ScriptPack is currently active.
         """
 
-        if self._active_scriptpack is None:
-            raise EngineError(
-                "No active ScriptPack."
-            )
+        scriptpack = self.get_active_scriptpack()
 
-        return self._active_scriptpack.get_characters()
+        if scriptpack is None:
+            return []
+
+        return scriptpack.get_characters()
 
     def get_active_characters(
         self,
@@ -360,3 +360,72 @@ class CoreEngine:
 
         for callback in self._listeners:
             callback()
+
+    def get_available_datasets(
+        self,
+    ) -> list[tuple[str, str]]:
+        """
+        Return the available datasets from the active ScriptPack.
+
+        Returns
+        -------
+        list[tuple[str, str]]
+            List of (internal_name, display_name).
+        """
+
+        scriptpack = self.get_active_scriptpack()
+
+        if scriptpack is None:
+            return []
+
+        return scriptpack.get_available_datasets()
+
+    def set_current_dataset(
+        self,
+        dataset_name: str,
+    ) -> None:
+        """
+        Set the active learning dataset.
+
+        Parameters
+        ----------
+        dataset_name:
+            Internal dataset identifier.
+        """
+
+        scriptpack = self.get_active_scriptpack()
+
+        if scriptpack is None:
+            return
+
+        scriptpack.set_current_dataset(
+            dataset_name,
+        )
+
+    def get_current_dataset(
+        self,
+    ) -> str:
+        """
+        Return the active dataset identifier.
+        """
+
+        scriptpack = self.get_active_scriptpack()
+
+        if scriptpack is None:
+            return ""
+
+        return scriptpack.get_current_dataset()
+
+    def get_current_dataset_display_name(
+        self,
+    ) -> str:
+        """
+        Return the display name of the active dataset.
+        """
+
+        scriptpack = self.get_active_scriptpack()
+
+        if scriptpack is None:
+            return ""
+
+        return scriptpack.get_dataset_display_name()

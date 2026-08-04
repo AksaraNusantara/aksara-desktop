@@ -1,0 +1,23 @@
+[
+    {
+        "id": "cakra",
+        "glyph": "ꦿ",
+        "latin": "r",
+        "unicode": "U+A9BF",
+        "description": "Adds the consonant sound 'r' after the base consonant."
+    },
+    {
+        "id": "keret",
+        "glyph": "ꦽ",
+        "latin": "reu",
+        "unicode": "U+A9BD",
+        "description": "Changes the inherent vowel to 'reu' while adding the consonant sound 'r'."
+    },
+    {
+        "id": "pengkal",
+        "glyph": "ꦾ",
+        "latin": "y",
+        "unicode": "U+A9BE",
+        "description": "Adds the consonant sound 'y' after the base consonant."
+    }
+]

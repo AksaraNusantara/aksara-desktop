@@ -1,0 +1,30 @@
+[
+    {
+        "id": "wignyan",
+        "glyph": "ꦃ",
+        "latin": "h",
+        "unicode": "U+A983",
+        "description": "Adds the final consonant sound 'h'."
+    },
+    {
+        "id": "layar",
+        "glyph": "ꦂ",
+        "latin": "r",
+        "unicode": "U+A982",
+        "description": "Adds the final consonant sound 'r'."
+    },
+    {
+        "id": "cecak",
+        "glyph": "ꦁ",
+        "latin": "ng",
+        "unicode": "U+A981",
+        "description": "Adds the final consonant sound 'ng'."
+    },
+    {
+        "id": "pangkon",
+        "glyph": "꧀",
+        "latin": "",
+        "unicode": "U+A9C0",
+        "description": "Removes the inherent vowel from the base consonant."
+    }
+]

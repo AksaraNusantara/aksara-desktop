@@ -707,16 +707,38 @@ Applications SHALL NOT access Foundation services before initialization has comp
 
 ## 4.2.5 Public Responsibilities
 
-The Core Engine provides the public Foundation interface.
+The Core Engine provides the public Runtime API of the Foundation.
+
+Applications SHALL communicate exclusively with the Foundation through the
+Core Engine.
+
+The Core Engine exposes only generic runtime services.
 
 Typical operations include:
 
-- initialize()
-- retrieve ScriptPacks
-- query runtime information
-- expose Foundation state
+- initialize the Foundation runtime;
+- activate a ScriptPack;
+- retrieve the active ScriptPack;
+- retrieve character definitions from the active ScriptPack;
+- enumerate available learning datasets;
+- manage the active learning dataset;
+- query runtime information;
+- expose Foundation state;
+- notify runtime observers.
 
-Applications SHALL NOT access Foundation services directly.
+Dataset management SHALL remain implementation-independent.
+
+The Core Engine SHALL delegate all dataset-specific behavior to the active
+ScriptPack through the BaseScriptPack contract.
+
+The Core Engine SHALL NOT interpret:
+
+- lesson names;
+- dataset semantics;
+- writing-system terminology;
+- character classifications.
+
+Such knowledge SHALL remain exclusively within ScriptPack implementations.
 
 ---
 

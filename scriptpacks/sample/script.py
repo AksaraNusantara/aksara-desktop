@@ -49,6 +49,10 @@ class SampleScriptPack(BaseScriptPack):
     """
     Official implementation of the Sample ScriptPack.
     """
+    def __init__(self) -> None:
+        super().__init__()
+        self._dataset_name = "sample"
+
     def get_characters(self):
         """
         Return all enabled Sample characters.
@@ -95,3 +99,59 @@ class SampleScriptPack(BaseScriptPack):
         """
 
         return "sample"
+
+    def get_available_datasets(
+        self,
+    ) -> list[tuple[str, str]]:
+        """
+        Return available datasets.
+        """
+
+        return [
+            (
+                "sample",
+                "Sample",
+            ),
+        ]
+
+    def get_available_datasets(
+        self,
+    ) -> list[tuple[str, str]]:
+        """
+        Return available datasets.
+        """
+
+        return [
+            (
+                "sample",
+                "Sample",
+            ),
+        ]
+
+    def set_current_dataset(
+        self,
+        dataset_name: str,
+    ) -> None:
+        """
+        Set the active dataset.
+        """
+
+        self._dataset_name = "Sample"
+
+    def get_current_dataset(
+        self,
+    ) -> str:
+        """
+        Return the active dataset.
+        """
+
+        return self._dataset_name
+
+    def get_dataset_display_name(
+        self,
+    ) -> str:
+        """
+        Return display name.
+        """
+
+        return "Sample"

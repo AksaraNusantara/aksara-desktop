@@ -103,6 +103,44 @@ class BaseScriptPack(ABC):
 
         raise NotImplementedError
 
+    @abstractmethod
+    def get_available_datasets(
+        self,
+    ) -> list[tuple[str, str]]:
+        """
+        Return all available datasets.
+
+        Returns
+        -------
+        list[tuple[str, str]]
+            List of (internal_name, display_name).
+        """
+
+        raise NotImplementedError
+
+
+    @abstractmethod
+    def set_current_dataset(
+        self,
+        dataset_name: str,
+    ) -> None:
+        """
+        Set the active dataset.
+        """
+
+        raise NotImplementedError
+
+
+    @abstractmethod
+    def get_current_dataset(
+        self,
+    ) -> str:
+        """
+        Return the active dataset identifier.
+        """
+
+        raise NotImplementedError
+
     @property
     def metadata(self) -> dict[str, object]:
         """
@@ -130,3 +168,20 @@ class BaseScriptPack(ABC):
         """
         self._metadata = metadata
 
+    def get_dataset_name(
+        self,
+    ) -> str:
+        """
+        Internal dataset identifier.
+        """
+
+        raise NotImplementedError
+
+    def get_dataset_display_name(
+        self,
+    ) -> str:
+        """
+        Human-readable dataset name.
+        """
+
+        raise NotImplementedError
