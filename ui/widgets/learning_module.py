@@ -22,16 +22,20 @@ Responsibilities:
 
 from __future__ import annotations
 
-from PySide6.QtCore import Signal
+from PySide6.QtCore import (
+    Signal,
+    Qt,
+)
 from PySide6.QtWidgets import (
-    QLabel,
-    QPushButton,
+#    QLabel,
+#    QPushButton,
     QStackedWidget,
     QVBoxLayout,
     QWidget,
 )
 
 from core.engine import CoreEngine
+from ui.widgets.empty_state import EmptyStateWidget
 
 
 class LearningModule(QWidget):
@@ -96,37 +100,23 @@ class LearningModule(QWidget):
 
     def _create_placeholder_page(self) -> QWidget:
         """
-        Create the placeholder page.
+        Create the placeholder page displayed when no
+        ScriptPack is active.
         """
-        page = QWidget()
 
-        layout = QVBoxLayout(page)
-        layout.addStretch()
-
-        title = QLabel(self._module_name)
-        title.setStyleSheet("font-size:20pt;font-weight:bold;")
-        title.setAlignment(
-            __import__("PySide6.QtCore").QtCore.Qt.AlignmentFlag.AlignCenter
+        page = EmptyStateWidget(
+            title=self._module_name,
+            description=(
+                "No ScriptPack is currently active.\n\n"
+                "Please activate a ScriptPack from the Home tab "
+                "before using this learning module."
+            ),
+            action_text="Open Home",
         )
 
-        message = QLabel(
-            "No ScriptPack is currently active.\n\n"
-            "Please activate a ScriptPack from the Home tab\n"
-            "before using this learning module."
+        page.action_requested.connect(
+            self.open_home_requested.emit,
         )
-        message.setWordWrap(True)
-        message.setAlignment(
-            __import__("PySide6.QtCore").QtCore.Qt.AlignmentFlag.AlignCenter
-        )
-
-        button = QPushButton("Open Home")
-        button.clicked.connect(self.open_home_requested.emit)
-
-        layout.addWidget(title)
-        layout.addWidget(message)
-        layout.addWidget(button, alignment=
-            __import__("PySide6.QtCore").QtCore.Qt.AlignmentFlag.AlignCenter)
-        layout.addStretch()
 
         return page
 
