@@ -45,7 +45,7 @@ from PySide6.QtCore import Signal
 
 from PySide6.QtWidgets import (
     QFrame,
-    QHBoxLayout,
+#    QHBoxLayout,
     QLabel,
     QLineEdit,
     QListWidget,
@@ -53,10 +53,13 @@ from PySide6.QtWidgets import (
     QStackedWidget,
     QVBoxLayout,
     QWidget,
+    QGridLayout,
+    QPushButton,
 )
 
-from core.engine import CoreEngine
+from PySide6.QtGui import QFont
 
+from core.engine import CoreEngine
 from ui.widgets.empty_state import EmptyStateWidget
 
 
@@ -99,6 +102,8 @@ class ScriptExplorerTab(QWidget):
 
         self._character_area: QWidget | None = None
 
+        self._character_grid: QGridLayout | None = None
+
         self._detail_area: QWidget | None = None
 
         self._build_ui()
@@ -108,6 +113,8 @@ class ScriptExplorerTab(QWidget):
         )
 
         self._datasets: list[tuple[str, str]] = []
+
+        self._characters: list[dict] = []
 
         self._dataset_list.currentRowChanged.connect(
             self._dataset_changed,
@@ -246,11 +253,26 @@ class ScriptExplorerTab(QWidget):
 
         right_layout = QVBoxLayout(right_panel)
 
-        self._character_area = QFrame()
+        #
+        # Character Grid
+        #
 
-        self._character_area.setFrameShape(
-            QFrame.Shape.StyledPanel,
+        self._character_area = QWidget()
+
+        self._character_grid = QGridLayout(
+            self._character_area,
         )
+
+        self._character_grid.setSpacing(12)
+
+        right_layout.addWidget(
+            self._character_area,
+            3,
+        )
+
+        #
+        # Detail Area
+        #
 
         self._detail_area = QFrame()
 
@@ -259,15 +281,9 @@ class ScriptExplorerTab(QWidget):
         )
 
         right_layout.addWidget(
-            self._character_area,
-            3,
-        )
-
-        right_layout.addWidget(
             self._detail_area,
             2,
         )
-
         splitter.addWidget(
             left_panel,
         )
@@ -310,6 +326,8 @@ class ScriptExplorerTab(QWidget):
         self._stack.setCurrentIndex(1)
 
         self._populate_datasets()
+
+        self._populate_character_grid()
 
     def _populate_datasets(self) -> None:
         """
@@ -358,7 +376,66 @@ class ScriptExplorerTab(QWidget):
             internal,
         )
 
-        #
-        # TODO(AD-5):
-        # Refresh character grid.
-        #
+        self._populate_character_grid()
+        
+    def _clear_character_grid(
+        self,
+    ) -> None:
+        """
+        Remove every widget from the character grid.
+        """
+
+        while self._character_grid.count():
+
+            item = self._character_grid.takeAt(0)
+
+            widget = item.widget()
+
+            if widget is not None:
+                widget.deleteLater()
+
+    def _populate_character_grid(
+        self,
+    ) -> None:
+        """
+        Populate the character grid from the current dataset.
+        """
+
+        self._clear_character_grid()
+
+        self._characters = (
+            self._engine.get_characters()
+        )
+
+        GRID_COLUMNS = 5
+
+        for index, character in enumerate(
+            self._characters
+        ):
+
+            button = QPushButton(
+                character["glyph"],
+            )
+
+            button.setFont(
+                QFont(
+                    "Noto Sans Javanese",
+                    32,
+                )
+            )
+
+            button.setMinimumSize(
+                72,
+                72,
+            )
+
+            row = index // GRID_COLUMNS
+
+            column = index % GRID_COLUMNS
+
+            self._character_grid.addWidget(
+                button,
+                row,
+                column,
+            )
+

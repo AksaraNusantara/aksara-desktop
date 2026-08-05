@@ -45,6 +45,7 @@ from core.engine import CoreEngine
 
 from .tabs.home_tab import HomeTab
 from .tabs.flashcard_tab import FlashcardTab
+from .tabs.script_explorer_tab import ScriptExplorerTab
 
 
 class CentralWorkspace(QWidget):
@@ -104,6 +105,19 @@ class CentralWorkspace(QWidget):
         self._tab_widget.addTab(
             self._home_tab,
             "Home",
+        )
+
+        self._script_explorer_tab = ScriptExplorerTab(
+            self._engine,
+        )
+
+        self._tab_widget.addTab(
+            self._script_explorer_tab,
+            "Script Explorer",
+        )
+
+        self._script_explorer_tab.open_home_requested.connect(
+            self._show_home_tab,
         )
 
         self._flashcard_tab = FlashcardTab(
