@@ -63,4 +63,9 @@ class EngineError(CoreEngineError):
     """
     pass
 
-    
+
+class AudioServiceError(CoreEngineError):
+    """
+    Raised when an audio service operation fails.
+    """
+    pass
