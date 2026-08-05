@@ -1,0 +1,72 @@
+[
+    {
+        "id": "0",
+        "glyph": "꧐",
+        "latin": "0",
+        "unicode": "U+A9D0",
+        "description": "Represents the Javanese digit ZERO."
+    },
+    {
+        "id": "1",
+        "glyph": "꧑",
+        "latin": "1",
+        "unicode": "U+A9D1",
+        "description": "Represents the Javanese digit ONE."
+    },
+    {
+        "id": "2",
+        "glyph": "꧒",
+        "latin": "2",
+        "unicode": "U+A9D2",
+        "description": "Represents the Javanese digit TWO."
+    },
+    {
+        "id": "3",
+        "glyph": "꧓",
+        "latin": "3",
+        "unicode": "U+A9D3",
+        "description": "Represents the Javanese digit THREE."
+    },
+    {
+        "id": "4",
+        "glyph": "꧔",
+        "latin": "4",
+        "unicode": "U+A9D4",
+        "description": "Represents the Javanese digit FOUR."
+    },
+    {
+        "id": "5",
+        "glyph": "꧕",
+        "latin": "5",
+        "unicode": "U+A9D5",
+        "description": "Represents the Javanese digit FIVE."
+    },
+    {
+        "id": "6",
+        "glyph": "꧖",
+        "latin": "6",
+        "unicode": "U+A9D6",
+        "description": "Represents the Javanese digit SIX."
+    },
+    {
+        "id": "7",
+        "glyph": "꧗",
+        "latin": "7",
+        "unicode": "U+A9D7",
+        "description": "Represents the Javanese digit SEVEN."
+    },
+    {
+        "id": "8",
+        "glyph": "꧘",
+        "latin": "8",
+        "unicode": "U+A9D8",
+        "description": "Represents the Javanese digit EIGHT."
+    },
+    {
+        "id": "9",
+        "glyph": "꧙",
+        "latin": "9",
+        "unicode": "U+A9D9",
+        "description": "Represents the Javanese digit NINE."
+    }
+]

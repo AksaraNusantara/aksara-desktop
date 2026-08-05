@@ -1,0 +1,37 @@
+[
+    {
+        "id": "lingsa",
+        "glyph": "꧈",
+        "latin": ",",
+        "unicode": "U+A9C8",
+        "description": "Represents the Pada Lingsa punctuation mark."
+    },
+    {
+        "id": "lungsi",
+        "glyph": "꧉",
+        "latin": ".",
+        "unicode": "U+A9C9",
+        "description": "Represents the Pada Lungsi punctuation mark."
+    },
+    {
+        "id": "pangkat",
+        "glyph": "꧇",
+        "latin": "",
+        "unicode": "U+A9C7",
+        "description": "Represents the Pada Pangkat punctuation mark."
+    },
+    {
+        "id": "adeg",
+        "glyph": "꧋",
+        "latin": "",
+        "unicode": "U+A9CB",
+        "description": "Represents the Pada Adeg punctuation mark."
+    },
+    {
+        "id": "piseleh",
+        "glyph": "ꧏ",
+        "latin": "",
+        "unicode": "U+A9CF",
+        "description": "Represents the Pada Piseleh punctuation mark."
+    }
+]

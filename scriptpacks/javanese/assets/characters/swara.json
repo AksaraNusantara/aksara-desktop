@@ -1,0 +1,37 @@
+[
+    {
+        "id": "a",
+        "glyph": "ꦄ",
+        "latin": "a",
+        "unicode": "U+A984",
+        "description": "Represents the Swara character A."
+    },
+    {
+        "id": "i",
+        "glyph": "ꦆ",
+        "latin": "i",
+        "unicode": "U+A986",
+        "description": "Represents the Swara character I."
+    },
+    {
+        "id": "u",
+        "glyph": "ꦈ",
+        "latin": "u",
+        "unicode": "U+A988",
+        "description": "Represents the Swara character U."
+    },
+    {
+        "id": "e",
+        "glyph": "ꦌ",
+        "latin": "e",
+        "unicode": "U+A98C",
+        "description": "Represents the Swara character E."
+    },
+    {
+        "id": "o",
+        "glyph": "ꦎ",
+        "latin": "o",
+        "unicode": "U+A98E",
+        "description": "Represents the Swara character O."
+    }
+]

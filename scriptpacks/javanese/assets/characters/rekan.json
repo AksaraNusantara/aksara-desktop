@@ -1,0 +1,44 @@
+[
+    {
+        "id": "kha",
+        "glyph": "ꦏ꦳",
+        "latin": "kh",
+        "unicode": "U+A98F U+A9B3",
+        "description": "Represents the Rekan form of KHA."
+    },
+    {
+        "id": "gha",
+        "glyph": "ꦒ꦳",
+        "latin": "gh",
+        "unicode": "U+A992 U+A9B3",
+        "description": "Represents the Rekan form of GHA."
+    },
+    {
+        "id": "za",
+        "glyph": "ꦗ꦳",
+        "latin": "z",
+        "unicode": "U+A997 U+A9B3",
+        "description": "Represents the Rekan form of ZA."
+    },
+    {
+        "id": "fa",
+        "glyph": "ꦥ꦳",
+        "latin": "f",
+        "unicode": "U+A9A5 U+A9B3",
+        "description": "Represents the Rekan form of FA."
+    },
+    {
+        "id": "va",
+        "glyph": "ꦮ꦳",
+        "latin": "v",
+        "unicode": "U+A9AE U+A9B3",
+        "description": "Represents the Rekan form of VA."
+    },
+    {
+        "id": "dza",
+        "glyph": "ꦢ꦳",
+        "latin": "dz",
+        "unicode": "U+A9A2 U+A9B3",
+        "description": "Represents the Rekan form of DZA."
+    }
+]

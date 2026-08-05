@@ -1,0 +1,58 @@
+[
+    {
+        "id": "na",
+        "glyph": "ꦟ",
+        "latin": "n",
+        "unicode": "U+A99F",
+        "description": "Represents the Murda form of NA."
+    },
+    {
+        "id": "ka",
+        "glyph": "ꦑ",
+        "latin": "k",
+        "unicode": "U+A991",
+        "description": "Represents the Murda form of KA."
+    },
+    {
+        "id": "ta",
+        "glyph": "ꦡ",
+        "latin": "t",
+        "unicode": "U+A9A1",
+        "description": "Represents the Murda form of TA."
+    },
+    {
+        "id": "sa",
+        "glyph": "ꦯ",
+        "latin": "s",
+        "unicode": "U+A9AF",
+        "description": "Represents the Murda form of SA."
+    },
+    {
+        "id": "pa",
+        "glyph": "ꦦ",
+        "latin": "p",
+        "unicode": "U+A9A6",
+        "description": "Represents the Murda form of PA."
+    },
+    {
+        "id": "nya",
+        "glyph": "ꦘ",
+        "latin": "ny",
+        "unicode": "U+A998",
+        "description": "Represents the Murda form of NYA."
+    },
+    {
+        "id": "ga",
+        "glyph": "ꦓ",
+        "latin": "g",
+        "unicode": "U+A993",
+        "description": "Represents the Murda form of GA."
+    },
+    {
+        "id": "ba",
+        "glyph": "ꦨ",
+        "latin": "b",
+        "unicode": "U+A9A8",
+        "description": "Represents the Murda form of BA."
+    }
+]
