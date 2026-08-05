@@ -104,17 +104,37 @@ class ScriptExplorerTab(QWidget):
 
         self._character_grid: QGridLayout | None = None
 
-        self._detail_area: QWidget | None = None
+        self._detail_area: QFrame | None = None
+
+        #
+        # Character state
+        #
+
+        self._datasets: list[tuple[str, str]] = []
+
+        self._characters: list[dict] = []
+
+        self._character_buttons: list[QPushButton] = []
+
+        self._selected_index = -1
+
+        #
+        # Detail widgets
+        #
+
+        self._glyph_label: QLabel | None = None
+
+        self._latin_value: QLabel | None = None
+
+        self._unicode_value: QLabel | None = None
+
+        self._description_value: QLabel | None = None
 
         self._build_ui()
 
         self._engine.register_listener(
             self.refresh,
         )
-
-        self._datasets: list[tuple[str, str]] = []
-
-        self._characters: list[dict] = []
 
         self._dataset_list.currentRowChanged.connect(
             self._dataset_changed,
@@ -182,23 +202,7 @@ class ScriptExplorerTab(QWidget):
         self,
     ) -> QWidget:
         """
-        Create the explorer page.
-
-        Notes
-        -----
-        This method currently builds only the UI skeleton.
-
-        TODO(AD-5):
-            Populate categories from ScriptPack.
-
-        TODO(AD-5):
-            Implement character grid.
-
-        TODO(AD-5):
-            Implement details panel.
-
-        TODO(AD-5):
-            Connect Audio Service.
+        Create the Script Explorer page.
         """
 
         page = QWidget()
@@ -228,7 +232,7 @@ class ScriptExplorerTab(QWidget):
         )
 
         #
-        # Categories
+        # Dataset panel
         #
 
         left_panel = QWidget()
@@ -245,8 +249,12 @@ class ScriptExplorerTab(QWidget):
             self._dataset_list,
         )
 
+        splitter.addWidget(
+            left_panel,
+        )
+
         #
-        # Explorer
+        # Explorer panel
         #
 
         right_panel = QWidget()
@@ -263,7 +271,9 @@ class ScriptExplorerTab(QWidget):
             self._character_area,
         )
 
-        self._character_grid.setSpacing(12)
+        self._character_grid.setSpacing(
+            12,
+        )
 
         right_layout.addWidget(
             self._character_area,
@@ -271,7 +281,7 @@ class ScriptExplorerTab(QWidget):
         )
 
         #
-        # Detail Area
+        # Details
         #
 
         self._detail_area = QFrame()
@@ -280,12 +290,87 @@ class ScriptExplorerTab(QWidget):
             QFrame.Shape.StyledPanel,
         )
 
+        detail_layout = QVBoxLayout(
+            self._detail_area,
+        )
+
+        detail_layout.setContentsMargins(
+            20,
+            20,
+            20,
+            20,
+        )
+
+        detail_layout.setSpacing(
+            10,
+        )
+
+        #
+        # Glyph
+        #
+
+        self._glyph_label = QLabel("-")
+
+        self._glyph_label.setAlignment(
+            Qt.AlignmentFlag.AlignCenter,
+        )
+
+        self._glyph_label.setFont(
+            QFont(
+                "Noto Sans Javanese",
+                52,
+            )
+        )
+
+        detail_layout.addWidget(
+            self._glyph_label,
+        )
+
+        self._latin_value = QLabel("-")
+
+        detail_layout.addWidget(
+            self._latin_value,
+        )
+
+        #
+        # Unicode
+        #
+
+        self._unicode_value = QLabel("-")
+        
+        detail_layout.addWidget(
+            self._unicode_value,
+        )
+
+        #
+        # Description
+        #
+
+        description_title = QLabel(
+            "Description :"
+        )
+
+        detail_layout.addWidget(
+            description_title,
+        )
+
+        self._description_value = QLabel(
+            "Select a character to view its details."
+        )
+
+        self._description_value.setWordWrap(
+            True,
+        )
+
+        detail_layout.addWidget(
+            self._description_value,
+        )
+
+        detail_layout.addStretch()
+
         right_layout.addWidget(
             self._detail_area,
             2,
-        )
-        splitter.addWidget(
-            left_panel,
         )
 
         splitter.addWidget(
@@ -394,6 +479,80 @@ class ScriptExplorerTab(QWidget):
             if widget is not None:
                 widget.deleteLater()
 
+    def _select_character(
+        self,
+        index: int,
+    ) -> None:
+        """
+        Select a character from the grid.
+        """
+
+        if (
+            index < 0
+            or index >= len(self._characters)
+        ):
+            return
+
+        self._selected_index = index
+
+        for button in self._character_buttons:
+
+            button.setStyleSheet("")
+
+        selected = self._character_buttons[index]
+
+        selected.setStyleSheet(
+            """
+            QPushButton {
+                border: 2px solid #2D89EF;
+                border-radius: 6px;
+            }
+            """
+        )
+
+        self._refresh_details()
+
+    def _refresh_details(
+        self,
+    ) -> None:
+        """
+        Refresh the details panel.
+        """
+
+        if self._selected_index < 0:
+
+            self._glyph_label.setText("-")
+
+            self._latin_value.setText("-")
+
+            self._unicode_value.setText("-")
+
+            self._description_value.setText(
+                "Select a character to view its details."
+            )
+
+            return
+
+        character = self._characters[
+            self._selected_index
+        ]
+
+        self._glyph_label.setText(
+            character["glyph"]
+        )
+
+        self._latin_value.setText(
+            f"Latin : {character['latin']}"
+        )
+
+        self._unicode_value.setText(
+            f"Unicode : {character['unicode']}"
+        )
+
+        self._description_value.setText(
+            character["description"]
+        )
+
     def _populate_character_grid(
         self,
     ) -> None:
@@ -407,7 +566,9 @@ class ScriptExplorerTab(QWidget):
             self._engine.get_characters()
         )
 
-        GRID_COLUMNS = 5
+        self._character_buttons.clear()
+
+        self._selected_index = -1
 
         for index, character in enumerate(
             self._characters
@@ -429,9 +590,14 @@ class ScriptExplorerTab(QWidget):
                 72,
             )
 
-            row = index // GRID_COLUMNS
+            button.clicked.connect(
+                lambda checked=False, i=index:
+                    self._select_character(i)
+            )
 
-            column = index % GRID_COLUMNS
+            row = index // 5
+
+            column = index % 5
 
             self._character_grid.addWidget(
                 button,
@@ -439,3 +605,17 @@ class ScriptExplorerTab(QWidget):
                 column,
             )
 
+            self._character_buttons.append(
+                button,
+            )
+
+        #
+        # Automatically select
+        # the first character.
+        #
+
+        if self._characters:
+
+            self._select_character(
+                0,
+            )
