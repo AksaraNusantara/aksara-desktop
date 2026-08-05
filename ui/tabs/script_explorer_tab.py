@@ -114,6 +114,8 @@ class ScriptExplorerTab(QWidget):
 
         self._characters: list[dict] = []
 
+        self._filtered_characters: list[dict] = []
+
         self._character_buttons: list[QPushButton] = []
 
         self._selected_index = -1
@@ -217,6 +219,10 @@ class ScriptExplorerTab(QWidget):
 
         self._search_box.setPlaceholderText(
             "Search..."
+        )
+
+        self._search_box.textChanged.connect(
+            self._filter_characters,
         )
 
         root_layout.addWidget(
@@ -403,7 +409,6 @@ class ScriptExplorerTab(QWidget):
         """
         Refresh the Script Explorer state.
         """
-
         if self._engine.get_active_scriptpack() is None:
             self._stack.setCurrentIndex(0)
             return
@@ -412,7 +417,13 @@ class ScriptExplorerTab(QWidget):
 
         self._populate_datasets()
 
-        self._populate_character_grid()
+        self._characters = (
+            self._engine.get_characters()
+        )
+
+        self._filter_characters(
+            self._search_box.text(),
+        )
 
     def _populate_datasets(self) -> None:
         """
@@ -461,6 +472,42 @@ class ScriptExplorerTab(QWidget):
             internal,
         )
 
+        self._filter_characters(
+            self._search_box.text(),
+        )
+
+    def _filter_characters(
+        self,
+        text: str,
+    ) -> None:
+        """
+        Filter characters using the search text.
+        """
+
+        text = text.strip().lower()
+
+        if not text:
+
+            self._filtered_characters = list(
+                self._characters
+            )
+
+        else:
+
+            self._filtered_characters = []
+
+            for character in self._characters:
+
+                if (
+                    text in character["glyph"].lower()
+                    or text in character["latin"].lower()
+                    or text in character["description"].lower()
+                ):
+
+                    self._filtered_characters.append(
+                        character
+                    )
+
         self._populate_character_grid()
         
     def _clear_character_grid(
@@ -489,7 +536,7 @@ class ScriptExplorerTab(QWidget):
 
         if (
             index < 0
-            or index >= len(self._characters)
+            or index >= len(self._filtered_characters)
         ):
             return
 
@@ -533,7 +580,7 @@ class ScriptExplorerTab(QWidget):
 
             return
 
-        character = self._characters[
+        character = self._filtered_characters[
             self._selected_index
         ]
 
@@ -571,8 +618,11 @@ class ScriptExplorerTab(QWidget):
         self._selected_index = -1
 
         for index, character in enumerate(
-            self._characters
+            self._filtered_characters
         ):
+            if not self._filtered_characters:
+                self._refresh_details()
+                return
 
             button = QPushButton(
                 character["glyph"],
@@ -611,11 +661,10 @@ class ScriptExplorerTab(QWidget):
 
         #
         # Automatically select
-        # the first character.
+        # the filtered character.
         #
 
-        if self._characters:
-
+        if self._filtered_characters:
             self._select_character(
                 0,
             )
