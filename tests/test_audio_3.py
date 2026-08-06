@@ -31,6 +31,8 @@ audio = AudioService(
     engine,
 )
 
+audio.play(".ha ")
+
 result = audio._resolve_asset_audio(
     "ha",
 )
