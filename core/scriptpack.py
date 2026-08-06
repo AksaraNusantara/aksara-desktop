@@ -29,6 +29,8 @@ from __future__ import annotations
 from abc import ABC
 from abc import abstractmethod
 
+from pathlib import Path
+
 
 # -----------------------------------------------------------------------------
 # Implements:
@@ -47,6 +49,79 @@ class BaseScriptPack(ABC):
     This class defines the minimum contract required by the
     Aksara Nusantara Core Engine.
     """
+    @property
+    def root_path(
+        self,
+    ) -> Path:
+        """
+        Return the root directory of the ScriptPack.
+
+        Returns
+        -------
+        Path
+            Absolute path to the ScriptPack root.
+        """
+
+        return self._root_path
+
+    @property
+    def data_path(
+        self,
+    ) -> Path:
+        """
+        Return the data directory.
+
+        Returns
+        -------
+        Path
+            Data directory.
+        """
+
+        return (
+            self.root_path
+            / "data"
+        )
+
+    @property
+    def assets_path(
+        self,
+    ) -> Path:
+        """
+        Return the assets directory.
+
+        Returns
+        -------
+        Path
+            Assets directory.
+        """
+
+        return (
+            self.root_path
+            / "assets"
+        )
+
+    @property
+    def generated_path(
+        self,
+    ) -> Path:
+        """
+        Return the generated runtime directory.
+
+        This directory stores runtime-generated
+        resources such as synthesized audio,
+        thumbnails, indexes, and other cached
+        artifacts.
+
+        Returns
+        -------
+        Path
+            Generated directory.
+        """
+
+        return (
+            self.root_path
+            / "generated"
+        )
 
     @abstractmethod
     def get_characters(self) -> list[dict]:
@@ -59,14 +134,20 @@ class BaseScriptPack(ABC):
     @abstractmethod
     def register_assets(self) -> None:
         """
-        Register all runtime assets required by this ScriptPack.
+        Register UI assets owned by this ScriptPack.
 
-        This method is invoked by the Core Engine after the
-        ScriptPack has been successfully loaded and registered.
+        This method is invoked by the application
+        layer after the Core Engine has finished
+        loading ScriptPacks.
 
-        Implementations may register fonts, preload images,
-        initialize audio resources, or perform any other
-        runtime asset initialization required before use.
+        Typical assets include fonts, icons, and
+        other GUI-related resources.
+
+        Notes
+        -----
+        This method may depend on an active
+        QApplication instance and therefore
+        must not be called from the Core Engine.
         """
         raise NotImplementedError
 

@@ -138,8 +138,6 @@ class CoreEngine:
             # Register runtime assets owned by the ScriptPack.
             #
 
-            loaded.instance.register_assets()
-
     def _discover(
         self,
         scriptpacks_directory: Path,
@@ -449,3 +447,128 @@ class CoreEngine:
             )
 
         return self._active_scriptpack
+
+    def get_data_path(
+        self,
+    ) -> Path:
+        """
+        Return the data directory of the active
+        ScriptPack.
+
+        Returns
+        -------
+        Path
+            Data directory.
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is active.
+        """
+
+        scriptpack = (
+            self.get_active_scriptpack()
+        )
+
+        if scriptpack is None:
+
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        return scriptpack.data_path
+
+    def get_assets_path(
+        self,
+    ) -> Path:
+        """
+        Return the data directory of the active
+        ScriptPack.
+
+        Returns
+        -------
+        Path
+            Data directory.
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is active.
+        """
+
+        scriptpack = (
+            self.get_active_scriptpack()
+        )
+
+        if scriptpack is None:
+
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        return scriptpack.assets_path
+
+    def get_generated_path(
+        self,
+    ) -> Path:
+        """
+        Return the data directory of the active
+        ScriptPack.
+
+        Returns
+        -------
+        Path
+            Data directory.
+
+        Raises
+        ------
+        EngineError
+            If no ScriptPack is active.
+        """
+
+        scriptpack = (
+            self.get_active_scriptpack()
+        )
+
+        if scriptpack is None:
+
+            raise EngineError(
+                "No active ScriptPack."
+            )
+
+        directory = scriptpack.generated_path
+
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        return directory
+
+    def get_audio_generated_path(
+        self,
+    ) -> Path:
+        """
+        Return the generated audio directory of
+        the active ScriptPack.
+
+        The directory is created automatically
+        if it does not already exist.
+
+        Returns
+        -------
+        Path
+            Generated audio directory.
+        """
+
+        directory = (
+            self.get_generated_path()
+            / "audio"
+        )
+
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        return directory

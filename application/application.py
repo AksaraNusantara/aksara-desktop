@@ -63,7 +63,6 @@ class Application:
         return self._main_window
 
     def initialize(self) -> None:
-
         if self._initialized:
             return
 
@@ -74,6 +73,18 @@ class Application:
         self._engine.initialize(
             Path("scriptpacks")
         )
+
+        #
+        # Register UI assets provided by every ScriptPack.
+        #
+
+        for identifier in self._engine.list():
+
+            scriptpack = self._engine.get(
+                identifier,
+            )
+
+            scriptpack.register_assets()
 
         #
         # Initialize shared services.

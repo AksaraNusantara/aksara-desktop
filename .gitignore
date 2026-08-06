@@ -72,3 +72,9 @@ htmlcov/
 
 cache/audio/
 progress_*.json
+
+#
+# ScriptPack runtime artifacts
+#
+
+scriptpacks/**/generated/

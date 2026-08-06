@@ -96,14 +96,18 @@ class ScriptPackLoader:
 
         instance = self._create_instance(module)
         
+        #
+        # Inject ScriptPack runtime metadata.
+        #
+
         instance.metadata = manifest
+
+        instance._root_path = package_path
 
         return LoadedScriptPack(
             manifest=manifest,
             instance=instance,
         )
-
-        return self._create_instance(module)
 
     def _load_manifest(
         self,

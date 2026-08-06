@@ -164,7 +164,18 @@ class JavaneseScriptPack(BaseScriptPack):
         return self._dataset_name
 
     def register_assets(self) -> None:
-        """Register runtime assets required by this ScriptPack."""
+        """
+        Register GUI assets used by the Javanese
+        ScriptPack.
+
+        This method registers bundled fonts into
+        Qt's application font database.
+
+        Notes
+        -----
+        This method requires an active
+        QApplication instance.
+        """
 
         font_directory = (
             Path(__file__).parent
