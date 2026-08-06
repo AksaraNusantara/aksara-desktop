@@ -42,6 +42,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 from core.engine import CoreEngine
+from core.services.audio_service import AudioService
 
 from .tabs.home_tab import HomeTab
 from .tabs.flashcard_tab import FlashcardTab
@@ -65,6 +66,7 @@ class CentralWorkspace(QWidget):
     def __init__(
         self,
         engine: CoreEngine,
+        audio: AudioService,
     ) -> None:
         """
         Initialize the central workspace.
@@ -79,6 +81,7 @@ class CentralWorkspace(QWidget):
         """
         super().__init__()
         self._engine = engine
+        self._audio = audio
         self._tab_widget: QTabWidget | None = None
         self._home_tab: HomeTab | None = None
         self._flashcard_tab: FlashcardTab | None = None
@@ -108,7 +111,8 @@ class CentralWorkspace(QWidget):
         )
 
         self._script_explorer_tab = ScriptExplorerTab(
-            self._engine,
+            engine=self._engine,
+            audio=self._audio,
         )
 
         self._tab_widget.addTab(

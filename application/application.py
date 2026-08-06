@@ -25,6 +25,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from core.engine import CoreEngine
+from core.services.audio_service import AudioService
 from ui.main_window import MainWindow
 
 
@@ -38,6 +39,8 @@ class Application:
         self._initialized: bool = False
 
         self._engine = CoreEngine()
+
+        self._audio: AudioService | None = None
 
         self._main_window: MainWindow | None = None
 
@@ -73,11 +76,18 @@ class Application:
         )
 
         #
+        # Initialize shared services.
+        #
+
+        self._audio = AudioService()   
+
+        #
         # Create Main Window.
         #
 
         self._main_window = MainWindow(
-            self._engine
+            engine=self._engine,
+            audio=self._audio,
         )
 
         self._initialized = True

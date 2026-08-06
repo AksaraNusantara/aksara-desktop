@@ -42,6 +42,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtCore import Signal
+from PySide6.QtCore import QTimer
 
 from PySide6.QtWidgets import (
     QFrame,
@@ -60,6 +61,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QFont
 
 from core.engine import CoreEngine
+from core.services.audio_service import AudioService
+
 from ui.widgets.empty_state import EmptyStateWidget
 
 
@@ -83,6 +86,7 @@ class ScriptExplorerTab(QWidget):
     def __init__(
         self,
         engine: CoreEngine,
+        audio: AudioService,
     ) -> None:
         """
         Initialize the Script Explorer.
@@ -91,6 +95,8 @@ class ScriptExplorerTab(QWidget):
         super().__init__()
 
         self._engine = engine
+
+        self._audio = audio
 
         self._stack: QStackedWidget | None = None
 
@@ -131,6 +137,8 @@ class ScriptExplorerTab(QWidget):
         self._unicode_value: QLabel | None = None
 
         self._description_value: QLabel | None = None
+
+        self._pronounce_button: QPushButton | None = None
 
         self._build_ui()
 
@@ -372,6 +380,26 @@ class ScriptExplorerTab(QWidget):
             self._description_value,
         )
 
+        #
+        # Pronounce button
+        #
+
+        self._pronounce_button = QPushButton(
+            "🔊 Pronounce",
+        )
+
+        self._pronounce_button.setEnabled(
+            False,
+        )
+
+        self._pronounce_button.clicked.connect(
+            self._pronounce_character,
+        )
+
+        detail_layout.addWidget(
+            self._pronounce_button,
+        )
+
         detail_layout.addStretch()
 
         right_layout.addWidget(
@@ -565,7 +593,6 @@ class ScriptExplorerTab(QWidget):
         """
         Refresh the details panel.
         """
-
         if self._selected_index < 0:
 
             self._glyph_label.setText("-")
@@ -576,6 +603,10 @@ class ScriptExplorerTab(QWidget):
 
             self._description_value.setText(
                 "Select a character to view its details."
+            )
+
+            self._pronounce_button.setEnabled(
+                False,
             )
 
             return
@@ -598,6 +629,27 @@ class ScriptExplorerTab(QWidget):
 
         self._description_value.setText(
             character["description"]
+        )
+
+        if self._pronounce_button is not None:
+
+            self._pronounce_button.setEnabled(
+                True,
+            )
+
+    def _pronounce_character(self) -> None:
+
+        if self._selected_index < 0:
+            return
+
+        if self._selected_index >= len(self._filtered_characters):
+            return
+
+        character = self._filtered_characters[self._selected_index]
+
+        QTimer.singleShot(
+            0,
+            lambda: self._audio.play(character["latin"]),
         )
 
     def _populate_character_grid(

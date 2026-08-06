@@ -31,6 +31,7 @@ from PySide6.QtWidgets import QStatusBar
 from PySide6.QtWidgets import QToolBar
 
 from core.engine import CoreEngine
+from core.services.audio_service import AudioService
 from .central_workspace import CentralWorkspace
 
 
@@ -42,11 +43,13 @@ class MainWindow(QMainWindow):
     def __init__(
         self,
         engine: CoreEngine,
+        audio: AudioService,
     ) -> None:
-
         super().__init__()
 
         self._engine = engine
+
+        self._audio = audio
 
         self._status_bar: QStatusBar | None = None
         self._main_toolbar: QToolBar | None = None
@@ -88,6 +91,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(
             CentralWorkspace(
-                self._engine
+                self._engine,
+                audio=self._audio,
             )
         )
