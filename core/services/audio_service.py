@@ -33,9 +33,6 @@ SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 import asyncio
-import os
-import tempfile
-import uuid
 from pathlib import Path
 
 import edge_tts
@@ -76,8 +73,6 @@ class AudioService:
         self._engine = engine
 
         self._playing = False
-
-        self._temporary_file: Path | None = None
 
     def _resolve_asset_audio(
         self,
@@ -147,6 +142,78 @@ class AudioService:
             return audio_path
 
         return None
+
+    def _get_generated_audio_path(
+        self,
+        text: str,
+    ) -> Path:
+        """
+        Return the destination path for generated
+        audio.
+
+        Parameters
+        ----------
+        text:
+            Spoken text.
+
+        Returns
+        -------
+        Path
+            Destination path of the generated
+            audio file.
+        """
+
+        return (
+            self._engine.get_audio_generated_path()
+            / f"{text}.mp3"
+        )
+
+    def _generate_audio(
+        self,
+        text: str,
+        voice: str,
+        destination: Path,
+    ) -> None:
+        """
+        Generate speech using Edge TTS.
+
+        Parameters
+        ----------
+        text:
+            Spoken text.
+
+        voice:
+            Edge TTS voice.
+
+        destination:
+            Output audio file.
+
+        Raises
+        ------
+        AudioServiceError
+            If speech generation fails.
+        """
+
+        print(f"Generating audio: {text}")
+
+        try:
+
+            communicate = edge_tts.Communicate(
+                text=text,
+                voice=voice,
+            )
+
+            asyncio.run(
+                communicate.save(
+                    str(destination),
+                )
+            )
+
+        except Exception as exc:
+
+            raise AudioServiceError(
+                "Failed to generate speech."
+            ) from exc
 
     def _play_file(
         self,
@@ -236,25 +303,20 @@ class AudioService:
 
         try:
 
-            self._temporary_file = (
-                Path(
-                    tempfile.gettempdir()
-                )
-                / f"{uuid.uuid4().hex}.mp3"
-            )
-
-            asyncio.run(
-                self._synthesize(
-                    text=text,
-                    voice=voice,
-                    output=self._temporary_file,
+            generated_audio = (
+                self._get_generated_audio_path(
+                    text,
                 )
             )
 
-            playsound(
-                str(
-                    self._temporary_file,
-                )
+            self._generate_audio(
+                text=text,
+                voice=voice,
+                destination=generated_audio,
+            )
+
+            self._play_file(
+                generated_audio,
             )
 
         except Exception as exc:
@@ -266,8 +328,6 @@ class AudioService:
         finally:
 
             self._playing = False
-
-            self._cleanup()
 
     def stop(
         self,
@@ -285,8 +345,6 @@ class AudioService:
 
         self._playing = False
 
-        self._cleanup()
-
     def is_playing(
         self,
     ) -> bool:
@@ -295,54 +353,3 @@ class AudioService:
         """
 
         return self._playing
-
-    # ------------------------------------------------------------------
-    # Private Helpers
-    # ------------------------------------------------------------------
-
-    async def _synthesize(
-        self,
-        text: str,
-        voice: str,
-        output: Path,
-    ) -> None:
-        """
-        Generate speech using Microsoft Edge TTS.
-        """
-
-        communicate = edge_tts.Communicate(
-            text=text,
-            voice=voice,
-        )
-
-        await communicate.save(
-            str(output),
-        )
-
-    def _cleanup(
-        self,
-    ) -> None:
-        """
-        Remove the temporary audio file.
-        """
-
-        if self._temporary_file is None:
-            return
-
-        try:
-
-            if self._temporary_file.exists():
-
-                os.remove(
-                    self._temporary_file,
-                )
-
-        except OSError:
-
-            #
-            # Ignore cleanup failures.
-            #
-            pass
-
-        self._temporary_file = None
-
