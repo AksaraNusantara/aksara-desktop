@@ -41,6 +41,7 @@ from pathlib import Path
 import edge_tts
 from playsound3 import playsound
 
+from core.engine import CoreEngine
 from core.exceptions import AudioServiceError
 
 
@@ -60,14 +61,71 @@ class AudioService:
 
     def __init__(
         self,
+        engine: CoreEngine,
     ) -> None:
         """
         Initialize the Audio Service.
+
+        Parameters
+        ----------
+        engine:
+            Shared Core Engine instance.
         """
+
+        self._engine = engine
 
         self._playing = False
 
         self._temporary_file: Path | None = None
+
+    def _resolve_asset_audio(
+        self,
+        text: str,
+    ) -> Path | None:
+        """
+        Resolve bundled audio from the active
+        ScriptPack.
+
+        Parameters
+        ----------
+        text:
+            Spoken text.
+
+        Returns
+        -------
+        Path | None
+            Path to the bundled audio file if it
+            exists, otherwise None.
+        """
+
+        audio_path = (
+            self._engine.get_assets_path()
+            / "audio"
+            / f"{text}.mp3"
+        )
+
+        if audio_path.is_file():
+
+            return audio_path
+
+        return None
+
+    def _play_file(
+        self,
+        audio_file: Path,
+    ) -> None:
+        """
+        Play an existing audio file.
+
+        Parameters
+        ----------
+        audio_file:
+            Audio file to be played.
+        """
+
+        playsound(
+            str(audio_file),
+        )
 
     # ------------------------------------------------------------------
     # Public API
@@ -111,6 +169,18 @@ class AudioService:
             voice
             or self.DEFAULT_VOICE
         )
+
+        asset_audio = self._resolve_asset_audio(
+            text,
+        )
+
+        if asset_audio is not None:
+
+            self._play_file(
+                asset_audio,
+            )
+
+            return
 
         try:
 

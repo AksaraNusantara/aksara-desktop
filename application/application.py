@@ -90,7 +90,9 @@ class Application:
         # Initialize shared services.
         #
 
-        self._audio = AudioService()   
+        self._audio = AudioService(
+            self._engine,
+        )   
 
         #
         # Create Main Window.
