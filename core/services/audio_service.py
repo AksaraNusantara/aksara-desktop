@@ -42,6 +42,7 @@ import edge_tts
 from playsound3 import playsound
 
 from core.engine import CoreEngine
+from core.exceptions import EngineError
 from core.exceptions import AudioServiceError
 
 
@@ -103,6 +104,43 @@ class AudioService:
             / "audio"
             / f"{text}.mp3"
         )
+
+        if audio_path.is_file():
+
+            return audio_path
+
+        return None
+
+    def _resolve_generated_audio(
+        self,
+        text: str,
+    ) -> Path | None:
+        """
+        Resolve generated audio from the active
+        ScriptPack.
+
+        Parameters
+        ----------
+        text:
+            Spoken text.
+
+        Returns
+        -------
+        Path | None
+            Generated audio file if found,
+            otherwise None.
+        """
+
+        try:
+
+            audio_path = (
+                self._engine.get_audio_generated_path()
+                / f"{text}.mp3"
+            )
+
+        except EngineError:
+
+            return None
 
         if audio_path.is_file():
 
@@ -178,6 +216,20 @@ class AudioService:
 
             self._play_file(
                 asset_audio,
+            )
+
+            return
+
+        generated_audio = (
+            self._resolve_generated_audio(
+                text,
+            )
+        )
+
+        if generated_audio is not None:
+
+            self._play_file(
+                generated_audio,
             )
 
             return
