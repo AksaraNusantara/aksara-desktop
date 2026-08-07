@@ -34,6 +34,20 @@ def main() -> None:
         "javanese",
     )
 
+    def on_session_changed() -> None:
+        """
+        Test session listener.
+        """
+
+        print(
+            "Session changed.",
+        )
+
+
+    session.register_listener(
+        on_session_changed,
+    )
+
     session.start()
 
     assert session.count() == 20

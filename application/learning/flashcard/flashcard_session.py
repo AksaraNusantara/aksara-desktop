@@ -24,6 +24,7 @@ the user interface.
 """
 
 from __future__ import annotations
+from collections.abc import Callable
 
 from core.engine import CoreEngine
 
@@ -52,6 +53,10 @@ class FlashcardSession:
 
         self._current_index = 0
 
+        self._listeners: list[
+            Callable[[], None]
+        ] = []
+
     def start(
         self,
     ) -> None:
@@ -64,6 +69,8 @@ class FlashcardSession:
         )
 
         self._current_index = 0
+        
+        self._notify_listeners()
 
     def reset(
         self,
@@ -82,6 +89,8 @@ class FlashcardSession:
         """
 
         self._current_index = 0
+
+        self._notify_listeners()
 
     def current(
         self,
@@ -163,6 +172,8 @@ class FlashcardSession:
 
         self._current_index += 1
 
+        self._notify_listeners()
+
         return True
 
     def previous(
@@ -183,5 +194,54 @@ class FlashcardSession:
 
         self._current_index -= 1
 
+        self._notify_listeners()
+
         return True
 
+    def register_listener(
+        self,
+        callback: Callable[[], None],
+    ) -> None:
+        """
+        Register a session listener.
+
+        Parameters
+        ----------
+        callback:
+            Callback invoked whenever the
+            session state changes.
+        """
+
+        self._listeners.append(
+            callback,
+        )
+
+    def unregister_listener(
+        self,
+        callback: Callable[[], None],
+    ) -> None:
+        """
+        Remove a registered listener.
+
+        Parameters
+        ----------
+        callback:
+            Previously registered callback.
+        """
+
+        if callback in self._listeners:
+
+            self._listeners.remove(
+                callback,
+            )
+
+    def _notify_listeners(
+        self,
+    ) -> None:
+        """
+        Notify all registered listeners.
+        """
+
+        for callback in self._listeners:
+
+            callback()
