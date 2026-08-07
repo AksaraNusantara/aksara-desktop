@@ -107,6 +107,10 @@ class FlashcardTab(LearningModule):
             "Flashcard",
         )
 
+        self._session.register_listener(
+            self._refresh_ui,
+        )
+
         self._lesson_selector.currentIndexChanged.connect(
             self._lesson_changed,
         )
@@ -329,10 +333,7 @@ class FlashcardTab(LearningModule):
         Refresh the Flashcard after a ScriptPack
         has been activated.
         """
-
         self._session.start()
-
-        self._refresh_ui()
 
     def _refresh_ui(
         self,
@@ -416,8 +417,7 @@ class FlashcardTab(LearningModule):
         """
         Display the previous character.
         """
-        if self._session.previous():
-            self._refresh_ui()
+        self._session.previous()
 
     def _show_next(
         self,
@@ -425,8 +425,7 @@ class FlashcardTab(LearningModule):
         """
         Display the next character.
         """
-        if self._session.next():
-            self._refresh_ui()
+        self._session.next()
 
     def keyPressEvent(
         self,
@@ -489,5 +488,3 @@ class FlashcardTab(LearningModule):
         )
 
         self._session.start()
-
-        self._refresh_ui()
