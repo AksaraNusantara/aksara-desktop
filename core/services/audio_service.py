@@ -1,27 +1,26 @@
 """
-===============================================================================
+Audio service.
 
-Aksara Nusantara
+===============================================================================
 
 Module:
     core.services.audio_service
 
+Module Type:
+    Service
+
 Purpose:
-    Shared text-to-speech service.
-
-Description:
-    AudioService provides a simple text-to-speech API for the
-    application.
-
-    Version 1.0 uses Microsoft Edge Neural Text-to-Speech and
-    plays the generated audio using playsound3.
+    High-level audio orchestration.
 
 Responsibilities:
-    - Convert text into speech.
-    - Play synthesized audio.
-    - Manage temporary audio files.
+    - Resolve audio.
+    - Generate missing audio.
+    - Play audio.
 
-The AudioService SHALL NOT depend on any UI module.
+Notes:
+    This service delegates all
+    responsibilities to the Audio
+    Framework components.
 
 Copyright (c) Aksara Nusantara Project
 
@@ -29,288 +28,73 @@ SPDX-License-Identifier: MIT
 
 ===============================================================================
 """
-
 from __future__ import annotations
 
-import asyncio
 from pathlib import Path
 
-import edge_tts
-from playsound3 import playsound
-
-from core.engine import CoreEngine
-
-from core.audio import AudioProvider
+from core.audio import AudioCache
+from core.audio import AudioPlayer
+from core.audio import AudioResolver
 from core.audio import GTTSProvider
-
-from core.exceptions import EngineError
-from core.exceptions import AudioServiceError
 
 
 class AudioService:
     """
-    Shared text-to-speech service.
-
-    This service provides a simple synchronous API while using
-    Edge TTS internally.
+    High-level audio service.
     """
-
-    DEFAULT_VOICE = "id-ID-GadisNeural"
-
-    # ------------------------------------------------------------------
-    # Construction
-    # ------------------------------------------------------------------
 
     def __init__(
         self,
-        engine: CoreEngine,
+        cache_root: Path,
+        asset_root: Path | None = None,
     ) -> None:
         """
-        Initialize the Audio Service.
-
-        Parameters
-        ----------
-        engine:
-            Shared Core Engine instance.
+        Initialize audio service.
         """
-        self._engine = engine
-
-        self._provider: AudioProvider = (
-            GTTSProvider()
+        self._cache = AudioCache(
+            cache_root,
         )
 
-        self._playing = False
+        self._provider = GTTSProvider()
 
-    def _resolve_asset_audio(
-        self,
-        text: str,
-    ) -> Path | None:
-        """
-        Resolve bundled audio from the active
-        ScriptPack.
+        self._player = AudioPlayer()
 
-        Parameters
-        ----------
-        text:
-            Spoken text.
-
-        Returns
-        -------
-        Path | None
-            Path to the bundled audio file if it
-            exists, otherwise None.
-        """
-        try:
-
-            audio_path = (
-                self._engine.get_assets_path()
-                / "audio"
-                / f"{text}.mp3"
-            )
-
-        except EngineError:
-
-            return None
-
-    def _resolve_generated_audio(
-        self,
-        text: str,
-    ) -> Path | None:
-        """
-        Resolve generated audio from the active
-        ScriptPack.
-
-        Parameters
-        ----------
-        text:
-            Spoken text.
-
-        Returns
-        -------
-        Path | None
-            Generated audio file if found,
-            otherwise None.
-        """
-
-        try:
-
-            audio_path = (
-                self._engine.get_audio_generated_path()
-                / f"{text}.mp3"
-            )
-
-        except EngineError:
-
-            return None
-
-        if audio_path.is_file():
-
-            return audio_path
-
-        return None
-
-    def _get_generated_audio_path(
-        self,
-        text: str,
-    ) -> Path:
-        """
-        Return the destination path for generated
-        audio.
-
-        Parameters
-        ----------
-        text:
-            Spoken text.
-
-        Returns
-        -------
-        Path
-            Destination path of the generated
-            audio file.
-        """
-        return (
-            self._engine
-            .get_audio_cache_for_current_scriptpack()
-            / f"{text}.mp3"
+        self._resolver = AudioResolver(
+            asset_root=asset_root,
+            cache=self._cache,
         )
-
-    def _play_file(
-        self,
-        audio_file: Path,
-    ) -> None:
-        """
-        Play an existing audio file.
-
-        Parameters
-        ----------
-        audio_file:
-            Audio file to be played.
-        """
-
-        playsound(
-            str(audio_file),
-        )
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
 
     def play(
         self,
         text: str,
-        voice: str | None = None,
     ) -> None:
         """
-        Convert text into speech and play it.
+        Play audio.
 
         Parameters
         ----------
         text:
-            Text to pronounce.
+            Text to be spoken.
 
-        voice:
-            Edge TTS voice name.
-
-        Raises
-        ------
-        AudioServiceError
-            Raised when synthesis or playback fails.
+        Returns
+        -------
+        None
         """
-
-        text = text.strip()
-
-        if not text:
-
-            raise AudioServiceError(
-                "Text must not be empty."
-            )
-
-        self.stop()
-
-        self._playing = True
-
-        #
-        # Reserved for future providers.
-        #
-        #voice = (
-        #    voice
-        #    or self.DEFAULT_VOICE
-        #)
-        #
-        asset_audio = self._resolve_asset_audio(
+        audio = self._resolver.resolve(
             text,
         )
 
-        if asset_audio is not None:
-
-            self._play_file(
-                asset_audio,
-            )
-
-            return
-
-        generated_audio = (
-            self._resolve_generated_audio(
-                text,
-            )
-        )
-
-        if generated_audio is not None:
-
-            self._play_file(
-                generated_audio,
-            )
-
-            return
-
-        try:
-
-            generated_audio = (
-                self._get_generated_audio_path(
-                    text,
+        if audio is None:
+            if not self._provider.is_available():
+                raise RuntimeError(
+                    "Audio provider is unavailable."
                 )
+
+            audio = self._cache.get_path(
+                text,
             )
 
             self._provider.generate(
                 text=text,
-                destination=generated_audio,
+                destination=audio,
             )
-
-            self._play_file(
-                generated_audio,
-            )
-
-        except Exception as exc:
-
-            raise AudioServiceError(
-                f"Audio playback failed: {exc}"
-            ) from exc
-
-        finally:
-
-            self._playing = False
-
-    def stop(
-        self,
-    ) -> None:
-        """
-        Stop audio playback.
-
-        Notes
-        -----
-        Version 1.0 does not interrupt active playback.
-
-        This method only resets the playback state and removes
-        any temporary audio file.
-        """
-
-        self._playing = False
-
-    def is_playing(
-        self,
-    ) -> bool:
-        """
-        Return whether audio is currently being played.
-        """
-
-        return self._playing

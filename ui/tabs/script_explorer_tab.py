@@ -61,7 +61,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QFont
 
 from core.engine import CoreEngine
-from core.services.audio_service import AudioService
+from core.services.audio_service_legacy import AudioService
 
 from ui.widgets.empty_state import EmptyStateWidget
 

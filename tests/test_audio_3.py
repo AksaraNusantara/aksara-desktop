@@ -7,7 +7,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from core.engine import CoreEngine
-from core.services.audio_service import AudioService
+from core.services.audio_service_legacy import AudioService
 
 engine = CoreEngine()
 
