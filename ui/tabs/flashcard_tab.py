@@ -67,6 +67,7 @@ class FlashcardTab(LearningModule):
     def __init__(
         self,
         engine: CoreEngine,
+        session: FlashcardSession,
     ) -> None:
         """
         Initialize the Flashcard module.
@@ -75,11 +76,11 @@ class FlashcardTab(LearningModule):
         ----------
         engine:
             Shared Core Engine instance.
+        session:
+            FlashcardSession
         """
 
-        self._characters: list[dict] = []
-
-        self._current_index = 0
+        self._session = session
 
         self._script_value: QLabel | None = None
 
@@ -329,30 +330,9 @@ class FlashcardTab(LearningModule):
         has been activated.
         """
 
-        self._characters = (
-            self._engine.get_characters()
-        )
-
-        self._lesson_selector.blockSignals(True)
-
-        self._lesson_selector.clear()
-
-        for internal, display in (
-            self._engine.get_available_datasets()
-        ):
-
-            self._lesson_selector.addItem(
-                display,
-                internal,
-            )
-
-        self._lesson_selector.blockSignals(False)
-
-        self._current_index = 0
+        self._session.start()
 
         self._refresh_ui()
-
-        self.setFocus()
 
     def _refresh_ui(
         self,
@@ -361,7 +341,7 @@ class FlashcardTab(LearningModule):
         Refresh the current Flashcard.
         """
 
-        if not self._characters:
+        if self._session.count() == 0:
             return
 
         scriptpack = (
@@ -371,9 +351,7 @@ class FlashcardTab(LearningModule):
         if scriptpack is None:
             return
 
-        character = self._characters[
-            self._current_index
-        ]
+        character = self._session.current()
 
         self._script_value.setText(
             scriptpack.metadata["name"]
@@ -409,9 +387,9 @@ class FlashcardTab(LearningModule):
         self._progress_label.setText(
             (
                 f"Character "
-                f"{self._current_index + 1}"
+                f"{self._session.index() + 1}"
                 f" of "
-                f"{len(self._characters)}"
+                f"{self._session.count()}"
             )
         )
 
@@ -425,12 +403,11 @@ class FlashcardTab(LearningModule):
         """
 
         self._previous_button.setEnabled(
-            self._current_index > 0
+            self._session.has_previous()
         )
 
         self._next_button.setEnabled(
-            self._current_index
-            < len(self._characters) - 1
+            self._session.has_next()
         )
 
     def _show_previous(
@@ -439,13 +416,8 @@ class FlashcardTab(LearningModule):
         """
         Display the previous character.
         """
-
-        if self._current_index == 0:
-            return
-
-        self._current_index -= 1
-
-        self._refresh_ui()
+        if self._session.previous():
+            self._refresh_ui()
 
     def _show_next(
         self,
@@ -453,15 +425,8 @@ class FlashcardTab(LearningModule):
         """
         Display the next character.
         """
-
-        if self._current_index >= (
-            len(self._characters) - 1
-        ):
-            return
-
-        self._current_index += 1
-
-        self._refresh_ui()
+        if self._session.next():
+            self._refresh_ui()
 
     def keyPressEvent(
         self,
@@ -523,10 +488,6 @@ class FlashcardTab(LearningModule):
             dataset,
         )
 
-        self._characters = (
-            self._engine.get_characters()
-        )
-
-        self._current_index = 0
+        self._session.start()
 
         self._refresh_ui()

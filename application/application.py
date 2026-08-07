@@ -26,6 +26,9 @@ from pathlib import Path
 
 from core.engine import CoreEngine
 from core.services.audio_service import AudioService
+from application.learning.flashcard.flashcard_session import (
+    FlashcardSession,
+)
 from ui.main_window import MainWindow
 
 
@@ -41,6 +44,8 @@ class Application:
         self._engine = CoreEngine()
 
         self._audio: AudioService | None = None
+
+        self._flashcard_session: FlashcardSession | None = None
 
         self._main_window: MainWindow | None = None
 
@@ -95,12 +100,21 @@ class Application:
         )   
 
         #
+        # Initialize session services.
+        #
+
+        self._flashcard_session = FlashcardSession(
+            self._engine,
+        )
+
+        #
         # Create Main Window.
         #
 
         self._main_window = MainWindow(
             engine=self._engine,
             audio=self._audio,
+            flashcard_session=self._flashcard_session
         )
 
         self._initialized = True

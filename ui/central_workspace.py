@@ -43,6 +43,9 @@ from PySide6.QtWidgets import QWidget
 
 from core.engine import CoreEngine
 from core.services.audio_service import AudioService
+from application.learning.flashcard.flashcard_session import (
+    FlashcardSession,
+)
 
 from .tabs.home_tab import HomeTab
 from .tabs.flashcard_tab import FlashcardTab
@@ -67,6 +70,7 @@ class CentralWorkspace(QWidget):
         self,
         engine: CoreEngine,
         audio: AudioService,
+        flashcard_session: FlashcardSession,
     ) -> None:
         """
         Initialize the central workspace.
@@ -82,6 +86,7 @@ class CentralWorkspace(QWidget):
         super().__init__()
         self._engine = engine
         self._audio = audio
+        self._flashcard_session = flashcard_session
         self._tab_widget: QTabWidget | None = None
         self._home_tab: HomeTab | None = None
         self._flashcard_tab: FlashcardTab | None = None
@@ -126,6 +131,7 @@ class CentralWorkspace(QWidget):
 
         self._flashcard_tab = FlashcardTab(
             self._engine,
+            self._flashcard_session,
         )
 
         self._tab_widget.addTab(
