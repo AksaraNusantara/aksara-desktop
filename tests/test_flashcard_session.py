@@ -26,6 +26,30 @@ def main() -> None:
     print("FlashcardSession created successfully.")
     print(session)
 
+    engine.initialize(
+        PROJECT_ROOT / "scriptpacks",
+    )
+
+    engine.activate(
+        "javanese",
+    )
+
+    session.start()
+
+    assert session.count() == 20
+    assert session.index() == 0
+    assert session.current()["latin"] == "ha"
+
+    assert session.next() is True
+    assert session.index() == 1
+    assert session.current()["latin"] == "na"
+
+    assert session.previous() is True
+    assert session.index() == 0
+    assert session.current()["latin"] == "ha"
+
+    print("FlashcardSession navigation PASS")
+
 
 if __name__ == "__main__":
     main()
