@@ -39,6 +39,10 @@ import edge_tts
 from playsound3 import playsound
 
 from core.engine import CoreEngine
+
+from core.audio import AudioProvider
+from core.audio import GTTSProvider
+
 from core.exceptions import EngineError
 from core.exceptions import AudioServiceError
 
@@ -69,8 +73,11 @@ class AudioService:
         engine:
             Shared Core Engine instance.
         """
-
         self._engine = engine
+
+        self._provider: AudioProvider = (
+            GTTSProvider()
+        )
 
         self._playing = False
 
@@ -93,18 +100,17 @@ class AudioService:
             Path to the bundled audio file if it
             exists, otherwise None.
         """
+        try:
 
-        audio_path = (
-            self._engine.get_assets_path()
-            / "audio"
-            / f"{text}.mp3"
-        )
+            audio_path = (
+                self._engine.get_assets_path()
+                / "audio"
+                / f"{text}.mp3"
+            )
 
-        if audio_path.is_file():
+        except EngineError:
 
-            return audio_path
-
-        return None
+            return None
 
     def _resolve_generated_audio(
         self,
@@ -162,58 +168,11 @@ class AudioService:
             Destination path of the generated
             audio file.
         """
-
         return (
-            self._engine.get_audio_generated_path()
+            self._engine
+            .get_audio_cache_for_current_scriptpack()
             / f"{text}.mp3"
         )
-
-    def _generate_audio(
-        self,
-        text: str,
-        voice: str,
-        destination: Path,
-    ) -> None:
-        """
-        Generate speech using Edge TTS.
-
-        Parameters
-        ----------
-        text:
-            Spoken text.
-
-        voice:
-            Edge TTS voice.
-
-        destination:
-            Output audio file.
-
-        Raises
-        ------
-        AudioServiceError
-            If speech generation fails.
-        """
-
-        print(f"Generating audio: {text}")
-
-        try:
-
-            communicate = edge_tts.Communicate(
-                text=text,
-                voice=voice,
-            )
-
-            asyncio.run(
-                communicate.save(
-                    str(destination),
-                )
-            )
-
-        except Exception as exc:
-
-            raise AudioServiceError(
-                "Failed to generate speech."
-            ) from exc
 
     def _play_file(
         self,
@@ -270,11 +229,14 @@ class AudioService:
 
         self._playing = True
 
-        voice = (
-            voice
-            or self.DEFAULT_VOICE
-        )
-
+        #
+        # Reserved for future providers.
+        #
+        #voice = (
+        #    voice
+        #    or self.DEFAULT_VOICE
+        #)
+        #
         asset_audio = self._resolve_asset_audio(
             text,
         )
@@ -309,9 +271,8 @@ class AudioService:
                 )
             )
 
-            self._generate_audio(
+            self._provider.generate(
                 text=text,
-                voice=voice,
                 destination=generated_audio,
             )
 

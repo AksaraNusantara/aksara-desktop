@@ -572,3 +572,81 @@ class CoreEngine:
         )
 
         return directory
+
+    def get_cache_path(
+        self,
+    ) -> Path:
+        """
+        Return the application cache directory.
+
+        Returns
+        -------
+        Path
+            Root cache directory.
+        """
+
+        cache_path = (
+            self.application_root
+            / "cache"
+        )
+
+        cache_path.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        return cache_path
+
+    def get_audio_cache_path(
+        self,
+    ) -> Path:
+        """
+        Return the audio cache directory.
+
+        Returns
+        -------
+        Path
+            Audio cache directory.
+        """
+
+        path = (
+            self.get_cache_path()
+            / "audio"
+        )
+
+        path.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        return path
+
+    def get_audio_cache_for_current_scriptpack(
+        self,
+    ) -> Path:
+        """
+        Return the current ScriptPack audio cache.
+
+        Returns
+        -------
+        Path
+            ScriptPack audio cache.
+        """
+        scriptpack = self.active_scriptpack
+
+        if scriptpack is None:
+            identifier = "global"
+        else:
+            identifier = scriptpack.identifier
+
+        path = (
+            self.get_audio_cache_path()
+            / identifier
+        )
+
+        path.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        return path
