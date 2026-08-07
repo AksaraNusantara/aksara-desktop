@@ -78,3 +78,6 @@ progress_*.json
 #
 
 scriptpacks/**/generated/
+
+# Audio cache
+cache/
