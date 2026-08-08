@@ -80,21 +80,17 @@ class AudioService:
         -------
         None
         """
-        audio = self._resolver.resolve(
-            text,
-        )
+        audio = self._resolver.resolve(text)
 
         if audio is None:
             if not self._provider.is_available():
-                raise RuntimeError(
-                    "Audio provider is unavailable."
-                )
+                raise RuntimeError("Audio provider is unavailable.")
 
-            audio = self._cache.get_path(
-                text,
-            )
+            audio = self._cache.get_path(text)
 
             self._provider.generate(
                 text=text,
                 destination=audio,
             )
+
+        self._player.play(audio)

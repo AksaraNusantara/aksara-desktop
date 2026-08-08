@@ -52,6 +52,8 @@ from PySide6.QtWidgets import QComboBox
 from PySide6.QtWidgets import QSizePolicy
 
 from core.engine import CoreEngine
+from core.services.audio_service import AudioService
+from application.learning.flashcard.flashcard_session import FlashcardSession
 
 from ui.widgets.learning_module import LearningModule
 
@@ -68,6 +70,7 @@ class FlashcardTab(LearningModule):
         self,
         engine: CoreEngine,
         session: FlashcardSession,
+        audio: AudioService,
     ) -> None:
         """
         Initialize the Flashcard module.
@@ -81,6 +84,8 @@ class FlashcardTab(LearningModule):
         """
 
         self._session = session
+
+        self._audio = audio
 
         self._script_value: QLabel | None = None
 
@@ -256,6 +261,10 @@ class FlashcardTab(LearningModule):
             False,
         )
 
+        self._listen_button.clicked.connect(
+            self._on_listen_clicked,
+        )
+
         self._listen_button.setMinimumWidth(
             160,
         )
@@ -335,6 +344,10 @@ class FlashcardTab(LearningModule):
         """
         self._session.start()
 
+        self._listen_button.setEnabled(
+            True,
+        )
+
     def _refresh_ui(
         self,
     ) -> None:
@@ -352,6 +365,10 @@ class FlashcardTab(LearningModule):
         if scriptpack is None:
             return
 
+        self._listen_button.setEnabled(
+            self._session.count() > 0,
+        )
+        
         character = self._session.current()
 
         self._script_value.setText(
@@ -488,3 +505,19 @@ class FlashcardTab(LearningModule):
         )
 
         self._session.start()
+
+    def _on_listen_clicked(
+        self,
+    ) -> None:
+        """
+        Handle the Listen button.
+        """
+        current = self._session.current()
+
+        if current is None:
+            print(">>> No current character")
+            return
+
+        self._audio.play(
+            current["latin"],
+        )

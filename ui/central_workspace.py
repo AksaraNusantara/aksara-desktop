@@ -42,7 +42,7 @@ from PySide6.QtWidgets import QVBoxLayout
 from PySide6.QtWidgets import QWidget
 
 from core.engine import CoreEngine
-from core.services.audio_service_legacy import AudioService
+from core.services.audio_service import AudioService
 from application.learning.flashcard.flashcard_session import (
     FlashcardSession,
 )
@@ -130,8 +130,9 @@ class CentralWorkspace(QWidget):
         )
 
         self._flashcard_tab = FlashcardTab(
-            self._engine,
-            self._flashcard_session,
+            engine=self._engine,
+            session=self._flashcard_session,
+            audio=self._audio,
         )
 
         self._tab_widget.addTab(

@@ -25,7 +25,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from core.engine import CoreEngine
-from core.services.audio_service_legacy import AudioService
+from core.services.audio_service import AudioService
 from application.learning.flashcard.flashcard_session import (
     FlashcardSession,
 )
@@ -91,12 +91,18 @@ class Application:
 
             scriptpack.register_assets()
 
+        project_root = Path(__file__).resolve().parent.parent
+
         #
         # Initialize shared services.
         #
 
         self._audio = AudioService(
-            self._engine,
+            cache_root=(
+                project_root
+                / "cache"
+                / "audio"
+            )
         )   
 
         #
