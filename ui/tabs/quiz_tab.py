@@ -64,6 +64,7 @@ class QuizTab(QWidget):
 
         # Visual skeleton
         self._build_ui()
+        self._refresh_ui_state()
 
     @property
     def session(self) -> QuizSession | None:
@@ -133,6 +134,8 @@ class QuizTab(QWidget):
         self._check_enabled = False
 
         self.quiz_started.emit()
+        self._refresh_question_display()
+        self._refresh_ui_state()
 
     def cancel_quiz(self) -> None:
         """Cancel the active Quiz."""
@@ -153,6 +156,7 @@ class QuizTab(QWidget):
         self._check_enabled = False
 
         self.quiz_cancelled.emit()
+        self._refresh_ui_state()
 
     def select_answer(
         self,
@@ -179,6 +183,7 @@ class QuizTab(QWidget):
 
         self._selected_answer = selected_answer
         self._check_enabled = True
+        self._refresh_ui_state()
 
     def submit_answer(
         self,
@@ -234,6 +239,8 @@ class QuizTab(QWidget):
 
             self.quiz_completed.emit()
 
+            self._refresh_ui_state()
+
             return is_correct
 
         self._current_question = (
@@ -245,7 +252,9 @@ class QuizTab(QWidget):
         self._selected_answer = None
         self._check_enabled = False
 
-        return 
+        self._refresh_ui_state()
+
+        return is_correct
 
     def _build_header(
         self,
@@ -295,12 +304,27 @@ class QuizTab(QWidget):
             ]
         )
 
+        self._difficulty_values = (
+            QuizDifficulty.LEVEL_1,
+            QuizDifficulty.LEVEL_2,
+            QuizDifficulty.LEVEL_3,
+            QuizDifficulty.LEVEL_4,
+        )
+
+        self.start_button = QPushButton(
+            "MULAI QUIZ"
+        )
+
         configuration_layout.addWidget(
             difficulty_label,
         )
 
         configuration_layout.addWidget(
             self.difficulty_combo,
+        )
+
+        configuration_layout.addWidget(
+            self.start_button,
         )
 
         configuration_layout.addStretch()
@@ -354,6 +378,11 @@ class QuizTab(QWidget):
                 button,
             )
 
+            button.clicked.connect(
+                lambda checked=False, btn=button:
+                    self._handle_answer_clicked(btn)
+            )
+
             row = index // 2
             column = index % 2
 
@@ -379,8 +408,16 @@ class QuizTab(QWidget):
             "PERIKSA"
         )
 
+        self.check_button.clicked.connect(
+            self._handle_check_clicked,
+        )
+
         self.cancel_button = QPushButton(
             "BATALKAN"
+        )
+
+        self.cancel_button.clicked.connect(
+            self.cancel_quiz,
         )
 
         action_layout.addStretch()
@@ -451,4 +488,90 @@ class QuizTab(QWidget):
         self._build_action_area(root_layout)
         self._build_statistics(root_layout)
 
+        self.start_button.clicked.connect(
+            self._handle_start_clicked,
+        )
+
         root_layout.addStretch()
+
+    def _refresh_question_display(self) -> None:
+        """Refresh the visible question and answer options."""
+
+        if self._current_question is None:
+            self.question_label.setText("—")
+
+            for button in self.answer_buttons:
+                button.setText("—")
+
+            return
+
+        self.question_label.setText(
+            self._current_question.prompt
+        )
+
+        for button, option in zip(
+            self.answer_buttons,
+            self._current_question.options,
+        ):
+            button.setText(option)
+
+    def _selected_difficulty(self) -> QuizDifficulty:
+        """Return the currently selected Quiz difficulty."""
+
+        return self._difficulty_values[
+            self.difficulty_combo.currentIndex()
+        ]
+
+    def _handle_start_clicked(self) -> None:
+        """Handle the Start Quiz button."""
+
+        difficulty = self._selected_difficulty()
+
+        self.start_quiz(
+            difficulty=difficulty,
+            total_questions=10,
+        )
+
+        self._refresh_question_display()
+
+    def _handle_answer_clicked(
+        self,
+        button: QPushButton,
+    ) -> None:
+        """Handle answer button selection."""
+
+        self.select_answer(
+            button.text(),
+        )
+
+    def _handle_check_clicked(self) -> None:
+        """Handle the Check button."""
+
+        self.submit_answer()
+
+        if self.is_quiz_active:
+            self._refresh_question_display()
+
+    def _refresh_ui_state(self) -> None:
+        """Synchronize widgets with the Quiz UI state contract."""
+
+        self.difficulty_combo.setEnabled(
+            self._difficulty_enabled
+        )
+
+        self.start_button.setEnabled(
+            self._start_enabled
+        )
+
+        self.cancel_button.setEnabled(
+            self._cancel_enabled
+        )
+
+        self.check_button.setEnabled(
+            self._check_enabled
+        )
+
+        for button in self.answer_buttons:
+            button.setEnabled(
+                self._session is not None
+            )
