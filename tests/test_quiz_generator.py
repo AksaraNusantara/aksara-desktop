@@ -18,6 +18,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from application.learning.quiz.quiz_generator import QuizGenerator
 from application.learning.quiz.quiz_question import QuizQuestion
+from application.learning.quiz.quiz_difficulty import QuizDifficulty
 
 
 class TestQuizGenerator(unittest.TestCase):
@@ -62,7 +63,7 @@ class TestQuizGenerator(unittest.TestCase):
         )
 
         question = generator.generate(
-            character_count=1,
+            difficulty=QuizDifficulty.LEVEL_1,
         )
 
         self.assertIsInstance(
@@ -91,7 +92,7 @@ class TestQuizGenerator(unittest.TestCase):
         )
 
         question = generator.generate(
-            character_count=1,
+            difficulty=QuizDifficulty.LEVEL_1,
         )
 
         self.assertIn(
@@ -107,7 +108,7 @@ class TestQuizGenerator(unittest.TestCase):
         )
 
         question = generator.generate(
-            character_count=3,
+            difficulty=QuizDifficulty.LEVEL_3,
         )
 
         self.assertEqual(
@@ -129,7 +130,7 @@ class TestQuizGenerator(unittest.TestCase):
         )
 
         question = generator.generate(
-            character_count=1,
+            difficulty=QuizDifficulty.LEVEL_1,
         )
 
         self.assertEqual(
@@ -152,20 +153,88 @@ class TestQuizGenerator(unittest.TestCase):
                 option_count=1,
             )
 
-    def test_invalid_character_count_is_rejected(self):
-        """Character count must be positive."""
+    def test_difficulty_cannot_exceed_available_data(self):
+        """Difficulty cannot require more characters than available."""
 
         generator = QuizGenerator(
-            self.characters,
+            self.characters[:3],
         )
 
         with self.assertRaises(ValueError):
             generator.generate(
-                character_count=0,
+                difficulty=QuizDifficulty.LEVEL_4,
             )
 
-    def test_character_count_cannot_exceed_available_data(self):
-        """Question cannot contain more characters than available."""
+    def test_level_1_generates_one_character(self):
+        """Level 1 generates a one-character question."""
+
+        generator = QuizGenerator(
+            self.characters,
+        )
+
+        question = generator.generate(
+            difficulty=QuizDifficulty.LEVEL_1,
+        )
+
+        self.assertEqual(
+            len(question.prompt.split()),
+            1,
+        )
+
+
+    def test_level_2_generates_two_characters(self):
+        """Level 2 generates a two-character question."""
+
+        generator = QuizGenerator(
+            self.characters,
+        )
+
+        question = generator.generate(
+            difficulty=QuizDifficulty.LEVEL_2,
+        )
+
+        self.assertEqual(
+            len(question.prompt.split()),
+            2,
+        )
+
+
+    def test_level_3_generates_three_characters(self):
+        """Level 3 generates a three-character question."""
+
+        generator = QuizGenerator(
+            self.characters,
+        )
+
+        question = generator.generate(
+            difficulty=QuizDifficulty.LEVEL_3,
+        )
+
+        self.assertEqual(
+            len(question.prompt.split()),
+            3,
+        )
+
+
+    def test_level_4_generates_four_characters(self):
+        """Level 4 generates a four-character question."""
+
+        generator = QuizGenerator(
+            self.characters,
+        )
+
+        question = generator.generate(
+            difficulty=QuizDifficulty.LEVEL_4,
+        )
+
+        self.assertEqual(
+            len(question.prompt.split()),
+            4,
+        )
+
+
+    def test_invalid_difficulty_is_rejected(self):
+        """Generator rejects an invalid difficulty value."""
 
         generator = QuizGenerator(
             self.characters,
@@ -173,7 +242,7 @@ class TestQuizGenerator(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             generator.generate(
-                character_count=10,
+                difficulty=99,
             )
 
 

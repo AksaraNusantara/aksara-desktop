@@ -11,6 +11,9 @@ persistence.
 import random
 from typing import Sequence
 
+from .quiz_difficulty import QuizDifficulty
+from .quiz_question import QuizQuestion
+
 
 class QuizGenerator:
     """
@@ -31,8 +34,11 @@ class QuizGenerator:
         Initialize the Quiz generator.
 
         Args:
-            characters: Characters supplied by the active ScriptPack.
-            option_count: Number of answer choices per question.
+            characters:
+                Characters supplied by the active ScriptPack.
+
+            option_count:
+                Number of answer choices per question.
         """
 
         if not characters:
@@ -50,29 +56,38 @@ class QuizGenerator:
 
     def generate(
         self,
-        character_count: int,
-    ):
+        difficulty: QuizDifficulty,
+    ) -> QuizQuestion:
         """
         Generate one QuizQuestion.
 
         Args:
-            character_count: Number of characters included in the
-                question.
+            difficulty:
+                Difficulty level controlling the number of characters
+                included in the question.
 
         Returns:
             A generated QuizQuestion.
+
+        Raises:
+            ValueError:
+                If difficulty is invalid or requires more characters
+                than are available.
         """
 
-        from .quiz_question import QuizQuestion
-
-        if character_count < 1:
+        if not isinstance(
+            difficulty,
+            QuizDifficulty,
+        ):
             raise ValueError(
-                "character_count must be at least 1."
+                "difficulty must be a QuizDifficulty."
             )
+
+        character_count = difficulty.character_count
 
         if character_count > len(self._characters):
             raise ValueError(
-                "character_count cannot exceed available characters."
+                "difficulty requires more characters than available."
             )
 
         selected = random.sample(
