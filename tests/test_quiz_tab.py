@@ -223,6 +223,89 @@ class TestQuizTab(unittest.TestCase):
             self.quiz_tab.session,
         )
 
+    def test_answer_generates_next_question(self):
+        """A non-final answer generates the next question."""
+
+        self.quiz_tab.start_quiz(
+            difficulty=QuizDifficulty.LEVEL_2,
+            total_questions=2,
+        )
+
+        self.quiz_tab.submit_answer("ha")
+
+        self.assertEqual(
+            len(self.generator.calls),
+            2,
+        )
+
+        self.assertIsNotNone(
+            self.quiz_tab.session,
+        )
+
+        self.assertIs(
+            self.quiz_tab.session.state,
+            QuizSessionState.ACTIVE,
+        )
+
+
+    def test_next_question_uses_same_difficulty(self):
+        """Every generated question uses the selected difficulty."""
+
+        self.quiz_tab.start_quiz(
+            difficulty=QuizDifficulty.LEVEL_3,
+            total_questions=3,
+        )
+
+        self.quiz_tab.submit_answer("ha")
+
+        self.assertEqual(
+            self.generator.calls,
+            [
+                QuizDifficulty.LEVEL_3,
+                QuizDifficulty.LEVEL_3,
+            ],
+        )
+
+
+    def test_quiz_remains_active_after_non_final_answer(self):
+        """A non-final answer keeps the Quiz active."""
+
+        self.quiz_tab.start_quiz(
+            difficulty=QuizDifficulty.LEVEL_1,
+            total_questions=2,
+        )
+
+        self.quiz_tab.submit_answer("ha")
+
+        self.assertIsNotNone(
+            self.quiz_tab.session,
+        )
+
+        self.assertIs(
+            self.quiz_tab.session.state,
+            QuizSessionState.ACTIVE,
+        )
+
+
+    def test_completed_quiz_does_not_generate_extra_question(self):
+        """The final answer does not generate another question."""
+
+        self.quiz_tab.start_quiz(
+            difficulty=QuizDifficulty.LEVEL_1,
+            total_questions=1,
+        )
+
+        self.quiz_tab.submit_answer("ha")
+
+        self.assertEqual(
+            len(self.generator.calls),
+            1,
+        )
+
+        self.assertIsNone(
+            self.quiz_tab.session,
+        )
+
 
 if __name__ == "__main__":
     unittest.main(
