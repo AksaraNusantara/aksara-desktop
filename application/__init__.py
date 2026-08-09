@@ -1,13 +1,7 @@
 """
 Application Layer.
+
+The package initializer intentionally contains no eager imports.
+Application components should be imported explicitly from their
+respective modules.
 """
-
-print(">> application.__init__ START")
-
-from .application import Application
-
-print(">> application.__init__ END")
-
-__all__ = [
-    "Application",
-]
