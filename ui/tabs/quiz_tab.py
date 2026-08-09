@@ -62,6 +62,11 @@ class QuizTab(QWidget):
         self._cancel_enabled = False
         self._check_enabled = False
 
+        self._feedback_visible = False
+        self._feedback_is_correct: bool | None = None
+        self._feedback_text = ""
+        self._correct_answer_text = ""
+
         # Visual skeleton
         self._build_ui()
         self._refresh_ui_state()
@@ -69,38 +74,52 @@ class QuizTab(QWidget):
     @property
     def session(self) -> QuizSession | None:
         """Return the active QuizSession, if any."""
-
         return self._session
 
     @property
     def is_quiz_active(self) -> bool:
         """Return whether a Quiz is currently active."""
-
         return self._session is not None
 
     @property
     def difficulty_enabled(self) -> bool:
         """Return whether difficulty selection is enabled."""
-
         return self._difficulty_enabled
 
     @property
     def start_enabled(self) -> bool:
         """Return whether starting a Quiz is enabled."""
-
         return self._start_enabled
 
     @property
     def cancel_enabled(self) -> bool:
         """Return whether cancelling the Quiz is enabled."""
-
         return self._cancel_enabled
 
     @property
     def check_enabled(self) -> bool:
         """Return whether answer checking is enabled."""
-
         return self._check_enabled
+
+    @property
+    def feedback_visible(self) -> bool:
+        """Return whether answer feedback is visible."""
+        return self._feedback_visible
+
+    @property
+    def feedback_is_correct(self) -> bool | None:
+        """Return the feedback correctness state."""
+        return self._feedback_is_correct
+
+    @property
+    def feedback_text(self) -> str:
+        """Return the current feedback message."""
+        return self._feedback_text
+
+    @property
+    def correct_answer_text(self) -> str:
+        """Return the correct answer when feedback requires it."""
+        return self._correct_answer_text
 
     def start_quiz(
         self,
@@ -217,6 +236,11 @@ class QuizTab(QWidget):
         is_correct = self._session.answer(
             self._current_question,
             selected_answer,
+        )
+
+        self._set_feedback(
+            is_correct=is_correct,
+            correct_answer=self._current_question.correct_answer,
         )
 
         if self._session.is_complete:
@@ -496,6 +520,7 @@ class QuizTab(QWidget):
 
     def _refresh_question_display(self) -> None:
         """Refresh the visible question and answer options."""
+        self._reset_feedback()
 
         if self._current_question is None:
             self.question_label.setText("—")
@@ -575,3 +600,28 @@ class QuizTab(QWidget):
             button.setEnabled(
                 self._session is not None
             )
+
+    def _set_feedback(
+        self,
+        is_correct: bool,
+        correct_answer: str,
+    ) -> None:
+        """Set feedback state for the submitted answer."""
+
+        self._feedback_visible = True
+        self._feedback_is_correct = is_correct
+
+        if is_correct:
+            self._feedback_text = "Benar!"
+            self._correct_answer_text = ""
+        else:
+            self._feedback_text = "Kurang tepat."
+            self._correct_answer_text = correct_answer
+
+    def _reset_feedback(self) -> None:
+        """Clear answer feedback state."""
+
+        self._feedback_visible = False
+        self._feedback_is_correct = None
+        self._feedback_text = ""
+        self._correct_answer_text = ""
