@@ -221,6 +221,64 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
             ActivityType.QUIZ,
         )
 
+    def test_persisted_result_matches_quiz_statistics(self):
+        """Persisted QuizResult matches QuizTab statistics."""
+
+        self.quiz_tab.start_quiz(
+            difficulty=QuizDifficulty.LEVEL_1,
+            total_questions=2,
+        )
+
+        # Question 1 — correct.
+        self.quiz_tab.select_answer("ha")
+        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.next_question()
+
+        # Question 2 — incorrect.
+        self.quiz_tab.select_answer("na")
+        self.quiz_tab.submit_answer("na")
+
+        expected_correct = self.quiz_tab.correct_count
+        expected_incorrect = self.quiz_tab.incorrect_count
+
+        self.assertEqual(
+            expected_correct,
+            1,
+        )
+
+        self.assertEqual(
+            expected_incorrect,
+            1,
+        )
+
+        # Completing the final question persists the result
+        # and resets QuizTab statistics to idle state.
+        self.quiz_tab.next_question()
+
+        sessions = self.repository.load_sessions()
+
+        self.assertEqual(
+            len(sessions),
+            1,
+        )
+
+        result = sessions[0].payload
+
+        self.assertEqual(
+            result.total_questions,
+            2,
+        )
+
+        self.assertEqual(
+            result.correct_answers,
+            expected_correct,
+        )
+
+        self.assertEqual(
+            result.incorrect_answers,
+            expected_incorrect,
+        )
+
 
 if __name__ == "__main__":
     unittest.main(
