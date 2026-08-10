@@ -277,10 +277,14 @@ class QuizTab(QWidget):
         selected_answer: str,
     ) -> None:
         """Select an answer without submitting it."""
-
         if self._session is None:
             raise RuntimeError(
                 "No active Quiz."
+            )
+
+        if self._feedback_visible:
+            raise RuntimeError(
+                "Answer selection is closed during feedback."
             )
 
         if self._current_question is None:
