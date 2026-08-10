@@ -697,6 +697,7 @@ class QuizTab(QWidget):
         for button in self.answer_buttons:
             button.setEnabled(
                 self._session is not None
+                and not self._feedback_visible
             )
 
     def _set_feedback(
