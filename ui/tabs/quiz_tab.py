@@ -55,6 +55,7 @@ class QuizTab(QWidget):
         self._current_question = None
         self._difficulty = None
         self._selected_answer = None
+        self._quiz_ready_to_complete = False
 
         # UI state contract
         self._difficulty_enabled = True
@@ -66,6 +67,8 @@ class QuizTab(QWidget):
         self._feedback_is_correct: bool | None = None
         self._feedback_text = ""
         self._correct_answer_text = ""
+
+        self._next_enabled = False
 
         # Visual skeleton
         self._build_ui()
@@ -121,6 +124,16 @@ class QuizTab(QWidget):
         """Return the correct answer when feedback requires it."""
         return self._correct_answer_text
 
+    @property
+    def next_enabled(self) -> bool:
+        """Return whether Next Question is enabled."""
+        return self._next_enabled
+
+    @property
+    def selected_answer(self) -> str | None:
+        """Return the currently selected answer."""
+        return self._selected_answer
+
     def start_quiz(
         self,
         difficulty: QuizDifficulty,
@@ -152,6 +165,10 @@ class QuizTab(QWidget):
         self._cancel_enabled = True
         self._check_enabled = False
 
+        self._next_enabled = False
+        self._quiz_ready_to_complete = False
+        self._reset_feedback()
+
         self.quiz_started.emit()
         self._refresh_question_display()
         self._refresh_ui_state()
@@ -173,6 +190,10 @@ class QuizTab(QWidget):
         self._start_enabled = True
         self._cancel_enabled = False
         self._check_enabled = False
+
+        self._next_enabled = False
+        self._quiz_ready_to_complete = False
+        self._reset_feedback()
 
         self.quiz_cancelled.emit()
         self._refresh_ui_state()
@@ -208,7 +229,7 @@ class QuizTab(QWidget):
         self,
         selected_answer: str | None = None,
     ) -> bool:
-        """Submit the selected answer."""
+        """Submit the selected answer and show feedback."""
 
         if self._session is None:
             raise RuntimeError(
@@ -244,36 +265,15 @@ class QuizTab(QWidget):
         )
 
         if self._session.is_complete:
-            result = self._session.build_result()
-
-            self._learning_service.record_quiz_result(
-                learner_id=self._learner_id,
-                result=result,
-            )
-
-            self._session = None
-            self._current_question = None
-            self._difficulty = None
-            self._selected_answer = None
-
-            self._difficulty_enabled = True
-            self._start_enabled = True
-            self._cancel_enabled = False
+            self._quiz_ready_to_complete = True
+            self._next_enabled = True
             self._check_enabled = False
-
-            self.quiz_completed.emit()
 
             self._refresh_ui_state()
 
             return is_correct
 
-        self._current_question = (
-            self._generator.generate(
-                difficulty=self._difficulty,
-            )
-        )
-
-        self._selected_answer = None
+        self._next_enabled = True
         self._check_enabled = False
 
         self._refresh_ui_state()
@@ -444,6 +444,14 @@ class QuizTab(QWidget):
             self.cancel_quiz,
         )
 
+        self.next_button = QPushButton(
+            "LANJUT"
+        )
+
+        self.next_button.clicked.connect(
+            self.next_question,
+        )
+
         action_layout.addStretch()
 
         action_layout.addWidget(
@@ -452,6 +460,10 @@ class QuizTab(QWidget):
 
         action_layout.addWidget(
             self.cancel_button,
+        )
+
+        action_layout.addWidget(
+            self.next_button,
         )
 
         action_layout.addStretch()
@@ -520,8 +532,6 @@ class QuizTab(QWidget):
 
     def _refresh_question_display(self) -> None:
         """Refresh the visible question and answer options."""
-        self._reset_feedback()
-
         if self._current_question is None:
             self.question_label.setText("—")
 
@@ -596,6 +606,10 @@ class QuizTab(QWidget):
             self._check_enabled
         )
 
+        self.next_button.setEnabled(
+            self._next_enabled
+        )
+
         for button in self.answer_buttons:
             button.setEnabled(
                 self._session is not None
@@ -625,3 +639,57 @@ class QuizTab(QWidget):
         self._feedback_is_correct = None
         self._feedback_text = ""
         self._correct_answer_text = ""
+
+    def next_question(self) -> None:
+        """Advance to the next Quiz question."""
+
+        if self._session is None:
+            raise RuntimeError(
+                "No active Quiz."
+            )
+
+        if not self._next_enabled:
+            raise RuntimeError(
+                "Next question is not available."
+            )
+
+        if self._quiz_ready_to_complete:
+            result = self._session.build_result()
+
+            self._learning_service.record_quiz_result(
+                learner_id=self._learner_id,
+                result=result,
+            )
+
+            self._session = None
+            self._current_question = None
+            self._difficulty = None
+            self._selected_answer = None
+
+            self._next_enabled = False
+            self._check_enabled = False
+            self._difficulty_enabled = True
+            self._start_enabled = True
+            self._cancel_enabled = False
+
+            self._reset_feedback()
+            self._refresh_ui_state()
+
+            self.quiz_completed.emit()
+
+            return
+
+        self._current_question = (
+            self._generator.generate(
+                difficulty=self._difficulty,
+            )
+        )
+
+        self._selected_answer = None
+        self._next_enabled = False
+        self._check_enabled = False
+
+        self._reset_feedback()
+
+        self._refresh_question_display()
+        self._refresh_ui_state()

@@ -186,7 +186,7 @@ class TestQuizTabFeedback(unittest.TestCase):
             self.quiz_tab.feedback_visible,
         )
 
-        self.quiz_tab._refresh_question_display()
+        self.quiz_tab.next_question()
 
         self.assertFalse(
             self.quiz_tab.feedback_visible,

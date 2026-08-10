@@ -234,6 +234,16 @@ class TestQuizTabUIState(unittest.TestCase):
             "ha",
         )
 
+        self.assertTrue(
+            self.quiz_tab.is_quiz_active,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.next_enabled,
+        )
+
+        self.quiz_tab.next_question()
+
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
         )

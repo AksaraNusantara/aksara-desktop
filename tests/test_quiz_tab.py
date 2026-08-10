@@ -206,6 +206,21 @@ class TestQuizTab(unittest.TestCase):
 
         self.assertEqual(
             len(self.learning_service.calls),
+            0,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.is_quiz_active,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.next_enabled,
+        )
+
+        self.quiz_tab.next_question()
+
+        self.assertEqual(
+            len(self.learning_service.calls),
             1,
         )
 
@@ -231,7 +246,16 @@ class TestQuizTab(unittest.TestCase):
             total_questions=2,
         )
 
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.submit_answer(
+            "ha",
+        )
+
+        self.assertEqual(
+            len(self.generator.calls),
+            1,
+        )
+
+        self.quiz_tab.next_question()
 
         self.assertEqual(
             len(self.generator.calls),
@@ -247,7 +271,6 @@ class TestQuizTab(unittest.TestCase):
             QuizSessionState.ACTIVE,
         )
 
-
     def test_next_question_uses_same_difficulty(self):
         """Every generated question uses the selected difficulty."""
 
@@ -256,7 +279,11 @@ class TestQuizTab(unittest.TestCase):
             total_questions=3,
         )
 
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.submit_answer(
+            "ha",
+        )
+
+        self.quiz_tab.next_question()
 
         self.assertEqual(
             self.generator.calls,
@@ -265,7 +292,6 @@ class TestQuizTab(unittest.TestCase):
                 QuizDifficulty.LEVEL_3,
             ],
         )
-
 
     def test_quiz_remains_active_after_non_final_answer(self):
         """A non-final answer keeps the Quiz active."""
@@ -287,15 +313,32 @@ class TestQuizTab(unittest.TestCase):
         )
 
 
-    def test_completed_quiz_does_not_generate_extra_question(self):
-        """The final answer does not generate another question."""
+    def test_final_answer_waits_for_next_to_complete(self):
+        """Final answer waits for Next before completing the Quiz."""
 
         self.quiz_tab.start_quiz(
             difficulty=QuizDifficulty.LEVEL_1,
             total_questions=1,
         )
 
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.submit_answer(
+            "ha",
+        )
+
+        self.assertEqual(
+            len(self.generator.calls),
+            1,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.is_quiz_active,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.next_enabled,
+        )
+
+        self.quiz_tab.next_question()
 
         self.assertEqual(
             len(self.generator.calls),
@@ -304,6 +347,10 @@ class TestQuizTab(unittest.TestCase):
 
         self.assertIsNone(
             self.quiz_tab.session,
+        )
+
+        self.assertFalse(
+            self.quiz_tab.is_quiz_active,
         )
 
 
