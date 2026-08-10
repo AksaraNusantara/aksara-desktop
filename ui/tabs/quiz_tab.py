@@ -54,6 +54,13 @@ class QuizTab(QWidget):
         self._session = None
         self._current_question = None
         self._difficulty = None
+
+        self._current_question_number = 0
+        self._total_questions = 0
+
+        self._correct_count = 0
+        self._incorrect_count = 0
+
         self._selected_answer = None
         self._quiz_ready_to_complete = False
 
@@ -134,6 +141,56 @@ class QuizTab(QWidget):
         """Return the currently selected answer."""
         return self._selected_answer
 
+    @property
+    def progress_text(self) -> str:
+        """Return the current Quiz progress."""
+
+        if self._session is None:
+            return "—"
+
+        if self._current_question_number <= 0:
+            return "—"
+
+        return (
+            f"Soal "
+            f"{self._current_question_number} "
+            f"dari "
+            f"{self._total_questions}"
+        )
+
+    @property
+    def correct_count(self) -> int:
+        """Return the number of correct answers."""
+        return self._correct_count
+
+    @property
+    def incorrect_count(self) -> int:
+        """Return the number of incorrect answers."""
+
+        return self._incorrect_count
+
+    @property
+    def accuracy_text(self) -> str:
+        """Return the current Quiz accuracy."""
+        total_answers = (
+            self._correct_count
+            + self._incorrect_count
+        )
+
+        if total_answers == 0:
+            return "0%"
+
+        accuracy = (
+            self._correct_count
+            / total_answers
+            * 100
+        )
+
+        if accuracy.is_integer():
+            return f"{int(accuracy)}%"
+
+        return f"{accuracy:.1f}%"
+
     def start_quiz(
         self,
         difficulty: QuizDifficulty,
@@ -151,6 +208,12 @@ class QuizTab(QWidget):
         self._session = QuizSession(
             total_questions=total_questions,
         )
+
+        self._total_questions = total_questions
+        self._current_question_number = 1
+
+        self._correct_count = 0
+        self._incorrect_count = 0
 
         self._current_question = (
             self._generator.generate(
@@ -171,6 +234,8 @@ class QuizTab(QWidget):
 
         self.quiz_started.emit()
         self._refresh_question_display()
+        self._refresh_progress_display()
+        self._refresh_statistics_display()
         self._refresh_ui_state()
 
     def cancel_quiz(self) -> None:
@@ -185,6 +250,15 @@ class QuizTab(QWidget):
         self._current_question = None
         self._difficulty = None
         self._selected_answer = None
+
+        self._current_question_number = 0
+        self._total_questions = 0
+
+        self._correct_count = 0
+        self._incorrect_count = 0
+
+        self._refresh_progress_display()
+        self._refresh_statistics_display()
 
         self._difficulty_enabled = True
         self._start_enabled = True
@@ -230,7 +304,6 @@ class QuizTab(QWidget):
         selected_answer: str | None = None,
     ) -> bool:
         """Submit the selected answer and show feedback."""
-
         if self._session is None:
             raise RuntimeError(
                 "No active Quiz."
@@ -258,6 +331,13 @@ class QuizTab(QWidget):
             self._current_question,
             selected_answer,
         )
+
+        if is_correct:
+            self._correct_count += 1
+        else:
+            self._incorrect_count += 1
+
+        self._refresh_statistics_display()
 
         self._set_feedback(
             is_correct=is_correct,
@@ -640,6 +720,28 @@ class QuizTab(QWidget):
         self._feedback_text = ""
         self._correct_answer_text = ""
 
+    def _refresh_progress_display(self) -> None:
+        """Refresh the visible Quiz progress."""
+
+        self.progress_label.setText(
+            self.progress_text
+        )
+
+    def _refresh_statistics_display(self) -> None:
+        """Refresh the visible Quiz statistics."""
+
+        self.correct_label.setText(
+            f"Benar: {self.correct_count}"
+        )
+
+        self.incorrect_label.setText(
+            f"Salah: {self.incorrect_count}"
+        )
+
+        self.accuracy_label.setText(
+            f"Akurasi: {self.accuracy_text}"
+        )
+
     def next_question(self) -> None:
         """Advance to the next Quiz question."""
 
@@ -666,6 +768,14 @@ class QuizTab(QWidget):
             self._difficulty = None
             self._selected_answer = None
 
+            self._current_question_number = 0
+            self._total_questions = 0
+
+            self._correct_count = 0
+            self._incorrect_count = 0
+
+            self._refresh_statistics_display()
+
             self._next_enabled = False
             self._check_enabled = False
             self._difficulty_enabled = True
@@ -673,11 +783,14 @@ class QuizTab(QWidget):
             self._cancel_enabled = False
 
             self._reset_feedback()
+            self._refresh_progress_display()
             self._refresh_ui_state()
 
             self.quiz_completed.emit()
 
             return
+
+        self._current_question_number += 1
 
         self._current_question = (
             self._generator.generate(
@@ -692,4 +805,5 @@ class QuizTab(QWidget):
         self._reset_feedback()
 
         self._refresh_question_display()
+        self._refresh_progress_display()
         self._refresh_ui_state()
