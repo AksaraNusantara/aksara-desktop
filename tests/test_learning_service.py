@@ -61,10 +61,17 @@ class InMemoryLearningRepository(LearningRepository):
 
         self.sessions.append(session)
 
-    def load_sessions(self) -> list[StudySession]:
-        """Return all StudySession records."""
+    def load_sessions(
+        self,
+        learner_id: str,
+    ) -> list[StudySession]:
+        """Return StudySession records belonging to a learner."""
 
-        return list(self.sessions)
+        return [
+            session
+            for session in self.sessions
+            if session.learner_id == learner_id
+        ]
 
     def save_profile(
         self,
@@ -158,7 +165,9 @@ class TestLearningService(unittest.TestCase):
             timestamp=self.timestamp,
         )
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),

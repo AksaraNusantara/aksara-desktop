@@ -92,12 +92,17 @@ class TestStudySession(unittest.TestCase):
 
         session = StudySession(
             session_id="session-001",
+            learner_id="learner-1",
             timestamp=timestamp,
             activity_type=ActivityType.QUIZ,
             payload=result,
         )
 
         self.assertEqual(session.session_id, "session-001")
+        self.assertEqual(
+            session.learner_id,
+            "learner-1",
+        )
         self.assertEqual(session.timestamp, timestamp)
         self.assertIs(session.activity_type, ActivityType.QUIZ)
         self.assertIs(session.payload, result)
@@ -108,6 +113,7 @@ class TestStudySession(unittest.TestCase):
         with self.assertRaises(ValueError):
             StudySession(
                 session_id="",
+                learner_id="learner-1",
                 timestamp=datetime.now(timezone.utc),
                 activity_type=ActivityType.QUIZ,
                 payload=self._create_quiz_result(),
@@ -119,9 +125,22 @@ class TestStudySession(unittest.TestCase):
         with self.assertRaises(ValueError):
             StudySession(
                 session_id="session-003",
+                learner_id="learner-1",
                 timestamp=datetime.now(timezone.utc),
                 activity_type=ActivityType.QUIZ,
                 payload=None,
+            )
+
+    def test_empty_learner_id(self):
+        """StudySession requires a non-empty learner identifier."""
+
+        with self.assertRaises(ValueError):
+            StudySession(
+                session_id="session-002",
+                learner_id="",
+                timestamp=datetime.now(timezone.utc),
+                activity_type=ActivityType.QUIZ,
+                payload=self._create_quiz_result(),
             )
 
 
@@ -211,6 +230,7 @@ class TestDomainModelImmutability(unittest.TestCase):
 
         session = StudySession(
             session_id="session-001",
+            learner_id="learner-1",
             timestamp=datetime.now(timezone.utc),
             activity_type=ActivityType.QUIZ,
             payload=QuizResult(

@@ -147,7 +147,9 @@ class TestLearningFlow(unittest.TestCase):
         # 3. Verify persisted StudySession
         # --------------------------------------------------------------
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),
@@ -287,7 +289,9 @@ class TestLearningFlow(unittest.TestCase):
         # Verify Primary Data
         # --------------------------------------------------------------
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),
@@ -385,7 +389,9 @@ class TestLearningFlow(unittest.TestCase):
             ),
         )
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         reconstructed_total_sessions = len(sessions)
 

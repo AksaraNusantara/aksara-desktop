@@ -85,6 +85,7 @@ class LearningService:
 
         session = StudySession(
             session_id=str(uuid4()),
+            learner_id=learner_id,
             timestamp=timestamp,
             activity_type=ActivityType.QUIZ,
             payload=result,

@@ -54,10 +54,17 @@ class InMemoryLearningRepository(LearningRepository):
 
         self._sessions.append(session)
 
-    def load_sessions(self) -> list[StudySession]:
-        """Return all persisted StudySession records."""
+    def load_sessions(
+        self,
+        learner_id: str,
+    ) -> list[StudySession]:
+        """Load stored sessions belonging to a learner."""
 
-        return list(self._sessions)
+        return [
+            session
+            for session in self._sessions
+            if session.learner_id == learner_id
+        ]
 
     def save_profile(self, profile: LearningProfile) -> None:
         """Persist a LearningProfile in memory."""
@@ -84,11 +91,13 @@ class TestLearningRepositoryContract(unittest.TestCase):
     def _create_session(
         self,
         session_id: str = "session-001",
+        learner_id: str = "learner-001",
     ) -> StudySession:
         """Create a valid Quiz StudySession."""
 
         return StudySession(
             session_id=session_id,
+            learner_id=learner_id,
             timestamp=datetime.now(timezone.utc),
             activity_type=ActivityType.QUIZ,
             payload=QuizResult(
@@ -113,7 +122,9 @@ class TestLearningRepositoryContract(unittest.TestCase):
 
         self.repository.save_session(session)
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            session.learner_id,
+        )
 
         self.assertEqual(len(sessions), 1)
         self.assertIs(sessions[0], session)
@@ -121,13 +132,21 @@ class TestLearningRepositoryContract(unittest.TestCase):
     def test_multiple_sessions_are_preserved(self):
         """Multiple StudySession records are preserved."""
 
-        session_1 = self._create_session("session-001")
-        session_2 = self._create_session("session-002")
+        session_1 = self._create_session(
+            session_id="session-001",
+            learner_id="learner-001",
+        )
 
+        session_2 = self._create_session(
+            session_id="session-002",
+            learner_id="learner-001",
+        )
         self.repository.save_session(session_1)
         self.repository.save_session(session_2)
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(len(sessions), 2)
         self.assertEqual(
@@ -138,7 +157,9 @@ class TestLearningRepositoryContract(unittest.TestCase):
     def test_load_sessions_returns_empty_list_initially(self):
         """A new repository has no StudySession records."""
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(sessions, [])
 
@@ -192,6 +213,60 @@ class TestLearningRepositoryContract(unittest.TestCase):
 
         self.assertIs(loaded, profile_2)
         self.assertEqual(loaded.total_sessions, 2)
+
+    def test_sessions_are_isolated_by_learner(self):
+        """Loading sessions returns only records belonging to the learner."""
+
+        learner_a_session_1 = self._create_session(
+            session_id="session-001",
+            learner_id="learner-001",
+        )
+
+        learner_b_session = self._create_session(
+            session_id="session-002",
+            learner_id="learner-002",
+        )
+
+        learner_a_session_2 = self._create_session(
+            session_id="session-003",
+            learner_id="learner-001",
+        )
+
+        self.repository.save_session(
+            learner_a_session_1,
+        )
+
+        self.repository.save_session(
+            learner_b_session,
+        )
+
+        self.repository.save_session(
+            learner_a_session_2,
+        )
+
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
+
+        self.assertEqual(
+            len(sessions),
+            2,
+        )
+
+        self.assertEqual(
+            {session.session_id for session in sessions},
+            {
+                "session-001",
+                "session-003",
+            },
+        )
+
+        self.assertTrue(
+            all(
+                session.learner_id == "learner-001"
+                for session in sessions
+            )
+        )
 
 
 if __name__ == "__main__":

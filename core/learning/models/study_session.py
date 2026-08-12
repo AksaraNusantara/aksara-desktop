@@ -11,7 +11,6 @@ Architecture references:
     AD-LE-004 — Activity Classification identifies the activity type.
     AD-LE-005 — Payload represents the activity-specific result.
 """
-
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -29,12 +28,14 @@ class StudySession:
 
     Attributes:
         session_id: Unique identifier of the learning session.
+        learner_id: Unique identifier of the learner who owns the session.
         timestamp: Date and time when the activity was completed.
         activity_type: Classification of the learning activity.
         payload: Activity-specific result associated with the session.
     """
 
     session_id: str
+    learner_id: str
     timestamp: datetime
     activity_type: ActivityType
     payload: Any
@@ -44,6 +45,9 @@ class StudySession:
 
         if not self.session_id:
             raise ValueError("session_id cannot be empty.")
+
+        if not self.learner_id:
+            raise ValueError("learner_id cannot be empty.")
 
         if not isinstance(self.activity_type, ActivityType):
             raise TypeError(

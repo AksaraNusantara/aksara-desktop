@@ -36,8 +36,11 @@ class LearningRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def load_sessions(self) -> list[StudySession]:
-        """Load all persisted StudySession records."""
+    def load_sessions(
+        self,
+        learner_id: str,
+    ) -> list[StudySession]:
+        """Load persisted StudySession records belonging to a learner."""
         raise NotImplementedError
 
     @abstractmethod
@@ -93,7 +96,17 @@ class StorageLearningRepository(LearningRepository):
         Existing sessions are preserved and the new session is appended.
         """
 
-        sessions = self.load_sessions()
+        sessions_data = self.storage.load(
+            self.SESSIONS_KEY,
+        )
+
+        if sessions_data is None:
+            sessions_data = []
+
+        sessions = [
+            self._deserialize_session(item)
+            for item in sessions_data
+        ]
 
         sessions = [
             existing
@@ -111,12 +124,19 @@ class StorageLearningRepository(LearningRepository):
             ],
         )
 
-    def load_sessions(self) -> list[StudySession]:
+    def load_sessions(
+        self,
+        learner_id: str,
+    ) -> list[StudySession]:
         """
-        Load all persisted StudySession records.
+        Load persisted StudySession records belonging to a learner.
+
+        Args:
+            learner_id: Unique identifier of the learner.
 
         Returns:
-            List of reconstructed StudySession objects.
+            List of reconstructed StudySession objects belonging
+            to the learner.
         """
 
         data = self.storage.load(
@@ -126,9 +146,15 @@ class StorageLearningRepository(LearningRepository):
         if data is None:
             return []
 
-        return [
+        sessions = [
             self._deserialize_session(item)
             for item in data
+        ]
+
+        return [
+            session
+            for session in sessions
+            if session.learner_id == learner_id
         ]
 
     # ------------------------------------------------------------------
@@ -219,6 +245,7 @@ class StorageLearningRepository(LearningRepository):
 
         return {
             "session_id": session.session_id,
+            "learner_id": session.learner_id,
             "timestamp": session.timestamp.isoformat(),
             "activity_type": session.activity_type.value,
             "payload": payload_data,
@@ -252,6 +279,7 @@ class StorageLearningRepository(LearningRepository):
 
         return StudySession(
             session_id=data["session_id"],
+            learner_id=data["learner_id"],
             timestamp=datetime.fromisoformat(
                 data["timestamp"],
             ),

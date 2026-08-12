@@ -1,16 +1,16 @@
 # Learning Engine Architecture
 
-**Architecture Version:** 1.0
-**Document Status:** Stable
+**Architecture Version:** 1.1
+**Document Status:** Proposed
 **Document Type:** Architecture Contract
 
 ---
 
 > **Document Status Note**
 >
-> Dokumen ini mendefinisikan Architecture Contract Learning Engine Version 1.0.
+> Dokumen ini mendefinisikan Architecture Contract Learning Engine Version 1.1.
 >
-> Status **Stable** menunjukkan bahwa struktur dan prinsip arsitektur telah selesai ditinjau dan dapat digunakan sebagai acuan implementasi.
+> Status **Proposed** menunjukkan bahwa perubahan kontrak telah dirumuskan dan didokumentasikan, tetapi implementasi reference dan regression validation belum selesai. Setelah implementasi tervalidasi, dokumen dapat dikembalikan ke status **Stable**.
 >
 > Setelah dokumen dinyatakan Stable, perubahan terhadap Architecture Contract harus dilakukan secara terkontrol dan tidak boleh dilakukan hanya untuk menyesuaikan implementasi terhadap desain yang telah ditetapkan.
 
@@ -24,7 +24,7 @@
 
 ## 1.1 Purpose
 
-Learning Engine merupakan subsistem yang bertanggung jawab untuk mengelola seluruh data perkembangan belajar pengguna di dalam ekosistem AksaraNusantara.
+Learning Engine merupakan subsistem yang bertanggung jawab untuk mengelola seluruh data perkembangan belajar pengguna di dalam ekosistem AksaraNusantara. Setiap data aktivitas belajar yang menjadi bagian dari Learning Engine harus memiliki identitas learner yang jelas agar perkembangan belajar beberapa learner dalam satu instalasi aplikasi tetap terisolasi.
 
 Learning Engine tidak berperan sebagai antarmuka pengguna (UI) maupun penyedia materi pembelajaran. Sebaliknya, komponen ini berfungsi sebagai pusat pengelolaan data belajar sehingga seluruh mode pembelajaran dapat menggunakan mekanisme pencatatan progres yang konsisten.
 
@@ -175,7 +175,6 @@ Fitur-fitur berikut belum diimplementasikan pada versi saat ini, namun telah dip
 * Learning Recommendation
 * Adaptive Learning
 * Cloud Synchronization
-* Multiple Learning Profiles
 
 Penambahan fitur-fitur tersebut di masa mendatang diharapkan tidak memerlukan perubahan terhadap kontrak arsitektur yang didefinisikan dalam dokumen ini.
 
@@ -185,7 +184,7 @@ Penambahan fitur-fitur tersebut di masa mendatang diharapkan tidak memerlukan pe
 
 Learning Engine dirancang dengan prinsip **forward compatibility**, yaitu kemampuan untuk berkembang tanpa mengubah struktur konseptual yang telah ditetapkan.
 
-Setiap implementasi baru diharapkan menjadi perluasan terhadap kontrak yang sudah ada, bukan perubahan terhadap kontrak tersebut.
+Setiap implementasi baru diharapkan menjadi perluasan terhadap kontrak yang sudah ada. Apabila kebutuhan baru tidak dapat diakomodasi tanpa mengubah kontrak, perubahan tersebut harus melalui proses Architecture Decision dan versioning yang sesuai.
 
 Dengan pendekatan ini, stabilitas dokumentasi dapat dipertahankan, sementara implementasi dapat terus berkembang mengikuti kebutuhan aplikasi dan ekosistem AksaraNusantara.
 
@@ -211,9 +210,11 @@ Learning Engine bersifat independen terhadap jenis mode pembelajaran yang diguna
 
 ## 3.2 Learning Profile
 
-Learning Profile merupakan representasi perkembangan belajar seorang pengguna.
+Learning Profile merupakan representasi perkembangan belajar seorang learner.
 
-Learning Profile menyimpan informasi ringkasan yang menggambarkan kondisi belajar pengguna secara keseluruhan dan menjadi sumber utama informasi progres pembelajaran.
+Setiap Learning Profile dimiliki oleh tepat satu learner dan diidentifikasi secara unik melalui `learner_id`.
+
+Learning Profile menyimpan informasi ringkasan yang menggambarkan kondisi belajar seorang learner secara keseluruhan dan menjadi sumber utama informasi progres pembelajaran.
 
 Learning Profile tidak menyimpan detail setiap aktivitas belajar secara langsung, melainkan menyimpan hasil agregasi dari seluruh Study Session yang telah tercatat.
 
@@ -221,17 +222,27 @@ Learning Profile tidak menyimpan detail setiap aktivitas belajar secara langsung
 
 ## 3.3 Study Session
 
-Study Session merupakan satu periode aktivitas belajar yang dilakukan oleh pengguna.
+Study Session merupakan satu aktivitas belajar yang telah selesai dan dimiliki oleh tepat satu learner.
+
+Setiap Study Session memiliki `learner_id` yang mengidentifikasi learner pemilik aktivitas tersebut.
 
 Satu Study Session dapat merepresentasikan berbagai jenis aktivitas pembelajaran, seperti Quiz, Flashcard, Writing Practice, maupun aktivitas lain yang didukung oleh Learning Engine.
 
 Setiap Study Session memiliki awal, akhir, serta hasil yang dapat dicatat sebagai bagian dari riwayat pembelajaran.
 
-Pada Reference Implementation versi pertama, hanya Study Session bertipe Quiz yang diimplementasikan.
+Pada Reference Implementation versi pertama, hanya Study Session bertipe Quiz yang diimplementasikan. Setiap Study Session Quiz tetap memiliki ownership learner yang eksplisit.
 
 ---
 
-## 3.4 Learning Activity
+## 3.4 Learner Identity
+
+Learner Identity merupakan identitas unik yang digunakan Learning Engine untuk menentukan pemilik data perkembangan belajar. Identitas ini direpresentasikan oleh `learner_id`.
+
+Setiap `StudySession` dan `LearningProfile` harus terkait dengan tepat satu `learner_id`. Learning Engine tidak bertanggung jawab terhadap mekanisme pemilihan, autentikasi, maupun pengelolaan antarmuka learner; Learning Engine menerima `learner_id` sebagai bagian dari konteks operasi pembelajaran.
+
+---
+
+## 3.5 Learning Activity
 
 Learning Activity adalah jenis aktivitas pembelajaran yang dilakukan di dalam sebuah Study Session.
 
@@ -249,7 +260,7 @@ Reference Implementation saat ini hanya mengimplementasikan Quiz sebagai Learnin
 
 ---
 
-## 3.5 Learning Statistics
+## 3.6 Learning Statistics
 
 Learning Statistics merupakan kumpulan informasi statistik yang dihasilkan berdasarkan Learning Profile dan Study Session.
 
@@ -259,7 +270,7 @@ Learning Statistics bersifat turunan (*derived data*) dan dapat dihitung kembali
 
 ---
 
-## 3.6 Learning Repository
+## 3.7 Learning Repository
 
 Learning Repository adalah komponen yang bertanggung jawab terhadap proses penyimpanan dan pengambilan data Learning Engine.
 
@@ -269,7 +280,7 @@ Tanggung jawab Repository terbatas pada proses persistensi data.
 
 ---
 
-## 3.7 Learning Service
+## 3.8 Learning Service
 
 Learning Service merupakan lapisan layanan yang mengoordinasikan interaksi antara User Interface, Repository, dan komponen lain di dalam Learning Engine.
 
@@ -277,7 +288,7 @@ Learning Service bertanggung jawab menjalankan logika bisnis pembelajaran tanpa 
 
 ---
 
-## 3.8 Reference Implementation
+## 3.9 Reference Implementation
 
 Reference Implementation adalah implementasi pertama yang digunakan untuk membuktikan bahwa kontrak Learning Engine dapat diterapkan secara nyata.
 
@@ -287,7 +298,7 @@ Pada versi pertama dokumen ini, Quiz Module berperan sebagai Reference Implement
 
 ---
 
-## 3.9 Future Implementation
+## 3.10 Future Implementation
 
 Future Implementation adalah implementasi yang belum tersedia pada versi saat ini, tetapi telah diantisipasi oleh kontrak Learning Engine.
 
@@ -304,11 +315,11 @@ Contoh Future Implementation meliputi:
 
 ---
 
-## 3.10 Architecture Contract
+## 3.11 Architecture Contract
 
 Architecture Contract adalah seperangkat aturan konseptual yang mendefinisikan struktur, tanggung jawab, hubungan antar komponen, serta prinsip-prinsip yang harus dipatuhi oleh seluruh implementasi Learning Engine.
 
-Architecture Contract bersifat stabil dan dirancang untuk digunakan dalam jangka panjang.
+Architecture Contract bersifat stabil dan dirancang untuk digunakan dalam jangka panjang. Perubahan terhadap kontrak hanya dilakukan melalui proses perubahan arsitektur yang terdokumentasi dan dapat ditelusuri.
 
 Perubahan implementasi seharusnya tidak memerlukan perubahan terhadap Architecture Contract, kecuali apabila terjadi perubahan fundamental pada desain sistem.
 
@@ -1057,7 +1068,6 @@ Contoh pengembangan yang telah diantisipasi meliputi:
 * Achievement System
 * Learning Recommendation
 * Cloud Synchronization
-* Multiple Learning Profiles
 
 Penambahan fitur-fitur tersebut diharapkan hanya memerlukan perluasan implementasi tanpa mengubah konsep dasar Learning Profile.
 
@@ -1081,6 +1091,8 @@ Study Session merupakan **Primary Data** dan **authoritative source** untuk lear
 
 Study Session tidak menyimpan informasi agregat yang dapat dihitung dari kumpulan Study Session.
 
+Setiap Study Session wajib memiliki `learner_id` dan tidak boleh menjadi milik lebih dari satu learner. `learner_id` merupakan bagian dari identitas ownership Study Session, bukan sekadar metadata presentation.
+
 ---
 
 ## 9.2 Responsibilities
@@ -1089,6 +1101,7 @@ Study Session memiliki tanggung jawab sebagai berikut:
 
 * Merepresentasikan satu aktivitas belajar.
 * Menyimpan informasi mengenai satu sesi pembelajaran.
+* Menyimpan identitas learner pemilik aktivitas melalui `learner_id`.
 * Menjadi sumber data bagi Learning Profile.
 * Menjadi sumber data bagi Learning Statistics.
 * Menyediakan dasar bagi analisis perkembangan belajar.
@@ -1102,7 +1115,7 @@ Study Session tidak bertanggung jawab terhadap penyimpanan permanen maupun perhi
 Learning Engine memperlakukan setiap aktivitas belajar sebagai sebuah Study Session.
 
 ```text
-                 Learning Profile
+                 Learner Identity
                          │
                          ▼
                   Study Sessions
@@ -1139,6 +1152,7 @@ Study Session memiliki hubungan konseptual dengan beberapa komponen Learning Eng
 
 | Component           | Relationship                                                              |
 | ------------------- | ------------------------------------------------------------------------- |
+| Learner Identity    | Menentukan learner pemilik Study Session.                                 |
 | Learning Profile    | Menjadi sumber data perkembangan belajar.                                 |
 | Learning Statistics | Menjadi sumber perhitungan statistik.                                     |
 | Learning Repository | Menyimpan dan mengambil Study Session.                                    |
@@ -1159,6 +1173,7 @@ Perancangan Study Session mengikuti prinsip-prinsip berikut:
 * Merupakan Primary Data.
 * Menjadi authoritative source untuk learning activity history.
 * Tidak menyimpan informasi agregat yang dapat dihitung ulang.
+* Memiliki ownership eksplisit melalui `learner_id`.
 * Tidak bergantung pada Learning Profile sebagai sumber data utama.
 * Dapat dipersist melalui Learning Repository.
 
@@ -1167,6 +1182,14 @@ Perancangan Study Session mengikuti prinsip-prinsip berikut:
 > Study Session merupakan sumber data utama untuk riwayat aktivitas pembelajaran.
 >
 > Learning Profile dan Statistics dapat dibentuk atau diperbarui berdasarkan Study Session, tetapi keduanya bukan pengganti Study Session sebagai authoritative learning activity history.
+
+> **Architecture Decision — AD-LE-014**
+>
+> Setiap Study Session dimiliki tepat satu learner melalui `learner_id`. Learning Repository menyediakan pengambilan Study Session secara learner-scoped.
+>
+> **Rationale**
+>
+> Explicit ownership menjaga isolasi data antar learner dalam satu instalasi aplikasi dan mencegah History atau consumer lain melakukan filtering ownership di luar Persistence Boundary.
 
 ---
 
@@ -1588,8 +1611,10 @@ Learning Repository harus menyediakan kemampuan konseptual berikut:
 * Menyimpan Learning Profile.
 * Mengambil Learning Profile.
 * Menyimpan Study Session.
-* Mengambil Study Session.
+* Mengambil Study Session untuk learner tertentu.
 * Menyediakan operasi pembaruan data secara konsisten.
+
+Pengambilan Study Session secara learner-scoped merupakan tanggung jawab Repository. Consumer tidak boleh mengambil seluruh collection lalu melakukan filtering ownership sendiri.
 
 Dokumen ini tidak mendefinisikan nama metode, struktur kelas, maupun bahasa pemrograman yang digunakan.
 
@@ -1611,10 +1636,12 @@ Learning Repository memiliki hubungan konseptual dengan:
 | ------------------ | --------------------------------------------------------- |
 | Learning Services  | Menggunakan Repository untuk seluruh operasi persistensi. |
 | Learning Profile   | Disimpan dan diambil melalui Repository.                  |
-| Study Session      | Disimpan dan diambil melalui Repository.                  |
+| Study Session      | Disimpan dan diambil melalui Repository dengan learner ownership. |
 | Persistent Storage | Menjadi media penyimpanan yang digunakan Repository.      |
 
 Repository tidak memiliki hubungan langsung dengan User Interface.
+
+Repository SHALL menyediakan learner-scoped retrieval untuk Study Session. Consumer meminta data berdasarkan `learner_id` dan tidak melakukan filtering ownership sendiri.
 
 ---
 
@@ -2063,7 +2090,7 @@ Persistent Storage merupakan media penyimpanan aktual yang digunakan oleh implem
 Architecture Contract menetapkan bahwa Data Storage harus mampu menyimpan informasi berikut:
 
 * Learning Profile
-* Study Session Collection
+* Study Session Collection dengan learner ownership eksplisit
 
 Kontrak ini tidak menentukan:
 
@@ -2212,6 +2239,8 @@ Supporting Domain menyediakan layanan yang mendukung pengelolaan Primary Domain.
 Primary Domain terdiri atas objek-objek berikut.
 
 ```text
+Learner Identity
+
 Learning Profile
 
 Study Session
@@ -2252,13 +2281,14 @@ Supporting Domain menyediakan layanan yang mengelola Primary Domain, tetapi buka
 Hubungan konseptual antar Domain Model digambarkan sebagai berikut.
 
 ```text
-                    Learning Profile
-                           ▲
+                    Learner Identity
                            │
-                     derived from
-                           │
-                           │
+                           ▼
                     Study Session *
+                           │
+                     derived into
+                           ▼
+                    Learning Profile
                            │
             ┌──────────────┴──────────────┐
             ▼                             ▼
@@ -2267,8 +2297,9 @@ Activity Classification              Payload
 
 Keterangan:
 
-* Satu Learning Profile merepresentasikan perkembangan belajar seorang pengguna.
-* Satu Learning Profile dibentuk dari banyak Study Session.
+* Satu Learning Profile merepresentasikan perkembangan belajar seorang learner.
+* Setiap Study Session dimiliki tepat satu learner melalui `learner_id`.
+* Satu Learning Profile dibentuk dari banyak Study Session milik learner yang sama.
 * Setiap Study Session memiliki tepat satu Activity Classification.
 * Setiap Study Session memiliki tepat satu Payload.
 
@@ -2294,8 +2325,8 @@ Interaksi dengan komponen tersebut dilakukan melalui Service Layer.
 
 Architecture Contract menetapkan aturan berikut.
 
-* Learning Profile merupakan representasi agregat.
-* Study Session merupakan Source of Truth.
+* Learning Profile merupakan representasi agregat seorang learner.
+* Study Session merupakan Source of Truth dan memiliki ownership eksplisit melalui `learner_id`.
 * Activity Classification mengidentifikasi jenis aktivitas.
 * Payload menyimpan hasil spesifik aktivitas.
 * Repository tidak mengandung logika bisnis.
@@ -2406,6 +2437,7 @@ Learning Engine mengikuti aturan kompatibilitas berikut:
 * Storage dapat berubah tanpa mengubah Domain Model.
 * Penambahan Activity Classification tidak mengubah kontrak.
 * Penambahan Payload baru tidak mengubah kontrak.
+* Perubahan yang mengubah ownership atau struktur inti Domain Model merupakan perubahan Architecture Contract dan harus melalui controlled architecture change.
 
 > **Architecture Decision — AD-LE-011**
 >
@@ -2437,7 +2469,8 @@ Breaking Change hanya terjadi apabila perubahan mengharuskan implementasi yang t
 
 Contoh Breaking Change antara lain:
 
-* perubahan hubungan antar Domain Model,
+* perubahan ownership atau hubungan antar Domain Model,
+* perubahan kontrak Repository yang memerlukan penyesuaian implementasi yang telah ada,
 * perubahan tanggung jawab komponen inti,
 * penghapusan kontrak yang telah dipublikasikan.
 
@@ -2727,6 +2760,8 @@ Learning Engine harus mempertahankan kompatibilitas terhadap implementasi yang t
 
 Perubahan implementasi tidak boleh menyebabkan implementasi sebelumnya menjadi tidak valid tanpa alasan arsitektural yang kuat.
 
+Untuk Study Session yang telah dipersist sebelum learner ownership diperkenalkan, sistem tidak boleh menetapkan `learner_id` secara diam-diam berdasarkan tebakan, urutan profile, timestamp, session identifier, atau informasi tidak authoritative lainnya. Legacy records tanpa ownership yang dapat diverifikasi harus diperlakukan sebagai legacy/unassigned data sampai migration strategy yang eksplisit diterapkan.
+
 Backward Compatibility merupakan salah satu prioritas utama dalam evolusi Learning Engine.
 
 ---
@@ -2745,11 +2780,11 @@ Seluruh perubahan terhadap Architecture Contract harus melalui evaluasi menyelur
 
 > **Architecture Decision — AD-LE-013**
 >
-> Evolusi Learning Engine dilakukan melalui perluasan implementasi, bukan perubahan terhadap Architecture Contract.
+> Evolusi Learning Engine dilakukan terutama melalui perluasan implementasi tanpa mengubah Architecture Contract. Perubahan terhadap Architecture Contract hanya dilakukan apabila terdapat kebutuhan arsitektural yang tidak dapat diakomodasi oleh kontrak yang ada dan telah melalui proses keputusan arsitektur yang terdokumentasi.
 >
 > **Rationale**
 >
-> Stabilitas kontrak menjaga kompatibilitas jangka panjang serta mengurangi kebutuhan refactoring berskala besar.
+> Stabilitas kontrak tetap menjadi prioritas, tetapi arsitektur harus dapat dikoreksi apabila ditemukan gap fundamental yang memengaruhi integrity, ownership, compatibility, atau long-term viability sistem.
 
 ---
 
@@ -2932,12 +2967,14 @@ Diagram ini memperlihatkan:
 Hubungan utama Domain Model adalah:
 
 ```text
-Learning Profile
-       ▲
+Learner Identity
        │
-       │ derived from
-       │
+       ▼
 Study Session *
+       │
+       │ derived into
+       ▼
+Learning Profile
        │
        ├───────────────┐
        │               │
@@ -2949,7 +2986,8 @@ Classification
 Interpretasi diagram:
 
 * Satu Learning Profile merepresentasikan satu learner.
-* Satu Learning Profile dapat memiliki banyak Study Session.
+* Setiap Study Session dimiliki tepat satu learner melalui `learner_id`.
+* Satu Learning Profile dapat memiliki banyak Study Session milik learner yang sama.
 * Setiap Study Session memiliki tepat satu Activity Classification.
 * Setiap Study Session memiliki tepat satu Payload.
 * Study Session merupakan Primary Data.
@@ -3145,7 +3183,7 @@ Reference Implementation menggunakan Quiz sebagai aktivitas pembelajaran pertama
 Alur utama Learning Engine adalah:
 
 ```text
-User
+Active Learner Context
  │
  ▼
 Quiz Module
@@ -3212,6 +3250,7 @@ QuizResult
     ▼
 Study Session
     │
+    ├── learner_id = Active Learner
     ├── Activity Classification = QUIZ
     │
     └── Payload = QuizResult
@@ -3497,7 +3536,8 @@ Identifier bersifat stabil dan tidak boleh digunakan kembali untuk keputusan yan
 | **AD-LE-010** | Domain Model dipisahkan dari Service Layer dan Persistence Layer.                                                                         | Domain Model             |
 | **AD-LE-011** | Architecture Version, Reference Implementation Version, dan Storage Version dikelola secara independen.                                   | Versioning               |
 | **AD-LE-012** | Reference Implementation digunakan untuk memvalidasi Architecture Contract dan bukan sebagai batas kemampuan Learning Engine.             | Reference Implementation |
-| **AD-LE-013** | Evolusi Learning Engine dilakukan terutama melalui perluasan implementasi tanpa mengubah Architecture Contract.                           | Evolution Strategy       |
+| **AD-LE-013** | Evolusi Learning Engine dilakukan terutama melalui perluasan implementasi; perubahan kontrak hanya melalui controlled architecture change.     | Evolution Strategy       |
+| **AD-LE-014** | Setiap Study Session dimiliki tepat satu learner melalui `learner_id`, dan Repository menyediakan learner-scoped retrieval.               | Learner Ownership        |
 
 ---
 
@@ -3514,6 +3554,7 @@ AD-LE-003
 AD-LE-004
 AD-LE-005
 AD-LE-010
+AD-LE-014
 ```
 
 ### Application Layer
@@ -3528,6 +3569,7 @@ AD-LE-008
 ```text
 AD-LE-006
 AD-LE-009
+AD-LE-014
 ```
 
 ### Versioning and Evolution
@@ -3862,22 +3904,31 @@ Storage Version dapat berubah secara independen dari Architecture Version.
 
 ---
 
-## E.26 Study Session
+## E.26 Learner Identity
 
-Representasi satu aktivitas pembelajaran yang dilakukan oleh pengguna.
+Identitas unik yang digunakan Learning Engine untuk menentukan learner pemilik Learning Profile dan Study Session. Learner Identity direpresentasikan oleh `learner_id`.
+
+---
+
+## E.27 Study Session
+
+Representasi satu aktivitas pembelajaran yang dilakukan oleh seorang learner.
 
 Study Session merupakan unit dasar pencatatan aktivitas dan Primary Data Learning Engine.
 
 Setiap Study Session memiliki:
 
 ```text id="o6p4o5"
+learner_id
 Activity Classification
 Payload
 ```
 
+Setiap Study Session dimiliki tepat satu learner.
+
 ---
 
-## E.27 User Interface
+## E.28 User Interface
 
 Lapisan aplikasi yang bertanggung jawab terhadap interaksi dan presentasi kepada pengguna.
 
@@ -3885,7 +3936,7 @@ User Interface tidak boleh mengakses Persistence Layer secara langsung.
 
 ---
 
-## E.28 History
+## E.29 History
 
 Representasi visual dari kumpulan Study Session.
 
@@ -3893,7 +3944,7 @@ History bukan merupakan Domain Model maupun sumber data terpisah.
 
 ---
 
-## E.29 Quiz Result
+## E.30 Quiz Result
 
 Payload yang digunakan oleh Reference Implementation untuk merepresentasikan hasil Quiz.
 
@@ -3901,7 +3952,7 @@ QuizResult merupakan implementasi spesifik dan bukan bagian dari Architecture Co
 
 ---
 
-## E.30 Reference Implementation Scope
+## E.31 Reference Implementation Scope
 
 Batas kemampuan yang direalisasikan oleh Reference Implementation pada versi tertentu.
 
@@ -3909,7 +3960,7 @@ Reference Implementation Scope tidak boleh dianggap sebagai batas Architecture C
 
 ---
 
-## E.31 Summary
+## E.32 Summary
 
 Glossary menetapkan terminologi resmi Learning Engine Architecture.
 

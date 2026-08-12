@@ -71,11 +71,13 @@ class TestStorageLearningRepository(unittest.TestCase):
     def _create_session(
         self,
         session_id: str = "session-001",
+        learner_id: str = "learner-001",
     ) -> StudySession:
         """Create a valid Quiz StudySession."""
 
         return StudySession(
             session_id=session_id,
+            learner_id=learner_id,
             timestamp=datetime(
                 2026,
                 8,
@@ -105,7 +107,9 @@ class TestStorageLearningRepository(unittest.TestCase):
             original,
         )
 
-        loaded_sessions = self.repository.load_sessions()
+        loaded_sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(loaded_sessions),
@@ -168,7 +172,9 @@ class TestStorageLearningRepository(unittest.TestCase):
             session_2,
         )
 
-        loaded = self.repository.load_sessions()
+        loaded = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(loaded),
@@ -183,6 +189,60 @@ class TestStorageLearningRepository(unittest.TestCase):
             ],
         )
 
+    def test_sessions_are_isolated_by_learner(self):
+        """Loading sessions returns only records belonging to the learner."""
+
+        learner_a_session_1 = self._create_session(
+            session_id="session-001",
+            learner_id="learner-001",
+        )
+
+        learner_b_session = self._create_session(
+            session_id="session-002",
+            learner_id="learner-002",
+        )
+
+        learner_a_session_2 = self._create_session(
+            session_id="session-003",
+            learner_id="learner-001",
+        )
+
+        self.repository.save_session(
+            learner_a_session_1,
+        )
+
+        self.repository.save_session(
+            learner_b_session,
+        )
+
+        self.repository.save_session(
+            learner_a_session_2,
+        )
+
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
+
+        self.assertEqual(
+            len(sessions),
+            2,
+        )
+
+        self.assertEqual(
+            {session.session_id for session in sessions},
+            {
+                "session-001",
+                "session-003",
+            },
+        )
+
+        self.assertTrue(
+            all(
+                session.learner_id == "learner-001"
+                for session in sessions
+            )
+        )
+
     def test_session_update_replaces_same_session(self):
         """Saving the same session ID replaces the previous record."""
 
@@ -192,6 +252,7 @@ class TestStorageLearningRepository(unittest.TestCase):
 
         updated = StudySession(
             session_id="session-001",
+            learner_id="learner-001",
             timestamp=datetime(
                 2026,
                 8,
@@ -216,7 +277,9 @@ class TestStorageLearningRepository(unittest.TestCase):
             updated,
         )
 
-        loaded = self.repository.load_sessions()
+        loaded = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(loaded),
@@ -379,7 +442,9 @@ class TestStorageLearningRepository(unittest.TestCase):
             session,
         )
 
-        loaded = self.repository.load_sessions()
+        loaded = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             loaded[0].session_id,

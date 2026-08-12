@@ -112,7 +112,9 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
         self.quiz_tab.submit_answer("ca")
         self.quiz_tab.next_question()
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),
@@ -120,6 +122,11 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
         )
 
         session = sessions[0]
+
+        self.assertEqual(
+            session.learner_id,
+            "learner-001",
+        )
 
         self.assertEqual(
             session.activity_type,
@@ -157,7 +164,9 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
 
         self.quiz_tab.cancel_quiz()
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             sessions,
@@ -199,7 +208,9 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
         self.quiz_tab.submit_answer(answer)
         self.quiz_tab.next_question()
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),
@@ -255,7 +266,9 @@ class TestQuizTabLearningIntegration(unittest.TestCase):
         # and resets QuizTab statistics to idle state.
         self.quiz_tab.next_question()
 
-        sessions = self.repository.load_sessions()
+        sessions = self.repository.load_sessions(
+            "learner-001",
+        )
 
         self.assertEqual(
             len(sessions),
