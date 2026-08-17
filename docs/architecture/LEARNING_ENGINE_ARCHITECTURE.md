@@ -1,6 +1,6 @@
 # Learning Engine Architecture
 
-**Architecture Version:** 1.1
+**Architecture Version:** 1.2
 **Document Status:** Proposed
 **Document Type:** Architecture Contract
 
@@ -8,7 +8,7 @@
 
 > **Document Status Note**
 >
-> Dokumen ini mendefinisikan Architecture Contract Learning Engine Version 1.1.
+> Dokumen ini mendefinisikan Architecture Contract Learning Engine Version 1.2.
 >
 > Status **Proposed** menunjukkan bahwa perubahan kontrak telah dirumuskan dan didokumentasikan, tetapi implementasi reference dan regression validation belum selesai. Setelah implementasi tervalidasi, dokumen dapat dikembalikan ke status **Stable**.
 >
@@ -110,7 +110,7 @@ Dokumen ini berfungsi sebagai kontrak arsitektur yang menjadi acuan bagi seluruh
 Learning Engine Architecture mencakup komponen-komponen berikut:
 
 * Learning Profile
-* Study Session
+* Learning Activity Record
 * Learning Activity
 * Quiz Result
 * Learning Statistics
@@ -151,7 +151,7 @@ Ruang lingkup implementasi saat ini meliputi:
 
 * Pencatatan hasil Quiz.
 * Pembentukan Learning Profile.
-* Penyimpanan Study Session bertipe Quiz.
+* Penyimpanan Learning Activity Record bertipe Quiz.
 * Perhitungan statistik dasar pembelajaran.
 * Penyediaan data statistik bagi Home Dashboard.
 
@@ -216,21 +216,23 @@ Setiap Learning Profile dimiliki oleh tepat satu learner dan diidentifikasi seca
 
 Learning Profile menyimpan informasi ringkasan yang menggambarkan kondisi belajar seorang learner secara keseluruhan dan menjadi sumber utama informasi progres pembelajaran.
 
-Learning Profile tidak menyimpan detail setiap aktivitas belajar secara langsung, melainkan menyimpan hasil agregasi dari seluruh Study Session yang telah tercatat.
+Learning Profile tidak menyimpan detail setiap aktivitas belajar secara langsung, melainkan menyimpan hasil agregasi dari seluruh Learning Activity Record yang telah tercatat.
 
 ---
 
-## 3.3 Study Session
+## 3.3 Learning Activity Record
+> **Terminology Boundary** — `Session` digunakan untuk runtime context yang sedang berlangsung pada Activity Module (misalnya `QuizSession`). `Learning Activity Record` digunakan untuk persistent record dari aktivitas yang telah selesai. `QuizResult` merupakan hasil dari `QuizSession` yang selesai dan dapat menjadi payload dari Learning Activity Record.
 
-Study Session merupakan satu aktivitas belajar yang telah selesai dan dimiliki oleh tepat satu learner.
 
-Setiap Study Session memiliki `learner_id` yang mengidentifikasi learner pemilik aktivitas tersebut.
+Learning Activity Record merupakan representasi persisten dari satu aktivitas pembelajaran yang telah selesai dan dicatat oleh Learning Engine. Record dimiliki oleh tepat satu learner.
 
-Satu Study Session dapat merepresentasikan berbagai jenis aktivitas pembelajaran, seperti Quiz, Flashcard, Writing Practice, maupun aktivitas lain yang didukung oleh Learning Engine.
+Setiap Learning Activity Record memiliki `learner_id` yang mengidentifikasi learner pemilik aktivitas tersebut.
 
-Setiap Study Session memiliki awal, akhir, serta hasil yang dapat dicatat sebagai bagian dari riwayat pembelajaran.
+Satu Learning Activity Record dapat merepresentasikan berbagai jenis aktivitas pembelajaran, seperti Quiz, Flashcard, Writing Practice, maupun aktivitas lain yang didukung oleh Learning Engine.
 
-Pada Reference Implementation versi pertama, hanya Study Session bertipe Quiz yang diimplementasikan. Setiap Study Session Quiz tetap memiliki ownership learner yang eksplisit.
+Learning Activity Record tidak merepresentasikan aktivitas yang masih berlangsung. Aktivitas yang sedang berlangsung dikelola oleh runtime Session milik Activity Module dan baru menghasilkan Learning Activity Record setelah aktivitas selesai secara normal dan menghasilkan Activity Result.
+
+Pada Reference Implementation versi pertama, hanya Learning Activity Record bertipe Quiz yang diimplementasikan. Setiap Learning Activity Record Quiz tetap memiliki ownership learner yang eksplisit.
 
 ---
 
@@ -238,13 +240,13 @@ Pada Reference Implementation versi pertama, hanya Study Session bertipe Quiz ya
 
 Learner Identity merupakan identitas unik yang digunakan Learning Engine untuk menentukan pemilik data perkembangan belajar. Identitas ini direpresentasikan oleh `learner_id`.
 
-Setiap `StudySession` dan `LearningProfile` harus terkait dengan tepat satu `learner_id`. Learning Engine tidak bertanggung jawab terhadap mekanisme pemilihan, autentikasi, maupun pengelolaan antarmuka learner; Learning Engine menerima `learner_id` sebagai bagian dari konteks operasi pembelajaran.
+Setiap `LearningActivityRecord` dan `LearningProfile` harus terkait dengan tepat satu `learner_id`. Learning Engine tidak bertanggung jawab terhadap mekanisme pemilihan, autentikasi, maupun pengelolaan antarmuka learner; Learning Engine menerima `learner_id` sebagai bagian dari konteks operasi pembelajaran.
 
 ---
 
 ## 3.5 Learning Activity
 
-Learning Activity adalah jenis aktivitas pembelajaran yang dilakukan di dalam sebuah Study Session.
+Learning Activity adalah jenis aktivitas pembelajaran yang direpresentasikan oleh sebuah Learning Activity Record. Istilah ini mendeskripsikan WHAT yang dilakukan, bukan runtime Session maupun persistent record-nya.
 
 Learning Activity mendeskripsikan bentuk pembelajaran yang sedang dijalankan tanpa bergantung pada implementasi tertentu.
 
@@ -262,7 +264,7 @@ Reference Implementation saat ini hanya mengimplementasikan Quiz sebagai Learnin
 
 ## 3.6 Learning Statistics
 
-Learning Statistics merupakan kumpulan informasi statistik yang dihasilkan berdasarkan Learning Profile dan Study Session.
+Learning Statistics merupakan kumpulan informasi statistik yang dihasilkan berdasarkan Learning Profile dan Learning Activity Record.
 
 Statistik ini digunakan untuk memberikan gambaran mengenai perkembangan belajar pengguna, seperti tingkat akurasi, jumlah sesi belajar, waktu belajar, maupun indikator perkembangan lainnya.
 
@@ -496,16 +498,16 @@ Prinsip ini bertujuan untuk meningkatkan keterbacaan, kemudahan pengujian, serta
 
 Learning Engine harus memiliki sumber data utama (*Source of Truth*) yang jelas.
 
-**Study Session merupakan Primary Data dan authoritative source untuk learning activity history.**
+**Learning Activity Record merupakan Primary Data dan authoritative source untuk learning activity history.**
 
-Learning Profile merupakan **persisted derived aggregate** yang merepresentasikan keadaan agregat pembelajaran berdasarkan data aktivitas yang tersimpan dalam Study Session.
+Learning Profile merupakan **persisted derived aggregate** yang merepresentasikan keadaan agregat pembelajaran berdasarkan data aktivitas yang tersimpan dalam Learning Activity Record.
 
 Learning Statistics merupakan **Derived Data** yang dihasilkan dari Primary Data dan/atau aggregated learning state.
 
 Dengan demikian, klasifikasi data utama Learning Engine adalah:
 
 ```text
-Study Session
+Learning Activity Record
     │
     └── Primary Data / Source of Truth
 
@@ -520,7 +522,7 @@ Learning Statistics
 
 Learning Profile dapat disimpan secara permanen untuk efisiensi akses, tetapi tidak menjadi sumber kebenaran utama untuk riwayat aktivitas pembelajaran.
 
-Learning Profile harus dapat direkonstruksi dari Study Session apabila diperlukan.
+Learning Profile harus dapat direkonstruksi dari Learning Activity Record apabila diperlukan.
 
 > **Architecture Note**
 >
@@ -819,7 +821,7 @@ Komponen-komponen utama Learning Engine dapat digambarkan sebagai berikut:
      ┌───────────────────┼───────────────────┐
      │                   │                   │
      ▼                   ▼                   ▼
-Learning Profile   Study Session   Learning Statistics
+Learning Profile   Learning Activity Record   Learning Statistics
          │
          ▼
 Learning Repository
@@ -844,19 +846,19 @@ Learning Profile tidak menyimpan detail setiap aktivitas belajar.
 
 ---
 
-## 7.4 Study Session
+## 7.4 Learning Activity Record
 
-Study Session merepresentasikan satu sesi pembelajaran yang dilakukan oleh pengguna.
+Learning Activity Record merepresentasikan satu aktivitas pembelajaran yang telah diselesaikan dan dicatat oleh pengguna.
 
-Seluruh aktivitas belajar direpresentasikan sebagai sebuah Study Session, terlepas dari jenis mode pembelajaran yang digunakan.
+Seluruh aktivitas belajar direpresentasikan sebagai sebuah Learning Activity Record, terlepas dari jenis mode pembelajaran yang digunakan.
 
-Pada Reference Implementation, seluruh Study Session berasal dari Quiz Module.
+Pada Reference Implementation, seluruh Learning Activity Record berasal dari Quiz Module.
 
 ---
 
 ## 7.5 Learning Activity
 
-Learning Activity mendeskripsikan jenis aktivitas yang dilakukan di dalam sebuah Study Session.
+Learning Activity mendeskripsikan jenis aktivitas yang dilakukan di dalam sebuah Learning Activity Record.
 
 Learning Activity memungkinkan Learning Engine mendukung berbagai bentuk pembelajaran tanpa mengubah Architecture Contract.
 
@@ -868,7 +870,7 @@ Reference Implementation hanya mengimplementasikan Quiz sebagai Learning Activit
 
 Learning Statistics menyediakan informasi ringkasan mengenai perkembangan belajar pengguna.
 
-Seluruh statistik dihasilkan dari data yang tersimpan pada Learning Profile dan Study Session.
+Seluruh statistik dihasilkan dari data yang tersimpan pada Learning Profile dan Learning Activity Record.
 
 Learning Statistics bukan merupakan sumber data utama (*source of truth*).
 
@@ -947,7 +949,7 @@ Learning Profile merupakan representasi agregat mengenai perkembangan belajar se
 
 Komponen ini menyediakan *aggregated learning state* yang dapat digunakan oleh berbagai komponen Learning Engine untuk memperoleh ringkasan kondisi pembelajaran pengguna.
 
-Learning Profile tidak merepresentasikan seluruh aktivitas pembelajaran secara individual. Riwayat aktivitas pembelajaran secara authoritative direpresentasikan oleh kumpulan Study Session.
+Learning Profile tidak merepresentasikan seluruh aktivitas pembelajaran secara individual. Riwayat aktivitas pembelajaran secara authoritative direpresentasikan oleh kumpulan Learning Activity Record.
 
 ---
 
@@ -963,20 +965,20 @@ Learning Profile memiliki tanggung jawab sebagai berikut:
 
 Learning Profile tidak bertanggung jawab terhadap pencatatan aktivitas pembelajaran individual.
 
-Learning Profile juga tidak menjadi Source of Truth untuk learning activity history. Riwayat aktivitas pembelajaran secara authoritative direpresentasikan oleh Study Session.
+Learning Profile juga tidak menjadi Source of Truth untuk learning activity history. Riwayat aktivitas pembelajaran secara authoritative direpresentasikan oleh Learning Activity Record.
 
 ---
 
 ## 8.3 Conceptual Model
 
-Secara konseptual, Learning Profile berada di atas seluruh Study Session yang dimiliki oleh seorang pengguna.
+Secara konseptual, Learning Profile berada di atas seluruh Learning Activity Record yang dimiliki oleh seorang pengguna.
 
 ```text
                  Learning Profile
                          │
          ┌───────────────┴───────────────┐
          ▼                               ▼
-Learning Statistics              Study Sessions
+Learning Statistics              Learning Activity Records
                                          │
                            ┌─────────────┼─────────────┐
                            ▼             ▼             ▼
@@ -994,7 +996,7 @@ Seluruh informasi yang disimpan merupakan representasi umum dari perkembangan be
 Siklus hidup Learning Profile terdiri atas beberapa tahap:
 
 1. Dibuat ketika pengguna pertama kali menggunakan Learning Engine.
-2. Diperbarui setiap kali Study Session selesai.
+2. Diperbarui setiap kali Learning Activity Record selesai.
 3. Digunakan sebagai sumber informasi oleh komponen lain.
 4. Disimpan secara permanen melalui Learning Repository.
 
@@ -1008,7 +1010,7 @@ Learning Profile memiliki hubungan konseptual dengan beberapa komponen Learning 
 
 | Component           | Relationship                                                             |
 | ------------------- | ------------------------------------------------------------------------ |
-| Study Session       | Menjadi sumber data perkembangan belajar.                                |
+| Learning Activity Record       | Menjadi sumber data perkembangan belajar.                                |
 | Learning Statistics | Menghasilkan informasi statistik berdasarkan profil dan riwayat belajar. |
 | Learning Repository | Menyimpan dan mengambil Learning Profile.                                |
 | Learning Services   | Mengelola perubahan terhadap Learning Profile.                           |
@@ -1027,7 +1029,7 @@ Perancangan Learning Profile mengikuti beberapa prinsip berikut:
 * Tidak menyimpan activity-specific payload.
 * Merepresentasikan aggregated learning state.
 * Dapat dipersist untuk efisiensi akses.
-* Dapat direkonstruksi dari Study Session.
+* Dapat direkonstruksi dari Learning Activity Record.
 * Tidak menjadi Source of Truth untuk learning activity history.
 * Dapat digunakan oleh berbagai platform aplikasi.
 
@@ -1037,7 +1039,7 @@ Perancangan Learning Profile mengikuti beberapa prinsip berikut:
 >
 > Walaupun Learning Profile dapat disimpan secara permanen untuk efisiensi akses, informasi tersebut tidak mengubah statusnya menjadi Primary Data.
 >
-> Apabila diperlukan, Learning Profile harus dapat direkonstruksi berdasarkan Study Session yang merupakan authoritative source untuk learning activity history.
+> Apabila diperlukan, Learning Profile harus dapat direkonstruksi berdasarkan Learning Activity Record yang merupakan authoritative source untuk learning activity history.
 
 ---
 
@@ -1073,99 +1075,100 @@ Penambahan fitur-fitur tersebut diharapkan hanya memerlukan perluasan implementa
 
 ------------------
 
-# 9. Study Session
+# 9. Learning Activity Record
 
 > **Docstring**
 >
-> Bab ini mendefinisikan konsep *Study Session* sebagai representasi satu aktivitas belajar yang dilakukan oleh pengguna.
-> Study Session merupakan unit dasar pencatatan aktivitas di dalam Learning Engine dan menjadi sumber utama data perkembangan pembelajaran.
-> Bab ini menjelaskan struktur konseptual Study Session tanpa bergantung pada implementasi mode pembelajaran tertentu.
+> Bab ini mendefinisikan konsep *Learning Activity Record* sebagai representasi persisten dari satu aktivitas pembelajaran yang telah diselesaikan oleh pengguna.
+> Learning Activity Record merupakan unit dasar pencatatan aktivitas di dalam Learning Engine dan menjadi sumber utama data perkembangan pembelajaran.
+> Bab ini menjelaskan struktur konseptual Learning Activity Record tanpa bergantung pada implementasi mode pembelajaran tertentu.
 
 ## 9.1 Purpose
 
-Study Session merepresentasikan satu aktivitas pembelajaran yang telah diselesaikan oleh pengguna.
+Learning Activity Record merepresentasikan satu aktivitas pembelajaran yang telah diselesaikan oleh pengguna.
 
-Setiap aktivitas pembelajaran yang menghasilkan perubahan terhadap learning state pengguna direpresentasikan sebagai sebuah Study Session.
+Setiap aktivitas pembelajaran yang menghasilkan perubahan terhadap learning state pengguna dan telah selesai secara normal dapat direpresentasikan sebagai sebuah Learning Activity Record.
 
-Study Session merupakan **Primary Data** dan **authoritative source** untuk learning activity history di dalam Learning Engine.
+Learning Activity Record merupakan **Primary Data** dan **authoritative source** untuk learning activity history di dalam Learning Engine.
 
-Study Session tidak menyimpan informasi agregat yang dapat dihitung dari kumpulan Study Session.
+Learning Activity Record tidak menyimpan informasi agregat yang dapat dihitung dari kumpulan Learning Activity Record.
 
-Setiap Study Session wajib memiliki `learner_id` dan tidak boleh menjadi milik lebih dari satu learner. `learner_id` merupakan bagian dari identitas ownership Study Session, bukan sekadar metadata presentation.
+Setiap Learning Activity Record wajib memiliki `learner_id` dan tidak boleh menjadi milik lebih dari satu learner. `learner_id` merupakan bagian dari identitas ownership Learning Activity Record, bukan sekadar metadata presentation.
 
 ---
 
 ## 9.2 Responsibilities
 
-Study Session memiliki tanggung jawab sebagai berikut:
+Learning Activity Record memiliki tanggung jawab sebagai berikut:
 
 * Merepresentasikan satu aktivitas belajar.
-* Menyimpan informasi mengenai satu sesi pembelajaran.
+* Menyimpan informasi mengenai satu aktivitas pembelajaran yang telah selesai.
 * Menyimpan identitas learner pemilik aktivitas melalui `learner_id`.
 * Menjadi sumber data bagi Learning Profile.
 * Menjadi sumber data bagi Learning Statistics.
 * Menyediakan dasar bagi analisis perkembangan belajar.
 
-Study Session tidak bertanggung jawab terhadap penyimpanan permanen maupun perhitungan statistik.
+Learning Activity Record adalah domain record; penyimpanan permanen dikelola oleh Learning Repository, sedangkan perhitungan statistik dikelola oleh komponen turunan yang relevan.
 
 ---
 
 ## 9.3 Conceptual Model
 
-Learning Engine memperlakukan setiap aktivitas belajar sebagai sebuah Study Session.
+Learning Engine memperlakukan setiap aktivitas belajar yang telah selesai dan dicatat sebagai sebuah Learning Activity Record. Runtime aktivitas tidak otomatis menjadi Learning Activity Record sebelum menghasilkan Activity Result.
 
 ```text
                  Learner Identity
                          │
                          ▼
-                  Study Sessions
+              Learning Activity Records
                          │
       ┌──────────────────┼──────────────────┐
       ▼                  ▼                  ▼
-  Session 1         Session 2         Session 3
+      Quiz Record    Flashcard Record   Writing Record
 ```
 
-Setiap Study Session berdiri sendiri dan merepresentasikan satu periode pembelajaran.
+Setiap Learning Activity Record berdiri sendiri dan merepresentasikan satu aktivitas pembelajaran yang telah selesai.
 
 ---
 
 ## 9.4 Lifecycle
 
-Siklus hidup Study Session terdiri atas beberapa tahap:
+Siklus pembentukan Learning Activity Record terdiri atas beberapa tahap:
 
-1. Aktivitas pembelajaran berlangsung di dalam Learning Activity Module.
-2. Aktivitas menghasilkan hasil pembelajaran (*Activity Result*).
-3. Setelah aktivitas selesai, Learning Service membentuk Study Session.
-4. Study Session diberi Activity Classification dan Payload.
-5. Study Session dipersist melalui Learning Repository.
-6. Study Session menjadi bagian dari authoritative learning activity history.
+1. Activity Module membuat runtime Session untuk aktivitas pembelajaran.
+2. Aktivitas berlangsung di dalam runtime Session.
+3. Setelah aktivitas selesai secara normal, Activity Module menghasilkan *Activity Result*.
+4. Learning Service membentuk Learning Activity Record dari Activity Result.
+5. Learning Activity Record diberi Activity Classification dan Payload.
+6. Learning Activity Record dipersist melalui Learning Repository.
+7. Learning Activity Record menjadi bagian dari authoritative learning activity history.
 
-Study Session pada Reference Implementation merepresentasikan aktivitas pembelajaran yang telah selesai.
+Learning Activity Record pada Reference Implementation merepresentasikan aktivitas pembelajaran yang telah selesai.
 
-Aktivitas yang sedang berlangsung tidak dianggap sebagai Study Session yang telah tersimpan.
+Aktivitas yang sedang berlangsung tidak dianggap sebagai Learning Activity Record yang telah tersimpan. Runtime Session dan Learning Activity Record adalah dua konsep berbeda.
 
 ---
 
 ## 9.5 Relationships
 
-Study Session memiliki hubungan konseptual dengan beberapa komponen Learning Engine.
+Learning Activity Record memiliki hubungan konseptual dengan beberapa komponen Learning Engine.
 
 | Component           | Relationship                                                              |
 | ------------------- | ------------------------------------------------------------------------- |
-| Learner Identity    | Menentukan learner pemilik Study Session.                                 |
+| Learner Identity    | Menentukan learner pemilik Learning Activity Record.                                 |
 | Learning Profile    | Menjadi sumber data perkembangan belajar.                                 |
 | Learning Statistics | Menjadi sumber perhitungan statistik.                                     |
-| Learning Repository | Menyimpan dan mengambil Study Session.                                    |
-| Learning Services   | Mengelola proses pembentukan Study Session.                               |
-| Learning Activity   | Mendefinisikan jenis aktivitas yang direpresentasikan oleh Study Session. |
+| Learning Repository | Menyimpan dan mengambil Learning Activity Record.                                    |
+| Learning Services   | Mengelola proses pembentukan Learning Activity Record.                               |
+| Learning Activity   | Mendefinisikan jenis aktivitas yang direpresentasikan oleh Learning Activity Record. |
 
-Study Session tidak memiliki ketergantungan langsung terhadap User Interface.
+Learning Activity Record tidak memiliki ketergantungan langsung terhadap User Interface.
 
 ---
 
 ## 9.6 Design Considerations
 
-Perancangan Study Session mengikuti prinsip-prinsip berikut:
+Perancangan Learning Activity Record mengikuti prinsip-prinsip berikut:
 
 * Merepresentasikan satu aktivitas pembelajaran yang telah selesai.
 * Bersifat independen terhadap jenis pembelajaran.
@@ -1179,13 +1182,13 @@ Perancangan Study Session mengikuti prinsip-prinsip berikut:
 
 > **Architecture Note**
 >
-> Study Session merupakan sumber data utama untuk riwayat aktivitas pembelajaran.
+> Learning Activity Record merupakan sumber data utama untuk riwayat aktivitas pembelajaran.
 >
-> Learning Profile dan Statistics dapat dibentuk atau diperbarui berdasarkan Study Session, tetapi keduanya bukan pengganti Study Session sebagai authoritative learning activity history.
+> Learning Profile dan Statistics dapat dibentuk atau diperbarui berdasarkan Learning Activity Record, tetapi keduanya bukan pengganti Learning Activity Record sebagai authoritative learning activity history.
 
 > **Architecture Decision — AD-LE-014**
 >
-> Setiap Study Session dimiliki tepat satu learner melalui `learner_id`. Learning Repository menyediakan pengambilan Study Session secara learner-scoped.
+> Setiap Learning Activity Record dimiliki tepat satu learner melalui `learner_id`. Learning Repository menyediakan pengambilan Learning Activity Record secara learner-scoped.
 >
 > **Rationale**
 >
@@ -1195,21 +1198,21 @@ Perancangan Study Session mengikuti prinsip-prinsip berikut:
 
 ## 9.7 Reference Implementation
 
-Reference Implementation pertama menggunakan Study Session untuk merepresentasikan hasil Quiz.
+Reference Implementation pertama menggunakan Learning Activity Record untuk merepresentasikan hasil Quiz.
 
-Setiap penyelesaian Quiz menghasilkan satu Study Session baru yang kemudian diproses oleh Learning Engine.
+Setiap penyelesaian Quiz menghasilkan satu QuizResult yang kemudian diproses oleh Learning Engine menjadi satu Learning Activity Record.
 
-Tidak ada jenis Study Session lain yang diimplementasikan pada versi pertama.
+Tidak ada jenis Learning Activity Record lain yang diimplementasikan pada versi pertama.
 
 > **Implementation Note**
 >
-> Payload dari Study Session pada Reference Implementation berupa Quiz Result.
+> Payload dari Learning Activity Record pada Reference Implementation berupa QuizResult.
 
 ---
 
 ## 9.8 Future Extensions
 
-Study Session dirancang agar mampu merepresentasikan berbagai aktivitas pembelajaran.
+Learning Activity Record dirancang agar mampu merepresentasikan berbagai aktivitas pembelajaran.
 
 Contoh implementasi yang telah diantisipasi antara lain:
 
@@ -1219,7 +1222,7 @@ Contoh implementasi yang telah diantisipasi antara lain:
 * Matching Exercise Session
 * Character Recognition Session
 
-Seluruh implementasi tersebut diharapkan menggunakan struktur konseptual Study Session yang sama sehingga tidak memerlukan perubahan terhadap Architecture Contract.
+Seluruh implementasi tersebut diharapkan menggunakan struktur konseptual Learning Activity Record yang sama sehingga tidak memerlukan perubahan terhadap Architecture Contract.
 
 ------------------
 
@@ -1228,14 +1231,14 @@ Seluruh implementasi tersebut diharapkan menggunakan struktur konseptual Study S
 > **Docstring**
 >
 > Bab ini mendefinisikan konsep *Activity Classification* sebagai mekanisme klasifikasi aktivitas pembelajaran di dalam Learning Engine.
-> Activity Classification digunakan untuk mengidentifikasi jenis aktivitas yang direpresentasikan oleh sebuah Study Session tanpa mengubah struktur konseptual Learning Engine.
+> Activity Classification digunakan untuk mengidentifikasi jenis aktivitas yang direpresentasikan oleh sebuah Learning Activity Record tanpa mengubah struktur konseptual Learning Engine.
 > Bab ini tidak mendefinisikan implementasi mode pembelajaran tertentu, melainkan kontrak klasifikasi yang digunakan oleh seluruh Reference Implementation maupun Future Implementation.
 
 ## 10.1 Purpose
 
-Activity Classification digunakan untuk mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh sebuah Study Session.
+Activity Classification digunakan untuk mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh sebuah Learning Activity Record.
 
-Klasifikasi ini memungkinkan Learning Engine mendukung berbagai mode pembelajaran menggunakan struktur Study Session yang sama.
+Klasifikasi ini memungkinkan Learning Engine mendukung berbagai mode pembelajaran menggunakan struktur Learning Activity Record yang sama.
 
 Dengan pendekatan ini, penambahan mode pembelajaran baru tidak memerlukan perubahan terhadap struktur konseptual Learning Engine.
 
@@ -1246,7 +1249,7 @@ Dengan pendekatan ini, penambahan mode pembelajaran baru tidak memerlukan peruba
 Activity Classification memiliki tanggung jawab sebagai berikut:
 
 * Mengidentifikasi jenis aktivitas pembelajaran.
-* Menentukan tipe payload yang berkaitan dengan sebuah Study Session.
+* Menentukan tipe payload yang berkaitan dengan sebuah Learning Activity Record.
 * Menjadi dasar bagi Learning Services dalam memproses aktivitas pembelajaran.
 * Menyediakan mekanisme klasifikasi yang konsisten bagi seluruh mode pembelajaran.
 
@@ -1256,10 +1259,10 @@ Activity Classification tidak bertanggung jawab terhadap penyimpanan data, logik
 
 ## 10.3 Conceptual Model
 
-Setiap Study Session memiliki satu Activity Classification.
+Setiap Learning Activity Record memiliki satu Activity Classification.
 
 ```text
-              Study Session
+              Learning Activity Record
                     │
         ┌───────────┴───────────┐
         │                       │
@@ -1271,21 +1274,21 @@ Activity Classification mendeskripsikan **jenis** aktivitas, sedangkan payload m
 
 > **Architecture Decision — AD-LE-004**
 >
-> Activity Classification direpresentasikan sebagai atribut konseptual dari Study Session, bukan sebagai komponen arsitektur yang berdiri sendiri.
+> Activity Classification direpresentasikan sebagai atribut konseptual dari Learning Activity Record, bukan sebagai komponen arsitektur yang berdiri sendiri.
 >
 > **Rationale**
 >
-> Pendekatan ini menjaga struktur Learning Engine tetap sederhana, mengurangi jumlah model yang harus dipelajari, serta memungkinkan seluruh mode pembelajaran menggunakan struktur Study Session yang sama.
+> Pendekatan ini menjaga struktur Learning Engine tetap sederhana, mengurangi jumlah model yang harus dipelajari, serta memungkinkan seluruh mode pembelajaran menggunakan struktur Learning Activity Record yang sama.
 
 ---
 
 ## 10.4 Classification Contract
 
-Architecture Contract menetapkan bahwa setiap Study Session harus memiliki tepat satu Activity Classification.
+Architecture Contract menetapkan bahwa setiap Learning Activity Record harus memiliki tepat satu Activity Classification.
 
 Setiap Activity Classification SHALL memiliki Payload yang kompatibel dengan klasifikasi tersebut.
 
-Activity Classification digunakan untuk menentukan jenis aktivitas pembelajaran yang direpresentasikan oleh Study Session, sedangkan Payload menyimpan hasil spesifik dari aktivitas tersebut.
+Activity Classification digunakan untuk menentukan jenis aktivitas pembelajaran yang direpresentasikan oleh Learning Activity Record, sedangkan Payload menyimpan hasil spesifik dari aktivitas tersebut.
 
 Dokumen ini tidak membatasi jumlah maupun jenis Activity Classification yang dapat digunakan oleh implementasi.
 
@@ -1293,9 +1296,9 @@ Reference Implementation maupun Future Implementation dapat menambahkan klasifik
 
 > **Architecture Rule**
 >
-> Activity Classification SHALL be compatible with the Payload associated with the Study Session.
+> Activity Classification SHALL be compatible with the Payload associated with the Learning Activity Record.
 >
-> Sebuah Study Session tidak boleh memiliki kombinasi Activity Classification dan Payload yang tidak sesuai.
+> Sebuah Learning Activity Record tidak boleh memiliki kombinasi Activity Classification dan Payload yang tidak sesuai.
 
 ---
 
@@ -1305,7 +1308,7 @@ Activity Classification memiliki hubungan konseptual dengan komponen berikut.
 
 | Component           | Relationship                                                        |
 | ------------------- | ------------------------------------------------------------------- |
-| Study Session       | Mengidentifikasi jenis aktivitas yang direpresentasikan.            |
+| Learning Activity Record       | Mengidentifikasi jenis aktivitas yang direpresentasikan.            |
 | Payload             | Menentukan struktur hasil aktivitas yang terkait.                   |
 | Learning Services   | Digunakan untuk menentukan alur pemrosesan aktivitas.               |
 | Learning Statistics | Dapat digunakan sebagai dasar pengelompokan statistik pembelajaran. |
@@ -1318,7 +1321,7 @@ Perancangan Activity Classification mengikuti prinsip berikut:
 
 * Tidak bergantung pada implementasi tertentu.
 * Dapat diperluas tanpa mengubah Architecture Contract.
-* Tidak memengaruhi struktur Study Session.
+* Tidak memengaruhi struktur Learning Activity Record.
 * Tidak mengubah mekanisme Learning Repository.
 * Tidak memengaruhi Learning Profile maupun Learning Statistics.
 
@@ -1334,7 +1337,7 @@ Reference Implementation pertama hanya mendefinisikan satu Activity Classificati
 QUIZ
 ```
 
-Activity Classification tersebut digunakan oleh seluruh Study Session yang dihasilkan oleh Quiz Module.
+Activity Classification tersebut digunakan oleh seluruh Learning Activity Record yang dihasilkan oleh Quiz Module.
 
 > **Implementation Note**
 >
@@ -1362,7 +1365,7 @@ CHARACTER_RECOGNITION
 
 Setiap klasifikasi baru diharapkan memiliki payload yang sesuai dengan kebutuhan mode pembelajaran masing-masing.
 
-Penambahan Activity Classification tidak memerlukan perubahan terhadap Learning Profile, Study Session, Learning Repository, maupun Learning Statistics selama tetap mengikuti Architecture Contract.
+Penambahan Activity Classification tidak memerlukan perubahan terhadap Learning Profile, Learning Activity Record, Learning Repository, maupun Learning Statistics selama tetap mengikuti Architecture Contract.
 
 ------------------
 
@@ -1370,7 +1373,7 @@ Penambahan Activity Classification tidak memerlukan perubahan terhadap Learning 
 
 > **Docstring**
 >
-> Bab ini mendefinisikan konsep *Payload Model* sebagai mekanisme untuk membawa hasil spesifik dari sebuah aktivitas pembelajaran di dalam Study Session.
+> Bab ini mendefinisikan konsep *Payload Model* sebagai mekanisme untuk membawa hasil spesifik dari sebuah aktivitas pembelajaran di dalam Learning Activity Record.
 > Payload Model memungkinkan Learning Engine tetap bersifat umum (*activity-agnostic*), sementara setiap mode pembelajaran dapat memiliki struktur data hasil yang berbeda.
 > Bab ini mendefinisikan kontrak konseptual Payload tanpa bergantung pada implementasi Python maupun jenis aktivitas pembelajaran tertentu.
 
@@ -1378,7 +1381,7 @@ Penambahan Activity Classification tidak memerlukan perubahan terhadap Learning 
 
 Payload merupakan representasi hasil dari sebuah aktivitas pembelajaran.
 
-Setiap Study Session memiliki tepat satu Payload yang menyimpan data spesifik sesuai Activity Classification yang dimiliki oleh Study Session tersebut.
+Setiap Learning Activity Record memiliki tepat satu Payload yang menyimpan data spesifik sesuai Activity Classification yang dimiliki oleh Learning Activity Record tersebut.
 
 Payload memungkinkan Learning Engine mengelola berbagai mode pembelajaran tanpa harus mengetahui struktur internal masing-masing mode.
 
@@ -1390,7 +1393,7 @@ Payload memiliki tanggung jawab sebagai berikut:
 
 * Menyimpan hasil spesifik dari satu aktivitas pembelajaran.
 * Menjadi representasi data yang diproses oleh Learning Services.
-* Menjadi sumber informasi detail bagi Study Session.
+* Menjadi sumber informasi detail bagi Learning Activity Record.
 * Menyediakan informasi yang diperlukan untuk membangun Learning Profile dan Learning Statistics.
 
 Payload tidak bertanggung jawab terhadap:
@@ -1404,10 +1407,10 @@ Payload tidak bertanggung jawab terhadap:
 
 ## 11.3 Conceptual Model
 
-Secara konseptual, Payload merupakan bagian dari sebuah Study Session.
+Secara konseptual, Payload merupakan bagian dari sebuah Learning Activity Record.
 
 ```text
-                 Study Session
+                 Learning Activity Record
                        │
          ┌─────────────┴─────────────┐
          │                           │
@@ -1415,7 +1418,7 @@ Secara konseptual, Payload merupakan bagian dari sebuah Study Session.
  Activity Classification         Payload
 ```
 
-Study Session bertanggung jawab terhadap identitas sesi pembelajaran.
+Learning Activity Record bertanggung jawab terhadap identitas dan ownership record aktivitas pembelajaran.
 
 Payload bertanggung jawab terhadap hasil aktivitas pembelajaran.
 
@@ -1425,10 +1428,10 @@ Payload bertanggung jawab terhadap hasil aktivitas pembelajaran.
 
 Architecture Contract menetapkan aturan berikut:
 
-* Setiap Study Session memiliki tepat satu Payload.
+* Setiap Learning Activity Record memiliki tepat satu Payload.
 * Payload harus sesuai dengan Activity Classification.
 * Payload harus merepresentasikan hasil dari aktivitas yang diklasifikasikan oleh Activity Classification tersebut.
-* Payload tidak boleh digunakan di luar konteks Study Session.
+* Payload tidak boleh digunakan di luar konteks Learning Activity Record.
 * Learning Engine tidak bergantung pada struktur internal Payload.
 
 Hubungan konseptual antara Activity Classification dan Payload adalah:
@@ -1456,7 +1459,7 @@ WRITING
 
 > **Architecture Note**
 >
-> Activity Classification dan Payload merupakan pasangan konseptual di dalam Study Session. Classification menjelaskan **jenis aktivitas**, sedangkan Payload menjelaskan **hasil aktivitas**.
+> Activity Classification dan Payload merupakan pasangan konseptual di dalam Learning Activity Record. Classification menjelaskan **jenis aktivitas**, sedangkan Payload menjelaskan **hasil aktivitas**.
 
 ---
 
@@ -1466,7 +1469,7 @@ Payload memiliki hubungan konseptual dengan komponen berikut.
 
 | Component               | Relationship                                              |
 | ----------------------- | --------------------------------------------------------- |
-| Study Session           | Dimiliki oleh satu Study Session.                         |
+| Learning Activity Record           | Dimiliki oleh satu Learning Activity Record.                         |
 | Activity Classification | Menentukan jenis Payload yang digunakan.                  |
 | Learning Services       | Memproses Payload sesuai kebutuhan bisnis.                |
 | Learning Statistics     | Menggunakan informasi Payload untuk menghitung statistik. |
@@ -1497,7 +1500,7 @@ Reference Implementation pertama hanya menggunakan satu jenis Payload.
 QuizResult
 ```
 
-Seluruh Study Session pada versi pertama menggunakan QuizResult sebagai Payload.
+Seluruh Learning Activity Record pada versi pertama menggunakan QuizResult sebagai Payload.
 
 > **Implementation Note**
 >
@@ -1531,7 +1534,7 @@ LISTENING → ListeningResult
 Penambahan Payload baru tidak memerlukan perubahan terhadap:
 
 * Learning Profile
-* Study Session
+* Learning Activity Record
 * Learning Repository
 * Learning Services
 * Statistics Services
@@ -1572,8 +1575,8 @@ Learning Repository memiliki tanggung jawab sebagai berikut:
 
 * Menyimpan Learning Profile.
 * Mengambil Learning Profile.
-* Menyimpan Study Session.
-* Mengambil Study Session.
+* Menyimpan Learning Activity Record.
+* Mengambil Learning Activity Record.
 * Menyediakan mekanisme persistensi yang konsisten.
 * Menyembunyikan detail implementasi media penyimpanan.
 
@@ -1610,11 +1613,11 @@ Learning Repository harus menyediakan kemampuan konseptual berikut:
 
 * Menyimpan Learning Profile.
 * Mengambil Learning Profile.
-* Menyimpan Study Session.
-* Mengambil Study Session untuk learner tertentu.
+* Menyimpan Learning Activity Record.
+* Mengambil Learning Activity Record untuk learner tertentu.
 * Menyediakan operasi pembaruan data secara konsisten.
 
-Pengambilan Study Session secara learner-scoped merupakan tanggung jawab Repository. Consumer tidak boleh mengambil seluruh collection lalu melakukan filtering ownership sendiri.
+Pengambilan Learning Activity Record secara learner-scoped merupakan tanggung jawab Repository. Consumer tidak boleh mengambil seluruh collection lalu melakukan filtering ownership sendiri.
 
 Dokumen ini tidak mendefinisikan nama metode, struktur kelas, maupun bahasa pemrograman yang digunakan.
 
@@ -1636,12 +1639,12 @@ Learning Repository memiliki hubungan konseptual dengan:
 | ------------------ | --------------------------------------------------------- |
 | Learning Services  | Menggunakan Repository untuk seluruh operasi persistensi. |
 | Learning Profile   | Disimpan dan diambil melalui Repository.                  |
-| Study Session      | Disimpan dan diambil melalui Repository dengan learner ownership. |
+| Learning Activity Record      | Disimpan dan diambil melalui Repository dengan learner ownership. |
 | Persistent Storage | Menjadi media penyimpanan yang digunakan Repository.      |
 
 Repository tidak memiliki hubungan langsung dengan User Interface.
 
-Repository SHALL menyediakan learner-scoped retrieval untuk Study Session. Consumer meminta data berdasarkan `learner_id` dan tidak melakukan filtering ownership sendiri.
+Repository SHALL menyediakan learner-scoped retrieval untuk Learning Activity Record. Consumer meminta data berdasarkan `learner_id` dan tidak melakukan filtering ownership sendiri.
 
 ---
 
@@ -1718,7 +1721,7 @@ Dengan pendekatan ini, seluruh logika bisnis berada pada satu lapisan yang konsi
 Learning Services memiliki tanggung jawab sebagai berikut:
 
 * Mengelola alur pembelajaran.
-* Membuat Study Session.
+* Membuat Learning Activity Record.
 * Memproses Payload.
 * Memperbarui Learning Profile.
 * Memanggil Learning Repository.
@@ -1744,7 +1747,7 @@ Learning Services menghubungkan seluruh komponen Learning Engine.
                     │
       ┌─────────────┼─────────────┐
       ▼             ▼             ▼
-Study Session  Learning Profile  Repository
+Learning Activity Record  Learning Profile  Repository
 ```
 
 Seluruh operasi pembelajaran melewati Learning Services.
@@ -1757,7 +1760,7 @@ Architecture Contract menetapkan bahwa:
 
 * User Interface tidak boleh mengakses Repository secara langsung.
 * User Interface tidak boleh memodifikasi Learning Profile secara langsung.
-* User Interface tidak boleh membuat maupun menyimpan Study Session secara langsung.
+* User Interface tidak boleh membuat maupun menyimpan Learning Activity Record secara langsung.
 
 Seluruh operasi tersebut harus dilakukan melalui Learning Services.
 
@@ -1778,9 +1781,9 @@ Learning Services memiliki hubungan konseptual dengan:
 | Component           | Relationship                                             |
 | ------------------- | -------------------------------------------------------- |
 | User Interface      | Menggunakan Service sebagai titik masuk seluruh operasi. |
-| Study Session       | Dibentuk dan diproses melalui Service.                   |
+| Learning Activity Record       | Dibentuk dan diproses melalui Service.                   |
 | Payload             | Diproses sesuai Activity Classification.                 |
-| Learning Profile    | Diperbarui berdasarkan hasil Study Session.              |
+| Learning Profile    | Diperbarui berdasarkan hasil Learning Activity Record.              |
 | Learning Repository | Digunakan untuk seluruh operasi persistensi.             |
 | Learning Statistics | Menggunakan data yang telah diproses oleh Service.       |
 
@@ -1797,7 +1800,7 @@ User Interface
 Learning Services
         │
         ▼
-Create Study Session
+Create Learning Activity Record
         │
         ▼
 Process Payload
@@ -1837,7 +1840,7 @@ Reference Implementation pertama menggunakan Learning Services untuk memproses h
 
 Setelah pengguna menyelesaikan Quiz, Learning Services:
 
-1. Membentuk Study Session.
+1. Membentuk Learning Activity Record.
 2. Mengaitkan Activity Classification.
 3. Menyimpan Payload.
 4. Memperbarui Learning Profile.
@@ -1886,7 +1889,7 @@ Seluruh aktivitas pembelajaran diproses melalui Service Layer sehingga komponen 
 
 Statistics Services menyediakan informasi statistik mengenai perkembangan belajar pengguna.
 
-Seluruh statistik dihasilkan berdasarkan data yang terdapat pada Learning Profile dan Study Session.
+Seluruh statistik dihasilkan berdasarkan data yang terdapat pada Learning Profile dan Learning Activity Record.
 
 Statistics Services tidak memiliki penyimpanan data sendiri.
 
@@ -1905,7 +1908,7 @@ Statistics Services memiliki tanggung jawab sebagai berikut:
 Statistics Services tidak bertanggung jawab terhadap:
 
 * penyimpanan data,
-* pembentukan Study Session,
+* pembentukan Learning Activity Record,
 * perubahan Learning Profile.
 
 ---
@@ -1915,7 +1918,7 @@ Statistics Services tidak bertanggung jawab terhadap:
 Statistics Services menghasilkan informasi berdasarkan data yang telah tersedia.
 
 ```text
-              Study Session
+              Learning Activity Record
                      │
                      ▼
             Learning Profile
@@ -1955,7 +1958,7 @@ Statistics Services memiliki hubungan konseptual dengan:
 
 | Component         | Relationship                                     |
 | ----------------- | ------------------------------------------------ |
-| Study Session     | Menjadi sumber utama data statistik.             |
+| Learning Activity Record     | Menjadi sumber utama data statistik.             |
 | Learning Profile  | Menyediakan informasi agregat yang diperlukan.   |
 | Learning Services | Memanggil Statistics Services ketika diperlukan. |
 | User Interface    | Menampilkan informasi statistik kepada pengguna. |
@@ -2090,7 +2093,7 @@ Persistent Storage merupakan media penyimpanan aktual yang digunakan oleh implem
 Architecture Contract menetapkan bahwa Data Storage harus mampu menyimpan informasi berikut:
 
 * Learning Profile
-* Study Session Collection dengan learner ownership eksplisit
+* Learning Activity Record Collection dengan learner ownership eksplisit
 
 Kontrak ini tidak menentukan:
 
@@ -2117,7 +2120,7 @@ Kontrak ini tidak menentukan:
 | Learning Repository | Menggunakan Storage Adapter untuk mengakses media penyimpanan.        |
 | Storage Adapter     | Menyediakan abstraksi terhadap teknologi Persistent Storage.          |
 | Learning Profile    | Disimpan melalui Learning Repository.                                 |
-| Study Session       | Disimpan melalui Learning Repository.                                 |
+| Learning Activity Record       | Disimpan melalui Learning Repository.                                 |
 | Persistent Storage  | Menjadi media penyimpanan aktual yang digunakan oleh Storage Adapter. |
 
 Data Storage tidak memiliki hubungan langsung dengan:
@@ -2243,7 +2246,7 @@ Learner Identity
 
 Learning Profile
 
-Study Session
+Learning Activity Record
 
 Activity Classification
 
@@ -2284,7 +2287,7 @@ Hubungan konseptual antar Domain Model digambarkan sebagai berikut.
                     Learner Identity
                            │
                            ▼
-                    Study Session *
+                    Learning Activity Record *
                            │
                      derived into
                            ▼
@@ -2298,10 +2301,10 @@ Activity Classification              Payload
 Keterangan:
 
 * Satu Learning Profile merepresentasikan perkembangan belajar seorang learner.
-* Setiap Study Session dimiliki tepat satu learner melalui `learner_id`.
-* Satu Learning Profile dibentuk dari banyak Study Session milik learner yang sama.
-* Setiap Study Session memiliki tepat satu Activity Classification.
-* Setiap Study Session memiliki tepat satu Payload.
+* Setiap Learning Activity Record dimiliki tepat satu learner melalui `learner_id`.
+* Satu Learning Profile dibentuk dari banyak Learning Activity Record milik learner yang sama.
+* Setiap Learning Activity Record memiliki tepat satu Activity Classification.
+* Setiap Learning Activity Record memiliki tepat satu Payload.
 
 ---
 
@@ -2326,7 +2329,7 @@ Interaksi dengan komponen tersebut dilakukan melalui Service Layer.
 Architecture Contract menetapkan aturan berikut.
 
 * Learning Profile merupakan representasi agregat seorang learner.
-* Study Session merupakan Source of Truth dan memiliki ownership eksplisit melalui `learner_id`.
+* Learning Activity Record merupakan Source of Truth dan memiliki ownership eksplisit melalui `learner_id`.
 * Activity Classification mengidentifikasi jenis aktivitas.
 * Payload menyimpan hasil spesifik aktivitas.
 * Repository tidak mengandung logika bisnis.
@@ -2359,7 +2362,7 @@ Reference Implementation pertama menggunakan Domain Model berikut.
 ```text
 Learning Profile
 
-Study Session
+Learning Activity Record
 
 Activity Classification
     └── QUIZ
@@ -2545,7 +2548,7 @@ Hubungan antara Architecture Contract dan Reference Implementation ditunjukkan p
 | Architecture Contract   | Reference Implementation |
 | ----------------------- | ------------------------ |
 | Learning Profile        | `LearningProfile`        |
-| Study Session           | `StudySession`           |
+| Learning Activity Record           | `LearningActivityRecord`           |
 | Activity Classification | `QUIZ`                   |
 | Payload                 | `QuizResult`             |
 | Learning Repository     | `LearningRepository`     |
@@ -2568,7 +2571,7 @@ Quiz Module
 Learning Service
       │
       ▼
-Create Study Session
+Create Learning Activity Record
       │
       ▼
 Attach Activity Classification
@@ -2600,7 +2603,7 @@ Reference Implementation menggunakan satu implementasi Repository.
 Repository bertanggung jawab terhadap:
 
 * penyimpanan Learning Profile,
-* penyimpanan Study Session,
+* penyimpanan Learning Activity Record,
 * pengambilan data pembelajaran.
 
 Media penyimpanan menggunakan JSON lokal.
@@ -2632,7 +2635,7 @@ Reference Implementation digunakan untuk memvalidasi keputusan-keputusan arsitek
 
 Validasi tersebut meliputi:
 
-* Study Session sebagai Source of Truth.
+* Learning Activity Record sebagai Source of Truth.
 * Learning Profile sebagai agregasi.
 * Repository sebagai Persistence Layer.
 * Service Layer sebagai pusat logika bisnis.
@@ -2760,7 +2763,7 @@ Learning Engine harus mempertahankan kompatibilitas terhadap implementasi yang t
 
 Perubahan implementasi tidak boleh menyebabkan implementasi sebelumnya menjadi tidak valid tanpa alasan arsitektural yang kuat.
 
-Untuk Study Session yang telah dipersist sebelum learner ownership diperkenalkan, sistem tidak boleh menetapkan `learner_id` secara diam-diam berdasarkan tebakan, urutan profile, timestamp, session identifier, atau informasi tidak authoritative lainnya. Legacy records tanpa ownership yang dapat diverifikasi harus diperlakukan sebagai legacy/unassigned data sampai migration strategy yang eksplisit diterapkan.
+Untuk Learning Activity Record yang telah dipersist sebelum learner ownership diperkenalkan, sistem tidak boleh menetapkan `learner_id` secara diam-diam berdasarkan tebakan, urutan profile, timestamp, session identifier, atau informasi tidak authoritative lainnya. Legacy records tanpa ownership yang dapat diverifikasi harus diperlakukan sebagai legacy/unassigned data sampai migration strategy yang eksplisit diterapkan.
 
 Backward Compatibility merupakan salah satu prioritas utama dalam evolusi Learning Engine.
 
@@ -2917,7 +2920,7 @@ Diagram ini memperlihatkan:
 │          ▲                           │ derived from           │
 │          │                           │                        │
 │          │                    ┌──────┴───────┐                │
-│          │                    │ Study Session│                │
+│          │                    │ Learning Activity Record│                │
 │          │                    └──────┬───────┘                │
 │          │                           │                        │
 │          │              ┌────────────┴────────────┐           │
@@ -2970,7 +2973,7 @@ Hubungan utama Domain Model adalah:
 Learner Identity
        │
        ▼
-Study Session *
+Learning Activity Record *
        │
        │ derived into
        ▼
@@ -2986,11 +2989,11 @@ Classification
 Interpretasi diagram:
 
 * Satu Learning Profile merepresentasikan satu learner.
-* Setiap Study Session dimiliki tepat satu learner melalui `learner_id`.
-* Satu Learning Profile dapat memiliki banyak Study Session milik learner yang sama.
-* Setiap Study Session memiliki tepat satu Activity Classification.
-* Setiap Study Session memiliki tepat satu Payload.
-* Study Session merupakan Primary Data.
+* Setiap Learning Activity Record dimiliki tepat satu learner melalui `learner_id`.
+* Satu Learning Profile dapat memiliki banyak Learning Activity Record milik learner yang sama.
+* Setiap Learning Activity Record memiliki tepat satu Activity Classification.
+* Setiap Learning Activity Record memiliki tepat satu Payload.
+* Learning Activity Record merupakan Primary Data.
 * Learning Profile merupakan Derived Aggregate.
 
 ---
@@ -3026,7 +3029,7 @@ Data Learning Engine dapat diklasifikasikan sebagai berikut:
 ```text
 PRIMARY DATA
     │
-    └── Study Session
+    └── Learning Activity Record
           │
           ├── Activity Classification
           └── Payload
@@ -3057,7 +3060,7 @@ Pada Reference Implementation, hubungan Domain Model menjadi:
 Learning Profile
        ▲
        │
-Study Session
+Learning Activity Record
        │
        ├── Activity Classification
        │        └── QUIZ
@@ -3097,7 +3100,7 @@ Ketika mode pembelajaran baru ditambahkan, struktur inti tetap dipertahankan.
 Contoh:
 
 ```text
-Study Session
+Learning Activity Record
      │
      ├── QUIZ
      │     └── QuizResult
@@ -3131,7 +3134,7 @@ Domain Relationship Diagram memberikan representasi ringkas terhadap struktur Le
 Struktur utama dapat diringkas sebagai:
 
 ```text
-Study Session
+Learning Activity Record
      │
      ├── Classification
      └── Payload
@@ -3192,7 +3195,7 @@ Quiz Module
  ▼
 Learning Service
  │
- ├── Create Study Session
+ ├── Create Learning Activity Record
  │
  ├── Set Activity Classification
  │
@@ -3240,15 +3243,15 @@ Quiz Module tidak menyimpan hasil pembelajaran secara langsung ke Persistent Sto
 
 ---
 
-## C.4 Study Session Creation
+## C.4 Learning Activity Record Creation
 
-Learning Service membuat Study Session berdasarkan hasil aktivitas.
+Learning Service membuat Learning Activity Record berdasarkan hasil aktivitas.
 
 ```text
 QuizResult
     │
     ▼
-Study Session
+Learning Activity Record
     │
     ├── learner_id = Active Learner
     ├── Activity Classification = QUIZ
@@ -3256,18 +3259,18 @@ Study Session
     └── Payload = QuizResult
 ```
 
-Study Session menjadi representasi permanen dari aktivitas pembelajaran tersebut.
+Learning Activity Record menjadi representasi permanen dari aktivitas pembelajaran tersebut.
 
 ---
 
 ## C.5 Learning Profile Update
 
-Setelah Study Session terbentuk, Learning Service memperbarui Learning Profile.
+Setelah Learning Activity Record terbentuk, Learning Service memperbarui Learning Profile.
 
 ```text
 Existing Learning Profile
           │
-          │ + Study Session
+          │ + Learning Activity Record
           ▼
 Updated Learning Profile
 ```
@@ -3315,7 +3318,7 @@ Reference Implementation menggunakan JSON sebagai Persistent Storage.
 Statistics Service membaca data pembelajaran yang telah tersimpan atau tersedia melalui Domain Model.
 
 ```text
-Study Sessions
+Learning Activity Records
       │
       ▼
 Learning Profile
@@ -3327,7 +3330,7 @@ Statistics Service
 Statistics Information
 ```
 
-Statistics Service tidak mengubah Study Session maupun Learning Profile.
+Statistics Service tidak mengubah Learning Activity Record maupun Learning Profile.
 
 ---
 
@@ -3371,7 +3374,7 @@ Keseluruhan Reference Implementation dapat digambarkan sebagai berikut:
 ┌─────────────────────────┐
 │    Learning Service     │
 │                         │
-│ Create Study Session    │
+│ Create Learning Activity Record    │
 │ Set Classification      │
 │ Attach Payload          │
 │ Update Profile          │
@@ -3450,7 +3453,7 @@ FlashcardResult
 Learning Service
       │
       ▼
-Study Session
+Learning Activity Record
       │
       ├── Classification = FLASHCARD
       └── Payload = FlashcardResult
@@ -3473,9 +3476,9 @@ Struktur Learning Engine lainnya tetap dipertahankan.
 Processing Flow mengikuti prinsip berikut:
 
 1. Aktivitas pembelajaran menghasilkan Payload.
-2. Learning Service membentuk Study Session.
-3. Study Session menjadi Primary Data.
-4. Learning Profile diperbarui berdasarkan Study Session.
+2. Learning Service membentuk Learning Activity Record.
+3. Learning Activity Record menjadi Primary Data.
+4. Learning Profile diperbarui berdasarkan Learning Activity Record.
 5. Repository menangani persistensi.
 6. Statistics Service menghasilkan Derived Data.
 7. User Interface hanya mengonsumsi hasil Service Layer.
@@ -3525,10 +3528,10 @@ Identifier bersifat stabil dan tidak boleh digunakan kembali untuk keputusan yan
 | ID            | Decision                                                                                                                                  | Reference                |
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
 | **AD-LE-001** | Learning Profile merepresentasikan aggregated learning state dan tidak menyimpan activity-specific payload.                               | Learning Profile         |
-| **AD-LE-002** | Study Session merupakan unit dasar pencatatan aktivitas pembelajaran yang telah selesai.                                                  | Study Session            |
-| **AD-LE-003** | History merupakan presentation view dari kumpulan Study Session dan bukan Domain Model.                                                   | Study Session            |
-| **AD-LE-004** | Activity Classification mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh Study Session.                          | Activity Classification  |
-| **AD-LE-005** | Payload merepresentasikan hasil spesifik aktivitas yang terkait dengan Study Session dan harus kompatibel dengan Activity Classification. | Payload Model            |
+| **AD-LE-002** | Learning Activity Record merupakan unit dasar pencatatan aktivitas pembelajaran yang telah selesai.                                                  | Learning Activity Record            |
+| **AD-LE-003** | History merupakan presentation view dari kumpulan Learning Activity Record dan bukan Domain Model.                                                   | Learning Activity Record            |
+| **AD-LE-004** | Activity Classification mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh Learning Activity Record.                          | Activity Classification  |
+| **AD-LE-005** | Payload merepresentasikan hasil spesifik aktivitas yang terkait dengan Learning Activity Record dan harus kompatibel dengan Activity Classification. | Payload Model            |
 | **AD-LE-006** | Seluruh operasi persistensi dilakukan melalui Learning Repository.                                                                        | Learning Repository      |
 | **AD-LE-007** | Learning Services merupakan entry point utama terhadap Business Logic Learning Engine.                                                    | Learning Services        |
 | **AD-LE-008** | Statistics merupakan Derived Data dan bukan Primary Data yang disimpan sebagai sumber kebenaran.                                          | Statistics Services      |
@@ -3537,7 +3540,7 @@ Identifier bersifat stabil dan tidak boleh digunakan kembali untuk keputusan yan
 | **AD-LE-011** | Architecture Version, Reference Implementation Version, dan Storage Version dikelola secara independen.                                   | Versioning               |
 | **AD-LE-012** | Reference Implementation digunakan untuk memvalidasi Architecture Contract dan bukan sebagai batas kemampuan Learning Engine.             | Reference Implementation |
 | **AD-LE-013** | Evolusi Learning Engine dilakukan terutama melalui perluasan implementasi; perubahan kontrak hanya melalui controlled architecture change.     | Evolution Strategy       |
-| **AD-LE-014** | Setiap Study Session dimiliki tepat satu learner melalui `learner_id`, dan Repository menyediakan learner-scoped retrieval.               | Learner Ownership        |
+| **AD-LE-014** | Setiap Learning Activity Record dimiliki tepat satu learner melalui `learner_id`, dan Repository menyediakan learner-scoped retrieval.               | Learner Ownership        |
 
 ---
 
@@ -3671,7 +3674,7 @@ Index ini mendukung traceability, maintainability, dan historical integrity tanp
 
 ## E.1 Activity Classification
 
-Mekanisme untuk mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh sebuah Study Session.
+Mekanisme untuk mengidentifikasi jenis aktivitas pembelajaran yang direpresentasikan oleh sebuah Learning Activity Record.
 
 Contoh:
 
@@ -3730,7 +3733,7 @@ Learning Engine Core Domain terdiri atas:
 
 ```text id="y7c4e3"
 Learning Profile
-Study Session
+Learning Activity Record
 Activity Classification
 Payload
 ```
@@ -3822,7 +3825,7 @@ Learning Service merupakan entry point utama untuk operasi pembelajaran.
 
 Data spesifik yang merepresentasikan hasil dari sebuah aktivitas pembelajaran.
 
-Setiap Study Session memiliki tepat satu Payload.
+Setiap Learning Activity Record memiliki tepat satu Payload.
 
 Struktur Payload bergantung pada Activity Classification.
 
@@ -3846,7 +3849,7 @@ Data Storage
 
 Data utama yang menjadi Source of Truth dan tidak bergantung pada data turunan.
 
-Dalam Learning Engine, Study Session merupakan Primary Data.
+Dalam Learning Engine, Learning Activity Record merupakan Primary Data.
 
 ---
 
@@ -3868,7 +3871,7 @@ Lapisan Application Layer yang menjalankan Business Logic dan mengoordinasikan D
 
 Data utama yang menjadi dasar bagi pembentukan seluruh Derived Data.
 
-Dalam Learning Engine, Study Session merupakan Source of Truth untuk aktivitas pembelajaran.
+Dalam Learning Engine, Learning Activity Record merupakan Source of Truth untuk aktivitas pembelajaran.
 
 ---
 
@@ -3906,17 +3909,17 @@ Storage Version dapat berubah secara independen dari Architecture Version.
 
 ## E.26 Learner Identity
 
-Identitas unik yang digunakan Learning Engine untuk menentukan learner pemilik Learning Profile dan Study Session. Learner Identity direpresentasikan oleh `learner_id`.
+Identitas unik yang digunakan Learning Engine untuk menentukan learner pemilik Learning Profile dan Learning Activity Record. Learner Identity direpresentasikan oleh `learner_id`.
 
 ---
 
-## E.27 Study Session
+## E.27 Learning Activity Record
 
 Representasi satu aktivitas pembelajaran yang dilakukan oleh seorang learner.
 
-Study Session merupakan unit dasar pencatatan aktivitas dan Primary Data Learning Engine.
+Learning Activity Record merupakan unit dasar pencatatan aktivitas dan Primary Data Learning Engine.
 
-Setiap Study Session memiliki:
+Setiap Learning Activity Record memiliki:
 
 ```text id="o6p4o5"
 learner_id
@@ -3924,7 +3927,7 @@ Activity Classification
 Payload
 ```
 
-Setiap Study Session dimiliki tepat satu learner.
+Setiap Learning Activity Record dimiliki tepat satu learner.
 
 ---
 
@@ -3938,7 +3941,7 @@ User Interface tidak boleh mengakses Persistence Layer secara langsung.
 
 ## E.29 History
 
-Representasi visual dari kumpulan Study Session.
+Representasi visual dari kumpulan Learning Activity Record.
 
 History bukan merupakan Domain Model maupun sumber data terpisah.
 
