@@ -132,7 +132,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -156,7 +156,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         """Next generates the following question."""
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.quiz_tab.next_question()
 
@@ -174,7 +174,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         """Next clears feedback state."""
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -204,7 +204,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         """Next clears the selected answer."""
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.quiz_tab.next_question()
 
@@ -216,7 +216,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         """Check is disabled for the new question."""
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.quiz_tab.next_question()
 
@@ -228,7 +228,7 @@ class TestQuizTabNextQuestion(unittest.TestCase):
         """Next is disabled until another answer is checked."""
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.next_enabled,
@@ -240,34 +240,33 @@ class TestQuizTabNextQuestion(unittest.TestCase):
             self.quiz_tab.next_enabled,
         )
 
-    def test_final_next_completes_quiz(self):
-        """Next after the final feedback completes the Quiz."""
+    def test_final_answer_completes_quiz(self):
+        """The final answer completes the Quiz and shows the Result view."""
 
+        # Question 1
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer()
-
-        self.quiz_tab.next_question()
-
-        self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer()
-
-        self.assertTrue(
-            self.quiz_tab.feedback_visible,
-        )
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.next_enabled,
         )
 
+        # Question 2 — final question
         self.quiz_tab.next_question()
+        self.quiz_tab.select_answer("na")
+        self.quiz_tab.check_answer()
 
+        # Final answer → RESULT
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
         )
 
-        self.assertEqual(
-            len(self.learning_service.calls),
-            1,
+        self.assertTrue(
+            self.quiz_tab.is_result_visible,
+        )
+
+        self.assertFalse(
+            self.quiz_tab.next_enabled,
         )
 
 

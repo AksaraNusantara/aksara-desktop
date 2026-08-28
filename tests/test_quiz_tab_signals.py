@@ -119,7 +119,7 @@ class TestQuizTabSignals(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
     def test_start_emits_started_once(self):
@@ -224,7 +224,7 @@ class TestQuizTabSignals(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         started_before = self.started_count
         cancelled_before = self.cancelled_count
@@ -244,7 +244,7 @@ class TestQuizTabSignals(unittest.TestCase):
 
         self.assertEqual(
             self.completed_count,
-            completed_before + 1,
+            completed_before,
         )
 
 

@@ -22,11 +22,13 @@ class QuizResult:
         total_questions: Number of questions presented.
         correct_answers: Number of correctly answered questions.
         incorrect_answers: Number of incorrectly answered questions.
+        difficulty_level: Difficulty level used for the Quiz.
     """
 
     total_questions: int
     correct_answers: int
     incorrect_answers: int
+    difficulty_level: int
 
     @property
     def activity_type(self) -> ActivityType:

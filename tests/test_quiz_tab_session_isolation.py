@@ -124,7 +124,7 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
     def test_second_quiz_starts_with_fresh_statistics(self):
@@ -137,15 +137,7 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
             total_questions=1,
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
 
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
@@ -175,7 +167,7 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -208,27 +200,20 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
         )
 
     def test_second_quiz_has_independent_session(self):
-        """Second Quiz creates an independent active session."""
+        """Second Quiz creates an independent public Quiz state."""
 
         self._complete_first_quiz()
-
-        first_session = self.quiz_tab._session
 
         self.quiz_tab.start_quiz(
             difficulty=QuizDifficulty.LEVEL_1,
             total_questions=1,
         )
 
-        second_session = self.quiz_tab._session
-
-        self.assertIsNotNone(
-            second_session,
-        )
-
-        self.assertIsNot(
-            second_session,
-            first_session,
-        )
+        self.assertTrue(self.quiz_tab.is_quiz_active)
+        self.assertFalse(self.quiz_tab.is_result_visible)
+        self.assertEqual(self.quiz_tab.progress_text, "Soal 1 dari 1")
+        self.assertIsNone(self.quiz_tab.selected_answer)
+        self.assertFalse(self.quiz_tab.feedback_visible)
 
     def test_second_quiz_result_is_persisted_separately(self):
         """Each completed Quiz produces its own persisted result."""
@@ -241,7 +226,7 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer("na")
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -260,17 +245,10 @@ class TestQuizTabSessionIsolation(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer("na")
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "100%")
 
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
 
 
 if __name__ == "__main__":

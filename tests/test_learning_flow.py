@@ -37,18 +37,21 @@ from core.learning.models.payload import QuizResult
 from core.learning.repositories.learning_repository import (
     StorageLearningRepository,
 )
+from core.learning.repositories.learner_repository import (
+    StorageLearnerRepository,
+)
 from core.learning.services.learning_service import LearningService
 from core.learning.services.statistics_service import (
     StatisticsService,
 )
-from core.learning.storage.json_storage import JSONStorage
+from core.learning.storage.json_adapter import JSONAdapter
 
 
 class TestLearningFlow(unittest.TestCase):
     """
     Validate the complete AD-7 learning flow.
 
-    The test intentionally uses the real JSONStorage and
+    The test intentionally uses the real JSONAdapter and
     StorageLearningRepository implementations.
     """
 
@@ -57,7 +60,7 @@ class TestLearningFlow(unittest.TestCase):
 
         self.temp_dir = Path(tempfile.mkdtemp())
 
-        storage = JSONStorage(
+        storage = JSONAdapter(
             self.temp_dir,
         )
 
@@ -65,8 +68,13 @@ class TestLearningFlow(unittest.TestCase):
             storage,
         )
 
+        learner_repository = StorageLearnerRepository(
+            storage,
+        )
+
         self.learning_service = LearningService(
             repository,
+            learner_repository,
         )
 
         self.statistics_service = StatisticsService()
@@ -95,7 +103,7 @@ class TestLearningFlow(unittest.TestCase):
                 ↓
             LearningProfile
                 ↓
-            JSONStorage
+            JSONAdapter
                 ↓
             reload
                 ↓
@@ -117,6 +125,7 @@ class TestLearningFlow(unittest.TestCase):
             total_questions=10,
             correct_answers=8,
             incorrect_answers=2,
+            difficulty_level=1,
         )
 
         # --------------------------------------------------------------
@@ -240,6 +249,7 @@ class TestLearningFlow(unittest.TestCase):
                 total_questions=10,
                 correct_answers=8,
                 incorrect_answers=2,
+                difficulty_level=1,
             ),
             timestamp=datetime(
                 2026,
@@ -257,6 +267,7 @@ class TestLearningFlow(unittest.TestCase):
                 total_questions=20,
                 correct_answers=15,
                 incorrect_answers=5,
+                difficulty_level=1,
             ),
             timestamp=datetime(
                 2026,
@@ -274,6 +285,7 @@ class TestLearningFlow(unittest.TestCase):
                 total_questions=5,
                 correct_answers=4,
                 incorrect_answers=1,
+                difficulty_level=1,
             ),
             timestamp=datetime(
                 2026,
@@ -361,6 +373,7 @@ class TestLearningFlow(unittest.TestCase):
                 total_questions=10,
                 correct_answers=7,
                 incorrect_answers=3,
+                difficulty_level=1,
             ),
             timestamp=datetime(
                 2026,
@@ -378,6 +391,7 @@ class TestLearningFlow(unittest.TestCase):
                 total_questions=20,
                 correct_answers=18,
                 incorrect_answers=2,
+                difficulty_level=1,
             ),
             timestamp=datetime(
                 2026,

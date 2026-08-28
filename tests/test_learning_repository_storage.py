@@ -1,5 +1,5 @@
 """
-Integration tests for LearningRepository with JSONStorage.
+Integration tests for LearningRepository with JSONAdapter.
 
 Architecture references:
     AD-LE-006 — Persistence operations SHALL be performed through
@@ -14,6 +14,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from typing import Any
 
 
 # ---------------------------------------------------------------------------
@@ -32,23 +33,41 @@ if str(ROOT_DIR) not in sys.path:
 
 from core.learning.models.activity import ActivityType
 from core.learning.models.learning_profile import LearningProfile
+from core.learning.models.learner_identity import LearnerIdentity
 from core.learning.models.payload import QuizResult
 from core.learning.models.study_session import StudySession
 from core.learning.repositories.learning_repository import (
     StorageLearningRepository,
 )
-from core.learning.storage.json_storage import JSONStorage
+from core.learning.storage.json_adapter import JSONAdapter
+from application.learning.quiz.quiz_difficulty import QuizDifficulty
+
+
+class FailingStorage:
+    """Storage double that fails on save()."""
+
+    def load(self, key):
+        return None
+
+    def save(self, key, data):
+        raise OSError("Simulated storage failure")
+
+    def delete(self, key):
+        pass
+
+    def exists(self, key):
+        return False
 
 
 class TestStorageLearningRepository(unittest.TestCase):
-    """Test LearningRepository persistence using JSONStorage."""
+    """Test LearningRepository persistence using JSONAdapter."""
 
     def setUp(self) -> None:
         """Create an isolated temporary repository."""
 
         self.temp_dir = Path(tempfile.mkdtemp())
 
-        storage = JSONStorage(
+        storage = JSONAdapter(
             self.temp_dir,
         )
 
@@ -88,10 +107,68 @@ class TestStorageLearningRepository(unittest.TestCase):
             ),
             activity_type=ActivityType.QUIZ,
             payload=QuizResult(
+                difficulty_level=1,
                 total_questions=10,
                 correct_answers=8,
                 incorrect_answers=2,
             ),
+        )
+
+    # ------------------------------------------------------------------
+    # Learner Identity
+    # ------------------------------------------------------------------
+
+    def save_learner(
+        self,
+        learner: LearnerIdentity,
+    ) -> None:
+        """
+        Persist a LearnerIdentity.
+
+        Learners are stored by learner identifier.
+        """
+
+        learners = self.storage.load(
+            self.LEARNERS_KEY,
+        )
+
+        if learners is None:
+            learners = {}
+
+        learners[learner.learner_id] = self._serialize_learner(
+            learner,
+        )
+
+        self.storage.save(
+            self.LEARNERS_KEY,
+            learners,
+        )
+
+    def load_learner(
+        self,
+        learner_id: str,
+    ) -> LearnerIdentity | None:
+        """
+        Load a LearnerIdentity by learner ID.
+
+        Returns:
+            Reconstructed LearnerIdentity or None.
+        """
+
+        learners = self.storage.load(
+            self.LEARNERS_KEY,
+        )
+
+        if learners is None:
+            return None
+
+        data = learners.get(learner_id)
+
+        if data is None:
+            return None
+
+        return self._deserialize_learner(
+            data,
         )
 
     # ------------------------------------------------------------------
@@ -263,6 +340,7 @@ class TestStorageLearningRepository(unittest.TestCase):
             ),
             activity_type=ActivityType.QUIZ,
             payload=QuizResult(
+                difficulty_level=2,
                 total_questions=20,
                 correct_answers=18,
                 incorrect_answers=2,
@@ -449,6 +527,48 @@ class TestStorageLearningRepository(unittest.TestCase):
         self.assertEqual(
             loaded[0].session_id,
             "ꦲꦤꦕꦫꦏ",
+        )
+
+    def test_save_session_propagates_storage_failure(self):
+        """Storage failures are propagated to the caller."""
+
+        repository = StorageLearningRepository(
+            FailingStorage(),
+        )
+
+        session = self._create_session()
+
+        with self.assertRaises(OSError):
+            repository.save_session(
+                session,
+            )
+
+    @staticmethod
+    def _serialize_learner(
+        learner: LearnerIdentity,
+    ) -> dict[str, Any]:
+        """
+        Convert a LearnerIdentity into storage-neutral data.
+        """
+
+        return {
+            "learner_id": learner.learner_id,
+            "display_name": learner.display_name,
+            "is_guest": learner.is_guest,
+        }
+
+    @staticmethod
+    def _deserialize_learner(
+        data: dict[str, Any],
+    ) -> LearnerIdentity:
+        """
+        Reconstruct a LearnerIdentity from stored data.
+        """
+
+        return LearnerIdentity(
+            learner_id=data["learner_id"],
+            display_name=data["display_name"],
+            is_guest=data["is_guest"],
         )
 
 

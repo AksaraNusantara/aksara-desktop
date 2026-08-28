@@ -32,6 +32,8 @@ from PySide6.QtWidgets import QToolBar
 
 from core.engine import CoreEngine
 from core.services.audio_service import AudioService
+from core.learning.services.learning_service import LearningService
+from core.learning.models.learner_identity import LearnerIdentity
 from application.learning.flashcard.flashcard_session import (
     FlashcardSession,
 )
@@ -48,6 +50,8 @@ class MainWindow(QMainWindow):
         engine: CoreEngine,
         audio: AudioService,
         flashcard_session: FlashcardSession,
+        learning_service: LearningService,
+        active_learner: LearnerIdentity | None,
     ) -> None:
         super().__init__()
 
@@ -56,6 +60,10 @@ class MainWindow(QMainWindow):
         self._audio = audio
 
         self._flashcard_session = flashcard_session
+
+        self._learning_service = learning_service
+
+        self._active_learner = active_learner
 
         self._status_bar: QStatusBar | None = None
         self._main_toolbar: QToolBar | None = None
@@ -99,6 +107,8 @@ class MainWindow(QMainWindow):
             CentralWorkspace(
                 engine=self._engine,
                 audio=self._audio,
-                flashcard_session=self._flashcard_session
+                flashcard_session=self._flashcard_session,
+                learning_service=self._learning_service,
+                active_learner=self._active_learner,
             )
         )

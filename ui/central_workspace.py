@@ -44,14 +44,29 @@ from PySide6.QtWidgets import QWidget
 
 from core.engine import CoreEngine
 from core.services.audio_service import AudioService
-
+from core.learning.services.learning_service import LearningService
+from core.learning.models.learner_identity import LearnerIdentity
 from application.learning.flashcard.flashcard_session import (
     FlashcardSession,
 )
+from application.learning.quiz.quiz_generator import QuizGenerator
+from application.learning.quiz.quiz_difficulty import QuizDifficulty
 
 from .tabs.home_tab import HomeTab
 from .tabs.flashcard_tab import FlashcardTab
 from .tabs.script_explorer_tab import ScriptExplorerTab
+from .tabs.quiz_tab import QuizTab
+
+
+class _EngineQuizGenerator:
+    """Resolve Quiz questions from the currently active ScriptPack."""
+
+    def __init__(self, engine: CoreEngine) -> None:
+        self._engine = engine
+
+    def generate(self, difficulty: QuizDifficulty):
+        characters = self._engine.get_active_characters()
+        return QuizGenerator(characters).generate(difficulty)
 
 
 class CentralWorkspace(QWidget):
@@ -75,6 +90,8 @@ class CentralWorkspace(QWidget):
         engine: CoreEngine,
         audio: AudioService,
         flashcard_session: FlashcardSession,
+        learning_service: LearningService,
+        active_learner: LearnerIdentity,
     ) -> None:
         """
         Initialize the central workspace.
@@ -95,12 +112,15 @@ class CentralWorkspace(QWidget):
         self._engine = engine
         self._audio = audio
         self._flashcard_session = flashcard_session
+        self._learning_service = learning_service
+        self._active_learner = active_learner
 
         self._tab_widget: QTabWidget | None = None
 
         self._home_tab: HomeTab | None = None
         self._script_explorer_tab: ScriptExplorerTab | None = None
         self._flashcard_tab: FlashcardTab | None = None
+        self._quiz_tab: QuizTab | None = None
 
         self._navigation_locked = False
         self._navigation_lock_states: dict[int, bool] = {}
@@ -157,7 +177,57 @@ class CentralWorkspace(QWidget):
             self._show_home_tab,
         )
 
+        self._quiz_tab = QuizTab(
+            generator=_EngineQuizGenerator(self._engine),
+            learning_service=self._learning_service,
+            learner_id=self._active_learner.learner_id,
+            learner_display_name=self._active_learner.display_name,
+            scriptpack_active=(
+                lambda: self._engine.get_active_scriptpack() is not None
+            ),
+        )
+
+        self._tab_widget.addTab(
+            self._quiz_tab,
+            "Quiz",
+        )
+
+        self._quiz_tab.open_home_requested.connect(
+            self._show_home_tab,
+        )
+
+        self._engine.register_listener(
+            self._quiz_tab.refresh,
+        )
+
+        self._quiz_tab.quiz_started.connect(
+            self._on_quiz_started,
+        )
+        self._quiz_tab.quiz_cancelled.connect(
+            self._on_quiz_cancelled,
+        )
+        self._quiz_tab.quiz_finished.connect(
+            self._on_quiz_finished,
+        )
+
         layout.addWidget(self._tab_widget)
+
+    @property
+    def quiz_tab(self) -> QuizTab | None:
+        """Return the hosted Quiz tab."""
+        return self._quiz_tab
+
+    def _on_quiz_started(self) -> None:
+        """Lock workspace navigation while a Quiz is running."""
+        self.set_navigation_locked(True)
+
+    def _on_quiz_cancelled(self) -> None:
+        """Restore workspace navigation after Quiz cancellation."""
+        self.set_navigation_locked(False)
+
+    def _on_quiz_finished(self) -> None:
+        """Restore workspace navigation after the Result flow ends."""
+        self.set_navigation_locked(False)
 
     def _show_home_tab(self) -> None:
         """

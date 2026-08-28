@@ -132,7 +132,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertEqual(
             self.quiz_tab.correct_label.text(),
@@ -158,7 +158,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer("na")
 
         self.assertEqual(
             self.quiz_tab.correct_label.text(),
@@ -184,7 +184,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -214,7 +214,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -232,8 +232,8 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
             "Akurasi: 100%",
         )
 
-    def test_statistics_labels_reset_after_completion(self):
-        """Statistics labels return to zero after completion."""
+    def test_statistics_labels_remain_visible_in_result(self):
+        """Final statistics remain available while Result is displayed."""
 
         self.quiz_tab.start_quiz(
             difficulty=QuizDifficulty.LEVEL_1,
@@ -241,8 +241,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
-        self.quiz_tab.next_question()
+        self.quiz_tab.check_answer("ha")
 
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
@@ -250,7 +249,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
 
         self.assertEqual(
             self.quiz_tab.correct_label.text(),
-            "Benar: 0",
+            "Benar: 1",
         )
 
         self.assertEqual(
@@ -260,7 +259,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
 
         self.assertEqual(
             self.quiz_tab.accuracy_label.text(),
-            "Akurasi: 0%",
+            "Akurasi: 100%",
         )
 
     def test_statistics_labels_reset_after_cancel(self):
@@ -272,7 +271,7 @@ class TestQuizTabStatisticsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.quiz_tab.cancel_quiz()
 

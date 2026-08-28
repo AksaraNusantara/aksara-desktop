@@ -108,7 +108,7 @@ class TestQuizTabAnswerButtonsUI(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -125,7 +125,7 @@ class TestQuizTabAnswerButtonsUI(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         self.assertFalse(
@@ -146,7 +146,7 @@ class TestQuizTabAnswerButtonsUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         self.assertFalse(

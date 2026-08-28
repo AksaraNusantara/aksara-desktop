@@ -79,5 +79,11 @@ progress_*.json
 
 scriptpacks/**/generated/
 
+# Learning runtime data
+data/learning/
+
 # Audio cache
 cache/
+
+# BATCH FILE
+*.bat

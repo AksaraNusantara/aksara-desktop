@@ -1,99 +1,60 @@
-"""
-Tests for the Learning Engine repository contract.
+"""Contract tests for LearningRepository.
 
-Architecture references:
-    AD-LE-006 — All persistence operations SHALL be performed
-                through Learning Repository.
-    AD-LE-009 — Learning Engine SHALL NOT depend on a specific
-                storage technology.
+This file is the full candidate replacement for
+tests/test_learning_repository.py.
+
+The test fixture follows the current QuizResult contract and uses
+JSONAdapter, not the retired JSONAdapter name.
 """
 
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
+import tempfile
 import unittest
-
-
-# ---------------------------------------------------------------------------
-# Project path
-# ---------------------------------------------------------------------------
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-
-# ---------------------------------------------------------------------------
-# Learning Engine imports
-# ---------------------------------------------------------------------------
-
+#from application.learning.quiz.quiz_difficulty import QuizDifficulty
 from core.learning.models.activity import ActivityType
 from core.learning.models.learning_profile import LearningProfile
 from core.learning.models.payload import QuizResult
 from core.learning.models.study_session import StudySession
-from core.learning.repositories.learning_repository import LearningRepository
-
-
-class InMemoryLearningRepository(LearningRepository):
-    """
-    In-memory implementation used to validate the repository contract.
-
-    This implementation deliberately contains no storage technology
-    concerns. It exists only for contract testing.
-    """
-
-    def __init__(self) -> None:
-        """Initialize the in-memory repository."""
-
-        self._sessions: list[StudySession] = []
-        self._profiles: dict[str, LearningProfile] = {}
-
-    def save_session(self, session: StudySession) -> None:
-        """Persist a StudySession in memory."""
-
-        self._sessions.append(session)
-
-    def load_sessions(
-        self,
-        learner_id: str,
-    ) -> list[StudySession]:
-        """Load stored sessions belonging to a learner."""
-
-        return [
-            session
-            for session in self._sessions
-            if session.learner_id == learner_id
-        ]
-
-    def save_profile(self, profile: LearningProfile) -> None:
-        """Persist a LearningProfile in memory."""
-
-        self._profiles[profile.learner_id] = profile
-
-    def load_profile(
-        self,
-        learner_id: str,
-    ) -> LearningProfile | None:
-        """Return a persisted LearningProfile for a learner."""
-
-        return self._profiles.get(learner_id)
+from core.learning.repositories.learning_repository import (
+    StorageLearningRepository,
+)
+from core.learning.storage.json_adapter import JSONAdapter
 
 
 class TestLearningRepositoryContract(unittest.TestCase):
-    """Validate the LearningRepository contract."""
+    """Validate StudySession and LearningProfile persistence."""
 
-    def setUp(self) -> None:
-        """Create a fresh repository for each test."""
+    def setUp(self):
+        self._temp_dir = tempfile.TemporaryDirectory()
 
-        self.repository = InMemoryLearningRepository()
+        self.storage_path = (
+            Path(self._temp_dir.name) / "learning.json"
+        )
+
+        self.storage = JSONAdapter(self.storage_path)
+
+        self.repository = StorageLearningRepository(
+            self.storage,
+        )
+
+    def tearDown(self):
+        self._temp_dir.cleanup()
 
     def _create_session(
         self,
         session_id: str = "session-001",
         learner_id: str = "learner-001",
+        difficulty_level: int = 1,
     ) -> StudySession:
-        """Create a valid Quiz StudySession."""
+        """Create a valid Quiz StudySession for repository tests."""
 
         return StudySession(
             session_id=session_id,
@@ -101,18 +62,26 @@ class TestLearningRepositoryContract(unittest.TestCase):
             timestamp=datetime.now(timezone.utc),
             activity_type=ActivityType.QUIZ,
             payload=QuizResult(
+                difficulty_level=difficulty_level,
                 total_questions=10,
                 correct_answers=8,
                 incorrect_answers=2,
             ),
         )
 
-    def test_repository_is_a_learning_repository(self):
-        """The implementation must satisfy the repository contract."""
+    def _create_profile(
+        self,
+        learner_id: str = "learner-001",
+    ) -> LearningProfile:
+        """Create a valid LearningProfile for repository tests."""
 
-        self.assertIsInstance(
-            self.repository,
-            LearningRepository,
+        return LearningProfile(
+            learner_id=learner_id,
+            total_sessions=3,
+            total_questions=30,
+            correct_answers=24,
+            incorrect_answers=6,
+            last_activity=datetime.now(timezone.utc),
         )
 
     def test_save_and_load_session(self):
@@ -122,12 +91,14 @@ class TestLearningRepositoryContract(unittest.TestCase):
 
         self.repository.save_session(session)
 
-        sessions = self.repository.load_sessions(
-            session.learner_id,
+        loaded = self.repository.load_sessions(
+            "learner-001",
         )
 
-        self.assertEqual(len(sessions), 1)
-        self.assertIs(sessions[0], session)
+        self.assertEqual(
+            loaded,
+            [session],
+        )
 
     def test_multiple_sessions_are_preserved(self):
         """Multiple StudySession records are preserved."""
@@ -140,132 +111,150 @@ class TestLearningRepositoryContract(unittest.TestCase):
         session_2 = self._create_session(
             session_id="session-002",
             learner_id="learner-001",
+            difficulty_level=2,
         )
+
         self.repository.save_session(session_1)
         self.repository.save_session(session_2)
 
-        sessions = self.repository.load_sessions(
+        loaded = self.repository.load_sessions(
             "learner-001",
         )
 
-        self.assertEqual(len(sessions), 2)
         self.assertEqual(
-            [session.session_id for session in sessions],
-            ["session-001", "session-002"],
+            loaded,
+            [session_1, session_2],
         )
-
-    def test_load_sessions_returns_empty_list_initially(self):
-        """A new repository has no StudySession records."""
-
-        sessions = self.repository.load_sessions(
-            "learner-001",
-        )
-
-        self.assertEqual(sessions, [])
-
-    def test_save_and_load_profile(self):
-        """A saved LearningProfile can be loaded."""
-
-        profile = LearningProfile(
-            learner_id="learner-001",
-            total_sessions=2,
-            total_questions=20,
-            correct_answers=16,
-            incorrect_answers=4,
-        )
-
-        self.repository.save_profile(profile)
-
-        loaded = self.repository.load_profile("learner-001")
-
-        self.assertIs(loaded, profile)
-
-    def test_load_missing_profile_returns_none(self):
-        """Loading a non-existent profile returns None."""
-
-        loaded = self.repository.load_profile("unknown-learner")
-
-        self.assertIsNone(loaded)
-
-    def test_profile_is_replaced_for_same_learner(self):
-        """Saving a profile replaces the previous aggregate."""
-
-        profile_1 = LearningProfile(
-            learner_id="learner-001",
-            total_sessions=1,
-            total_questions=10,
-            correct_answers=8,
-            incorrect_answers=2,
-        )
-
-        profile_2 = LearningProfile(
-            learner_id="learner-001",
-            total_sessions=2,
-            total_questions=20,
-            correct_answers=17,
-            incorrect_answers=3,
-        )
-
-        self.repository.save_profile(profile_1)
-        self.repository.save_profile(profile_2)
-
-        loaded = self.repository.load_profile("learner-001")
-
-        self.assertIs(loaded, profile_2)
-        self.assertEqual(loaded.total_sessions, 2)
 
     def test_sessions_are_isolated_by_learner(self):
-        """Loading sessions returns only records belonging to the learner."""
+        """Loading sessions returns only records for that learner."""
 
         learner_a_session_1 = self._create_session(
             session_id="session-001",
             learner_id="learner-001",
         )
 
-        learner_b_session = self._create_session(
+        learner_a_session_2 = self._create_session(
             session_id="session-002",
-            learner_id="learner-002",
+            learner_id="learner-001",
+            difficulty_level=2,
         )
 
-        learner_a_session_2 = self._create_session(
+        learner_b_session = self._create_session(
             session_id="session-003",
-            learner_id="learner-001",
+            learner_id="learner-002",
         )
 
         self.repository.save_session(
             learner_a_session_1,
         )
-
+        self.repository.save_session(
+            learner_a_session_2,
+        )
         self.repository.save_session(
             learner_b_session,
         )
 
-        self.repository.save_session(
-            learner_a_session_2,
-        )
-
-        sessions = self.repository.load_sessions(
+        loaded = self.repository.load_sessions(
             "learner-001",
         )
 
         self.assertEqual(
-            len(sessions),
-            2,
+            loaded,
+            [
+                learner_a_session_1,
+                learner_a_session_2,
+            ],
+        )
+
+    def test_replacing_session_with_same_id(self):
+        """Saving the same session ID replaces the previous session."""
+
+        original = self._create_session(
+            session_id="session-001",
+            learner_id="learner-001",
+            difficulty_level=1,
+        )
+
+        replacement = self._create_session(
+            session_id="session-001",
+            learner_id="learner-001",
+            difficulty_level=3,
+        )
+
+        self.repository.save_session(original)
+        self.repository.save_session(replacement)
+
+        loaded = self.repository.load_sessions(
+            "learner-001",
         )
 
         self.assertEqual(
-            {session.session_id for session in sessions},
-            {
-                "session-001",
-                "session-003",
-            },
+            loaded,
+            [replacement],
         )
 
-        self.assertTrue(
-            all(
-                session.learner_id == "learner-001"
-                for session in sessions
-            )
+    def test_missing_sessions_returns_empty_list(self):
+        """A learner without sessions receives an empty list."""
+
+        self.assertEqual(
+            self.repository.load_sessions(
+                "missing-learner",
+            ),
+            [],
+        )
+
+    def test_save_and_load_profile(self):
+        """A saved LearningProfile can be loaded."""
+
+        profile = self._create_profile()
+
+        self.repository.save_profile(profile)
+
+        loaded = self.repository.load_profile(
+            "learner-001",
+        )
+
+        self.assertEqual(
+            loaded,
+            profile,
+        )
+
+    def test_missing_profile_returns_none(self):
+        """A missing LearningProfile returns None."""
+
+        self.assertIsNone(
+            self.repository.load_profile(
+                "missing-learner",
+            ),
+        )
+
+    def test_profile_is_replaced_by_learner_id(self):
+        """Saving a profile with the same learner ID replaces it."""
+
+        original = self._create_profile(
+            "learner-001",
+        )
+
+        replacement = LearningProfile(
+            learner_id="learner-001",
+            total_sessions=7,
+            total_questions=70,
+            correct_answers=63,
+            incorrect_answers=7,
+            last_activity=datetime.now(timezone.utc),
+        )
+
+        self.repository.save_profile(original)
+        self.repository.save_profile(replacement)
+
+        loaded = self.repository.load_profile(
+            "learner-001",
+        )
+
+        self.assertEqual(
+            loaded,
+            replacement,
         )
 
 

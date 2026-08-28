@@ -17,7 +17,7 @@ import sys
 
 from PySide6.QtWidgets import QApplication
 
-from application import Application
+from application.application import Application
 
 
 def main() -> int:

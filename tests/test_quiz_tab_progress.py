@@ -130,7 +130,7 @@ class TestQuizTabProgress(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.progress_text,
@@ -146,7 +146,7 @@ class TestQuizTabProgress(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -163,11 +163,11 @@ class TestQuizTabProgress(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -184,19 +184,16 @@ class TestQuizTabProgress(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.progress_text,
-            "Soal 1 dari 1",
+            "—",
         )
-
-        self.quiz_tab.next_question()
 
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
         )
-
         self.assertEqual(
             self.quiz_tab.progress_text,
             "—",

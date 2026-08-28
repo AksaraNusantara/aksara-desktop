@@ -1,3 +1,8 @@
+"""Manual ScriptPack-aware AudioService smoke test.
+
+This module is intentionally safe to import during unittest discovery.
+"""
+
 from pathlib import Path
 import sys
 
@@ -9,32 +14,13 @@ if str(PROJECT_ROOT) not in sys.path:
 from core.engine import CoreEngine
 from core.services.audio_service import AudioService
 
-engine = CoreEngine()
 
-#
-# Initialize the Core Engine.
-#
+if __name__ == "__main__":
+    engine = CoreEngine()
+    engine.initialize(PROJECT_ROOT / "scriptpacks")
+    engine.activate("javanese")
 
-engine.initialize(
-    PROJECT_ROOT / "scriptpacks",
-)
-
-#
-# Activate the Javanese ScriptPack.
-#
-
-engine.activate(
-    "javanese",
-)
-
-audio = AudioService(
-    engine,
-)
-
-audio.play(".ha ")
-
-result = audio._resolve_asset_audio(
-    "ha",
-)
-
-print(result)
+    audio = AudioService(
+        cache_root=PROJECT_ROOT / "cache" / "audio",
+    )
+    audio.play("ha")

@@ -44,6 +44,7 @@ class TestQuizResult(unittest.TestCase):
             total_questions=10,
             correct_answers=8,
             incorrect_answers=2,
+            difficulty_level=1,
         )
 
         self.assertEqual(result.total_questions, 10)
@@ -59,6 +60,7 @@ class TestQuizResult(unittest.TestCase):
                 total_questions=10,
                 correct_answers=8,
                 incorrect_answers=1,
+                difficulty_level=1,
             )
 
     def test_negative_values(self):
@@ -69,6 +71,7 @@ class TestQuizResult(unittest.TestCase):
                 total_questions=-1,
                 correct_answers=0,
                 incorrect_answers=0,
+                difficulty_level=1,
             )
 
 
@@ -82,6 +85,7 @@ class TestStudySession(unittest.TestCase):
             total_questions=10,
             correct_answers=7,
             incorrect_answers=3,
+            difficulty_level=1,
         )
 
     def test_valid_study_session(self):
@@ -220,6 +224,7 @@ class TestDomainModelImmutability(unittest.TestCase):
             total_questions=10,
             correct_answers=8,
             incorrect_answers=2,
+            difficulty_level=1,
         )
 
         with self.assertRaises(AttributeError):
@@ -237,6 +242,7 @@ class TestDomainModelImmutability(unittest.TestCase):
                 total_questions=10,
                 correct_answers=8,
                 incorrect_answers=2,
+                difficulty_level=1,
             ),
         )
 

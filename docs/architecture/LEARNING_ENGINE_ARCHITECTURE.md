@@ -2869,7 +2869,7 @@ core/
     ├── storage/
     │
     │   ├── storage_adapter.py
-    |   └── json_storage.py
+    |   └── json_adapter.py
     │
     └── __init__.py
 ```

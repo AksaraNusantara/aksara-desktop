@@ -19,7 +19,7 @@ from typing import Any
 from .storage_adapter import StorageAdapter
 
 
-class JSONStorage(StorageAdapter):
+class JSONAdapter(StorageAdapter):
     """
     JSON file-based implementation of StorageAdapter.
 

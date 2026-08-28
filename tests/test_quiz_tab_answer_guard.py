@@ -130,7 +130,7 @@ class TestQuizTabAnswerGuard(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         with self.assertRaises(RuntimeError):
             self.quiz_tab.select_answer("na")
@@ -141,7 +141,7 @@ class TestQuizTabAnswerGuard(unittest.TestCase):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         with self.assertRaises(RuntimeError):

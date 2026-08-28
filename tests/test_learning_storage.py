@@ -11,6 +11,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 # ---------------------------------------------------------------------------
@@ -27,18 +28,18 @@ if str(ROOT_DIR) not in sys.path:
 # Learning Engine imports
 # ---------------------------------------------------------------------------
 
-from core.learning.storage.json_storage import JSONStorage
+from core.learning.storage.json_adapter import JSONAdapter
 from core.learning.storage.storage_adapter import StorageAdapter
 
 
-class TestJSONStorage(unittest.TestCase):
-    """Test JSONStorage against the StorageAdapter contract."""
+class TestJSONAdapter(unittest.TestCase):
+    """Test JSONAdapter against the StorageAdapter contract."""
 
     def setUp(self) -> None:
         """Create an isolated temporary storage directory."""
 
         self.temp_dir = Path(tempfile.mkdtemp())
-        self.storage = JSONStorage(self.temp_dir)
+        self.storage = JSONAdapter(self.temp_dir)
 
     def tearDown(self) -> None:
         """Remove the temporary storage directory."""
@@ -49,7 +50,7 @@ class TestJSONStorage(unittest.TestCase):
         )
 
     def test_is_storage_adapter(self):
-        """JSONStorage satisfies the StorageAdapter contract."""
+        """JSONAdapter satisfies the StorageAdapter contract."""
 
         self.assertIsInstance(
             self.storage,
@@ -195,6 +196,20 @@ class TestJSONStorage(unittest.TestCase):
         self.assertTrue(
             expected_path.exists(),
         )
+
+    def test_save_propagates_storage_failure(self):
+        """Storage failures are propagated to the caller."""
+
+        with patch.object(
+            Path,
+            "open",
+            side_effect=OSError("Simulated storage failure"),
+        ):
+            with self.assertRaises(OSError):
+                self.storage.save(
+                    "failure",
+                    {"value": 1},
+                )
 
 
 if __name__ == "__main__":

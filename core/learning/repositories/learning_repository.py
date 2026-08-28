@@ -1,14 +1,15 @@
 """
 Learning Engine repository implementation.
 
-This module defines the LearningRepository persistence boundary and
-its Reference Implementation using a StorageAdapter.
+This module defines the LearningRepository persistence boundary and its
+StorageAdapter-based reference implementation.
 
-Architecture references:
-    AD-LE-006 — All persistence operations SHALL be performed
-                through Learning Repository.
-    AD-LE-009 — Learning Engine SHALL NOT depend on a specific
-                storage technology.
+ADR-0003 boundary:
+    LearningRepository
+    ├── StudySession
+    └── LearningProfile
+
+LearnerIdentity persistence belongs to LearnerRepository.
 """
 
 from abc import ABC, abstractmethod
@@ -23,12 +24,7 @@ from core.learning.storage.storage_adapter import StorageAdapter
 
 
 class LearningRepository(ABC):
-    """
-    Abstract persistence interface for Learning Engine data.
-
-    Concrete implementations must provide persistence operations
-    without exposing storage technology details to the Service Layer.
-    """
+    """Abstract persistence interface for learning data."""
 
     @abstractmethod
     def save_session(self, session: StudySession) -> None:
@@ -36,11 +32,8 @@ class LearningRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def load_sessions(
-        self,
-        learner_id: str,
-    ) -> list[StudySession]:
-        """Load persisted StudySession records belonging to a learner."""
+    def load_sessions(self, learner_id: str) -> list[StudySession]:
+        """Load persisted StudySession records for a learner."""
         raise NotImplementedError
 
     @abstractmethod
@@ -58,47 +51,17 @@ class LearningRepository(ABC):
 
 
 class StorageLearningRepository(LearningRepository):
-    """
-    Reference LearningRepository implementation using StorageAdapter.
-
-    The repository is responsible for translating domain objects into
-    storage-neutral serializable data and reconstructing domain objects
-    when loading them.
-    """
+    """StorageAdapter-backed LearningRepository implementation."""
 
     SESSIONS_KEY = "learning_sessions"
     PROFILES_KEY = "learning_profiles"
 
-    def __init__(
-        self,
-        storage: StorageAdapter,
-    ) -> None:
-        """
-        Initialize the repository.
-
-        Args:
-            storage: StorageAdapter used for persistence.
-        """
-
+    def __init__(self, storage: StorageAdapter) -> None:
         self.storage = storage
 
-    # ------------------------------------------------------------------
-    # Study Session
-    # ------------------------------------------------------------------
-
-    def save_session(
-        self,
-        session: StudySession,
-    ) -> None:
-        """
-        Persist a StudySession.
-
-        Existing sessions are preserved and the new session is appended.
-        """
-
-        sessions_data = self.storage.load(
-            self.SESSIONS_KEY,
-        )
+    def save_session(self, session: StudySession) -> None:
+        """Persist a StudySession, replacing an existing matching ID."""
+        sessions_data = self.storage.load(self.SESSIONS_KEY)
 
         if sessions_data is None:
             sessions_data = []
@@ -124,24 +87,9 @@ class StorageLearningRepository(LearningRepository):
             ],
         )
 
-    def load_sessions(
-        self,
-        learner_id: str,
-    ) -> list[StudySession]:
-        """
-        Load persisted StudySession records belonging to a learner.
-
-        Args:
-            learner_id: Unique identifier of the learner.
-
-        Returns:
-            List of reconstructed StudySession objects belonging
-            to the learner.
-        """
-
-        data = self.storage.load(
-            self.SESSIONS_KEY,
-        )
+    def load_sessions(self, learner_id: str) -> list[StudySession]:
+        """Load StudySession records belonging to a learner."""
+        data = self.storage.load(self.SESSIONS_KEY)
 
         if data is None:
             return []
@@ -157,30 +105,14 @@ class StorageLearningRepository(LearningRepository):
             if session.learner_id == learner_id
         ]
 
-    # ------------------------------------------------------------------
-    # Learning Profile
-    # ------------------------------------------------------------------
-
-    def save_profile(
-        self,
-        profile: LearningProfile,
-    ) -> None:
-        """
-        Persist a LearningProfile.
-
-        Profiles are stored by learner identifier.
-        """
-
-        profiles = self.storage.load(
-            self.PROFILES_KEY,
-        )
+    def save_profile(self, profile: LearningProfile) -> None:
+        """Persist a LearningProfile."""
+        profiles = self.storage.load(self.PROFILES_KEY)
 
         if profiles is None:
             profiles = {}
 
-        profiles[profile.learner_id] = self._serialize_profile(
-            profile,
-        )
+        profiles[profile.learner_id] = self._serialize_profile(profile)
 
         self.storage.save(
             self.PROFILES_KEY,
@@ -191,19 +123,8 @@ class StorageLearningRepository(LearningRepository):
         self,
         learner_id: str,
     ) -> LearningProfile | None:
-        """
-        Load a LearningProfile for a learner.
-
-        Args:
-            learner_id: Unique learner identifier.
-
-        Returns:
-            Reconstructed LearningProfile or None.
-        """
-
-        profiles = self.storage.load(
-            self.PROFILES_KEY,
-        )
+        """Load a LearningProfile for a learner."""
+        profiles = self.storage.load(self.PROFILES_KEY)
 
         if profiles is None:
             return None
@@ -213,27 +134,19 @@ class StorageLearningRepository(LearningRepository):
         if data is None:
             return None
 
-        return self._deserialize_profile(
-            data,
-        )
-
-    # ------------------------------------------------------------------
-    # Serialization
-    # ------------------------------------------------------------------
+        return self._deserialize_profile(data)
 
     @staticmethod
     def _serialize_session(
         session: StudySession,
     ) -> dict[str, Any]:
-        """
-        Convert a StudySession into storage-neutral data.
-        """
-
+        """Convert a StudySession into storage-neutral data."""
         payload = session.payload
 
         if isinstance(payload, QuizResult):
             payload_data = {
                 "type": "quiz",
+                "difficulty_level": payload.difficulty_level,
                 "total_questions": payload.total_questions,
                 "correct_answers": payload.correct_answers,
                 "incorrect_answers": payload.incorrect_answers,
@@ -255,34 +168,26 @@ class StorageLearningRepository(LearningRepository):
     def _deserialize_session(
         data: dict[str, Any],
     ) -> StudySession:
-        """
-        Reconstruct a StudySession from stored data.
-        """
-
-        activity_type = ActivityType(
-            data["activity_type"],
-        )
-
+        """Reconstruct a StudySession from stored data."""
+        activity_type = ActivityType(data["activity_type"])
         payload_data = data["payload"]
 
         if payload_data["type"] == "quiz":
             payload = QuizResult(
+                difficulty_level=payload_data["difficulty_level"],
                 total_questions=payload_data["total_questions"],
                 correct_answers=payload_data["correct_answers"],
                 incorrect_answers=payload_data["incorrect_answers"],
             )
         else:
             raise ValueError(
-                f"Unsupported payload type: "
-                f"{payload_data['type']}"
+                f"Unsupported payload type: {payload_data['type']}"
             )
 
         return StudySession(
             session_id=data["session_id"],
             learner_id=data["learner_id"],
-            timestamp=datetime.fromisoformat(
-                data["timestamp"],
-            ),
+            timestamp=datetime.fromisoformat(data["timestamp"]),
             activity_type=activity_type,
             payload=payload,
         )
@@ -291,10 +196,7 @@ class StorageLearningRepository(LearningRepository):
     def _serialize_profile(
         profile: LearningProfile,
     ) -> dict[str, Any]:
-        """
-        Convert a LearningProfile into storage-neutral data.
-        """
-
+        """Convert a LearningProfile into storage-neutral data."""
         return {
             "learner_id": profile.learner_id,
             "total_sessions": profile.total_sessions,
@@ -312,10 +214,7 @@ class StorageLearningRepository(LearningRepository):
     def _deserialize_profile(
         data: dict[str, Any],
     ) -> LearningProfile:
-        """
-        Reconstruct a LearningProfile from stored data.
-        """
-
+        """Reconstruct a LearningProfile from stored data."""
         last_activity = data.get("last_activity")
 
         return LearningProfile(

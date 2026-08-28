@@ -1,3 +1,8 @@
+"""Manual AudioService smoke test.
+
+This module is intentionally safe to import during unittest discovery.
+"""
+
 from pathlib import Path
 import sys
 
@@ -8,8 +13,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from core.services.audio_service import AudioService
 
-audio = AudioService()
 
-assert not audio.is_playing()
-
-audio.play("")
+if __name__ == "__main__":
+    audio = AudioService(
+        cache_root=PROJECT_ROOT / "cache" / "audio",
+    )
+    audio.play("Halo dari AudioService.")

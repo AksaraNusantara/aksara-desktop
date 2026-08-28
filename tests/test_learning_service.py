@@ -30,6 +30,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from core.learning.models.activity import ActivityType
 from core.learning.models.learning_profile import LearningProfile
+from core.learning.models.learner_identity import LearnerIdentity
 from core.learning.models.payload import QuizResult
 from core.learning.models.study_session import StudySession
 from core.learning.repositories.learning_repository import (
@@ -46,6 +47,23 @@ class InMemoryLearningRepository(LearningRepository):
 
         self.sessions: list[StudySession] = []
         self.profiles: dict[str, LearningProfile] = {}
+        self.learners: dict[str, LearnerIdentity] = {}
+
+    def save_learner(
+        self,
+        learner: LearnerIdentity,
+    ) -> None:
+        """Save or replace a LearnerIdentity."""
+
+        self.learners[learner.learner_id] = learner
+
+    def load_learner(
+        self,
+        learner_id: str,
+    ) -> LearnerIdentity | None:
+        """Load a LearnerIdentity."""
+
+        return self.learners.get(learner_id)
 
     def save_session(
         self,
@@ -90,6 +108,30 @@ class InMemoryLearningRepository(LearningRepository):
         return self.profiles.get(learner_id)
 
 
+class FailingSessionRepository(InMemoryLearningRepository):
+    """Repository that fails when saving a StudySession."""
+
+    def save_session(
+        self,
+        session: StudySession,
+    ) -> None:
+        """Simulate a persistence failure."""
+
+        raise OSError("Simulated session persistence failure")
+
+
+class FailingProfileRepository(InMemoryLearningRepository):
+    """Repository that fails when saving a learner profile."""
+
+    def save_profile(
+        self,
+        profile: LearningProfile,
+    ) -> None:
+        """Simulate a profile persistence failure."""
+
+        raise OSError("Simulated profile persistence failure")
+
+
 class TestLearningService(unittest.TestCase):
     """Test LearningService orchestration."""
 
@@ -99,6 +141,7 @@ class TestLearningService(unittest.TestCase):
         self.repository = InMemoryLearningRepository()
 
         self.service = LearningService(
+            self.repository,
             self.repository,
         )
 
@@ -116,6 +159,7 @@ class TestLearningService(unittest.TestCase):
         total: int = 10,
         correct: int = 8,
         incorrect: int = 2,
+        difficulty_level: int = 1,
     ) -> QuizResult:
         """Create a valid QuizResult."""
 
@@ -123,6 +167,7 @@ class TestLearningService(unittest.TestCase):
             total_questions=total,
             correct_answers=correct,
             incorrect_answers=incorrect,
+            difficulty_level=difficulty_level,
         )
 
     def test_record_quiz_creates_study_session(self):
@@ -331,6 +376,62 @@ class TestLearningService(unittest.TestCase):
         self.assertNotEqual(
             session_1.session_id,
             session_2.session_id,
+        )
+
+    def test_record_quiz_propagates_session_persistence_failure(self):
+        """Session persistence failures are propagated to the caller."""
+
+        repository = FailingSessionRepository()
+
+        service = LearningService(
+            repository,
+            repository,
+        )
+
+        with self.assertRaises(OSError):
+            service.record_quiz_result(
+                learner_id="learner-001",
+                result=self._create_result(),
+                timestamp=self.timestamp,
+            )
+
+    def test_record_quiz_propagates_profile_persistence_failure(self):
+        """Profile persistence failures are propagated to the caller."""
+
+        repository = FailingProfileRepository()
+
+        service = LearningService(
+            repository,
+            repository,
+        )
+
+        with self.assertRaises(OSError):
+            service.record_quiz_result(
+                learner_id="learner-001",
+                result=self._create_result(),
+                timestamp=self.timestamp,
+            )
+
+    def test_record_quiz_partial_persistence_on_profile_failure(self):
+        """A session may remain persisted when profile persistence fails."""
+
+        repository = FailingProfileRepository()
+
+        service = LearningService(
+            repository,
+            repository,
+        )
+
+        with self.assertRaises(OSError):
+            service.record_quiz_result(
+                learner_id="learner-001",
+                result=self._create_result(),
+                timestamp=self.timestamp,
+            )
+
+        self.assertEqual(
+            len(repository.sessions),
+            1,
         )
 
 

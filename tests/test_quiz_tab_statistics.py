@@ -119,16 +119,6 @@ class TestQuizTabStatistics(unittest.TestCase):
         """Statistics start at zero before a Quiz."""
 
         self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
-
-        self.assertEqual(
             self.quiz_tab.accuracy_text,
             "0%",
         )
@@ -142,17 +132,7 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
+        self.quiz_tab.check_answer("ha")
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
@@ -168,17 +148,7 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            1,
-        )
+        self.quiz_tab.check_answer("na")
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
@@ -194,21 +164,11 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         self.quiz_tab.select_answer("ca")
-        self.quiz_tab.submit_answer("ca")
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            1,
-        )
+        self.quiz_tab.check_answer("ca")
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
@@ -224,20 +184,10 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
         )
 
         self.assertEqual(
@@ -254,26 +204,16 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
             "100%",
         )
 
-    def test_statistics_reset_after_completion(self):
-        """Statistics reset after Quiz completion."""
+    def test_statistics_remain_after_completion(self):
+        """Final statistics remain available in Result."""
 
         self.quiz_tab.start_quiz(
             difficulty=QuizDifficulty.LEVEL_1,
@@ -281,32 +221,25 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.quiz_tab.next_question()
+        self.quiz_tab.check_answer("ha")
 
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
+        self.assertTrue(
+            self.quiz_tab.is_result_visible,
         )
 
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
+        self.assertEqual(len(self.learning_service.calls), 1)
+        result = self.learning_service.calls[0]["result"]
+        self.assertEqual(result.total_questions, 1)
+        self.assertEqual(result.correct_answers, 1)
+        self.assertEqual(result.incorrect_answers, 0)
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
-            "0%",
+            "100%",
         )
 
     def test_statistics_reset_after_cancel(self):
@@ -318,27 +251,12 @@ class TestQuizTabStatistics(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
+        self.quiz_tab.check_answer("ha")
 
         self.quiz_tab.cancel_quiz()
 
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
         )
 
         self.assertEqual(

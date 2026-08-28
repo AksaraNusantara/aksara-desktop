@@ -16,10 +16,14 @@ from uuid import uuid4
 
 from core.learning.models.activity import ActivityType
 from core.learning.models.learning_profile import LearningProfile
+from core.learning.models.learner_identity import LearnerIdentity
 from core.learning.models.payload import QuizResult
 from core.learning.models.study_session import StudySession
 from core.learning.repositories.learning_repository import (
     LearningRepository,
+)
+from core.learning.repositories.learner_repository import (
+    LearnerRepository,
 )
 
 
@@ -35,6 +39,7 @@ class LearningService:
     def __init__(
         self,
         repository: LearningRepository,
+        learner_repository: LearnerRepository,
     ) -> None:
         """
         Initialize the LearningService.
@@ -44,6 +49,41 @@ class LearningService:
         """
 
         self.repository = repository
+        self.learner_repository = learner_repository
+
+
+    # ------------------------------------------------------------------
+    # Learner Identity
+    # ------------------------------------------------------------------
+
+    def register_learner(
+        self,
+        learner: LearnerIdentity,
+    ) -> None:
+        """
+        Register or update a learner identity.
+
+        Learner identity persistence is delegated to the repository.
+        """
+
+        self.learner_repository.save_learner(
+            learner,
+        )
+
+    def get_learner(
+        self,
+        learner_id: str,
+    ) -> LearnerIdentity | None:
+        """
+        Load a learner identity by learner ID.
+
+        Returns:
+            LearnerIdentity if the learner exists, otherwise None.
+        """
+
+        return self.learner_repository.load_learner(
+            learner_id,
+        )
 
     def record_quiz_result(
         self,

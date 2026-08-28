@@ -119,7 +119,7 @@ class TestQuizTabProgressUI(unittest.TestCase):
         """Progress label shows idle state before Quiz."""
         self.assertEqual(
             self.quiz_tab.progress_label.text(),
-            "Soal 0 / 0",
+            "—",
         )
 
     def test_progress_label_updates_when_quiz_starts(self):
@@ -144,7 +144,7 @@ class TestQuizTabProgressUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.progress_label.text(),
@@ -160,7 +160,7 @@ class TestQuizTabProgressUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -177,11 +177,11 @@ class TestQuizTabProgressUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer()
         self.quiz_tab.next_question()
 
         self.assertEqual(
@@ -198,11 +198,11 @@ class TestQuizTabProgressUI(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.progress_label.text(),
-            "Soal 1 dari 1",
+            "—",
         )
 
         self.quiz_tab.next_question()

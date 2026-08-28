@@ -118,7 +118,7 @@ class TestQuizTabFeedback(unittest.TestCase):
 
         self.quiz_tab.select_answer("ha")
 
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -137,7 +137,7 @@ class TestQuizTabFeedback(unittest.TestCase):
 
         self.quiz_tab.select_answer("na")
 
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -156,7 +156,7 @@ class TestQuizTabFeedback(unittest.TestCase):
 
         self.quiz_tab.select_answer("na")
 
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.correct_answer_text,
@@ -168,7 +168,7 @@ class TestQuizTabFeedback(unittest.TestCase):
 
         self.quiz_tab.select_answer("ha")
 
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertEqual(
             self.quiz_tab.correct_answer_text,
@@ -180,7 +180,7 @@ class TestQuizTabFeedback(unittest.TestCase):
 
         self.quiz_tab.select_answer("ha")
 
-        self.quiz_tab.submit_answer()
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,

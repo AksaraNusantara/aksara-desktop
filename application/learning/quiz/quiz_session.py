@@ -12,6 +12,7 @@ from enum import Enum
 
 from core.learning.models.payload import QuizResult
 
+from .quiz_difficulty import QuizDifficulty
 from .quiz_question import QuizQuestion
 
 
@@ -55,6 +56,7 @@ class QuizSession:
     def __init__(
         self,
         total_questions: int,
+        difficulty: QuizDifficulty,
     ) -> None:
         """
         Initialize a Quiz session.
@@ -69,6 +71,7 @@ class QuizSession:
             )
 
         self._total_questions = total_questions
+        self._difficulty = difficulty
         self._answers: list[QuizAnswer] = []
         self._state = QuizSessionState.ACTIVE
 
@@ -77,6 +80,12 @@ class QuizSession:
         """Return the configured number of questions."""
 
         return self._total_questions
+
+    @property
+    def difficulty(self) -> QuizDifficulty:
+        """Return the Quiz difficulty."""
+
+        return self._difficulty
 
     @property
     def answered_questions(self) -> int:
@@ -204,4 +213,5 @@ class QuizSession:
             total_questions=self.total_questions,
             correct_answers=self.correct_answers,
             incorrect_answers=self.incorrect_answers,
+            difficulty_level=self.difficulty.value,
         )

@@ -818,7 +818,7 @@ LearnerRepository
 StorageAdapter
        │
        ▼
-JSONStorage
+JSONAdapter
 ```
 
 The storage layer remains unaware of learner domain semantics.

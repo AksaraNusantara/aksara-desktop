@@ -206,9 +206,7 @@ class TestQuizTabUIState(unittest.TestCase):
             self.quiz_tab.check_enabled,
         )
 
-        self.quiz_tab.submit_answer(
-            "ha",
-        )
+        self.quiz_tab.check_answer()
 
         self.assertTrue(
             self.is_active_session(),
@@ -230,29 +228,25 @@ class TestQuizTabUIState(unittest.TestCase):
             "ha",
         )
 
-        self.quiz_tab.submit_answer(
-            "ha",
-        )
-
-        self.assertTrue(
-            self.quiz_tab.is_quiz_active,
-        )
-
-        self.assertTrue(
-            self.quiz_tab.next_enabled,
-        )
-
-        self.quiz_tab.next_question()
+        self.quiz_tab.check_answer()
 
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
         )
 
         self.assertTrue(
+            self.quiz_tab.is_result_visible,
+        )
+
+        self.assertFalse(
+            self.quiz_tab.next_enabled,
+        )
+
+        self.assertFalse(
             self.quiz_tab.difficulty_enabled,
         )
 
-        self.assertTrue(
+        self.assertFalse(
             self.quiz_tab.start_enabled,
         )
 
@@ -297,12 +291,7 @@ class TestQuizTabUIState(unittest.TestCase):
     def is_active_session(self):
         """Return whether QuizSession remains active."""
 
-        session = self.quiz_tab.session
-
-        return (
-            session is not None
-            and session.state is QuizSessionState.ACTIVE
-        )
+        return self.quiz_tab.is_quiz_active
 
 
 if __name__ == "__main__":

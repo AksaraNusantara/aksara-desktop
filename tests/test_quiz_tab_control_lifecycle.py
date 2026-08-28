@@ -91,14 +91,14 @@ class TestQuizTabControlLifecycle(unittest.TestCase):
     def _start_quiz(self):
         self.quiz_tab.start_quiz(
             difficulty=QuizDifficulty.LEVEL_1,
-            total_questions=1,
+            total_questions=2,
         )
 
     def _enter_feedback(self):
         self._start_quiz()
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
     def test_idle_state_allows_start(self):
         """Idle state allows starting a Quiz."""
@@ -204,20 +204,21 @@ class TestQuizTabControlLifecycle(unittest.TestCase):
             self.quiz_tab.next_enabled,
         )
 
-    def test_completion_restores_idle_controls(self):
-        """Completion restores the idle control state."""
+    def test_final_answer_enters_result_state(self):
+        """The final answer enters Result with Next disabled."""
 
-        self._enter_feedback()
+        self._start_quiz()
 
+        self.quiz_tab.select_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
+        self.quiz_tab.select_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
-        self.assertTrue(
-            self.quiz_tab.start_enabled,
-        )
-
-        self.assertFalse(
-            self.quiz_tab.cancel_enabled,
-        )
+        self.assertTrue(self.quiz_tab.is_result_visible)
+        self.assertFalse(self.quiz_tab.next_enabled)
+        self.assertFalse(self.quiz_tab.start_enabled)
+        self.assertFalse(self.quiz_tab.cancel_enabled)
 
         self.assertFalse(
             self.quiz_tab.check_enabled,

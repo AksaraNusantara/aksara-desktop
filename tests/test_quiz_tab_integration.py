@@ -135,20 +135,7 @@ class TestQuizTabIntegration(unittest.TestCase):
             "Soal 1 dari 2",
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.accuracy_text,
-            "0%",
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "0%")
 
         # -------------------------------------------------
         # QUESTION 1 — CORRECT
@@ -160,26 +147,13 @@ class TestQuizTabIntegration(unittest.TestCase):
             self.quiz_tab.check_enabled,
         )
 
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.accuracy_text,
-            "100%",
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "100%")
 
         self.assertEqual(
             self.quiz_tab.progress_text,
@@ -209,59 +183,40 @@ class TestQuizTabIntegration(unittest.TestCase):
             "Soal 2 dari 2",
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "100%")
 
         # -------------------------------------------------
         # QUESTION 2 — INCORRECT
         # -------------------------------------------------
 
         self.quiz_tab.select_answer("ca")
-        self.quiz_tab.submit_answer("ca")
+        self.quiz_tab.check_answer("ca")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            1,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.accuracy_text,
-            "50%",
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "50%")
 
         self.assertEqual(
             self.quiz_tab.progress_text,
-            "Soal 2 dari 2",
+            "—",
         )
 
         # -------------------------------------------------
         # COMPLETE
         # -------------------------------------------------
 
-        self.assertTrue(
-            self.quiz_tab.next_enabled,
-        )
-
-        self.quiz_tab.next_question()
-
         self.assertFalse(
             self.quiz_tab.is_quiz_active,
+        )
+
+        self.assertTrue(
+            self.quiz_tab.is_result_visible,
+        )
+
+        self.assertFalse(
+            self.quiz_tab.next_enabled,
         )
 
         self.assertEqual(
@@ -279,22 +234,9 @@ class TestQuizTabIntegration(unittest.TestCase):
             "—",
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "50%")
 
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.accuracy_text,
-            "0%",
-        )
-
-        self.assertTrue(
+        self.assertFalse(
             self.quiz_tab.start_enabled,
         )
 
@@ -319,7 +261,7 @@ class TestQuizTabIntegration(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
         self.assertFalse(
@@ -340,20 +282,7 @@ class TestQuizTabIntegration(unittest.TestCase):
             "Soal 1 dari 2",
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
-
-        self.assertEqual(
-            self.quiz_tab.accuracy_text,
-            "0%",
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "0%")
 
         self.assertFalse(
             self.quiz_tab.feedback_visible,

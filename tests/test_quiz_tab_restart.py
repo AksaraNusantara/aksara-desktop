@@ -114,7 +114,7 @@ class TestQuizTabRestart(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
         self.quiz_tab.next_question()
 
     def test_new_quiz_can_start_after_completion(self):
@@ -156,15 +156,9 @@ class TestQuizTabRestart(unittest.TestCase):
             total_questions=2,
         )
 
-        self.assertEqual(
-            self.quiz_tab.correct_count,
-            0,
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "0%")
 
-        self.assertEqual(
-            self.quiz_tab.incorrect_count,
-            0,
-        )
+        self.assertEqual(self.quiz_tab.accuracy_text, "0%")
 
         self.assertEqual(
             self.quiz_tab.accuracy_text,
@@ -180,7 +174,7 @@ class TestQuizTabRestart(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("ha")
-        self.quiz_tab.submit_answer("ha")
+        self.quiz_tab.check_answer("ha")
 
         self.assertTrue(
             self.quiz_tab.feedback_visible,
@@ -242,7 +236,7 @@ class TestQuizTabRestart(unittest.TestCase):
         )
 
         self.quiz_tab.select_answer("na")
-        self.quiz_tab.submit_answer("na")
+        self.quiz_tab.check_answer("na")
         self.quiz_tab.next_question()
 
         self.assertFalse(
