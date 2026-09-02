@@ -29,27 +29,27 @@ centuries of history, literature, philosophy, and culture.
 
 Aksara Nusantara exists to help preserve this heritage through:
 
--   Open-source software
--   Educational resources
--   Community collaboration
--   Standardized ScriptPack architecture
+- Open-source software
+- Educational resources
+- Community collaboration
+- Standardized ScriptPack architecture
 
-> Technology should help preserve culture---not replace it.
+> Technology should help preserve culture—not replace it.
 
 ------------------------------------------------------------------------
 
 # Project Architecture
 
-``` text
+```text
                     Aksara Nusantara Platform
 
                            Core Engine
-                                │
-      ┌─────────────────────────┼─────────────────────────┐
-      │                         │                         │
- ScriptPack API          Desktop Edition          Future Editions
-      │                         │              (Mobile / Web / CLI)
-      │
+                               │
+       ┌───────────────────────┼───────────────────────┐
+       │                       │                       │
+ ScriptPack API         Desktop Edition          Future Editions
+       │                                       (Mobile / Web / CLI)
+       │
  ├── Javanese
  ├── Balinese
  ├── Rejang
@@ -62,23 +62,28 @@ Aksara Nusantara exists to help preserve this heritage through:
 
 ## Core Platform
 
--   Core Engine
--   ScriptPack Architecture
--   ScriptPack Loader
--   ScriptPack Registry
--   ScriptPack Validator
--   Character Repository
--   Asset Management
--   Transliteration Framework
--   Audio Framework
+- Core Engine
+- ScriptPack Architecture
+- ScriptPack Loader
+- ScriptPack Registry
+- ScriptPack Validator
+- Character Repository
+- Asset Management
+- Transliteration Framework
+- Audio Framework
 
 ## Desktop Edition
 
--   HomeTab
--   ScriptPack Management
--   ScriptPack Activation
--   Runtime Asset Registration
--   Core Engine Integration
+- HomeTab
+- ScriptPack Management
+- ScriptPack Activation
+- Runtime Asset Registration
+- Core Engine Integration
+- Flashcard Learning
+- Quiz System
+- Learner Identity & Guest Mode
+- Learning Engine Integration
+- Learning Progress Persistence
 
 ------------------------------------------------------------------------
 
@@ -92,51 +97,61 @@ Active Development
 
 v0.1 Foundation
 
-**Current Milestone**
+**Current Focus**
 
-**Milestone M1 -- Core Engine Integration**
+Transliteration Subsystem
 
 ### Completed
 
--   Core Engine
--   ScriptPack Architecture
--   Loader
--   Registry
--   Validator
--   Reference Javanese ScriptPack
--   Desktop Integration
--   HomeTab
--   ScriptPack Management Interface
+- Core Engine
+- ScriptPack Architecture
+- Loader
+- Registry
+- Validator
+- Reference Javanese ScriptPack
+- Desktop Integration
+- HomeTab
+- ScriptPack Management Interface
+- Flashcard Module
+- Learner Identity & Guest Mode
+- Learning Engine
+- Learning Persistence
+- Quiz Module
+- Quiz Result Integration
 
 ### In Progress
 
--   Flashcard Module
+- Transliteration Module
 
 ### Planned
 
--   Quiz Module
--   Transliteration Module
--   Progress Tracking
--   Additional ScriptPacks
+- Additional ScriptPacks
+- Theme System
+- Audio Expansion
 
 ------------------------------------------------------------------------
 
 # Repository Structure
 
-``` text
+```text
 application/
 core/
 docs/
 scriptpacks/
 ui/
+tests/
+
 main.py
 requirements.txt
 README.md
 LICENSE
 ```
 
-Each ScriptPack owns its own assets (fonts, characters, audio, images).
-Shared runtime behavior belongs in the Core Engine.
+Each ScriptPack owns its own linguistic data and script-specific assets
+such as fonts, characters, audio, and images.
+
+Shared runtime behavior belongs in the Core Engine and Application
+layers according to their architectural responsibilities.
 
 ------------------------------------------------------------------------
 
@@ -144,36 +159,36 @@ Shared runtime behavior belongs in the Core Engine.
 
 ## Requirements
 
--   Python 3.12+
--   PySide6
+- Python 3.12+
+- PySide6
 
-``` bash
+```bash
 git clone https://github.com/AksaraNusantara/aksara-desktop.git
 cd aksara-desktop
 python -m venv .venv
 ```
 
-Windows
+### Windows
 
-``` bash
+```bash
 .venv\Scripts\activate
 ```
 
-Linux
+### Linux
 
-``` bash
+```bash
 source .venv/bin/activate
 ```
 
 Install dependencies:
 
-``` bash
+```bash
 pip install -r requirements.txt
 ```
 
 Run:
 
-``` bash
+```bash
 python main.py
 ```
 
@@ -185,40 +200,48 @@ Project documentation is located in the `docs/` directory.
 
 Recommended reading order:
 
-1.  START_HERE.md
-2.  PROJECT_CHARTER.md
-3.  ENGINEERING_PRINCIPLES.md
-4.  CORE_ARCHITECTURE.md
-5.  SCRIPTPACK_INTERFACE_SPECIFICATION.md
-6.  PROJECT_WORKFLOW.md
+1. `START_HERE.md`
+2. `PROJECT_CHARTER.md`
+3. `ENGINEERING_PRINCIPLES.md`
+4. `CORE_ARCHITECTURE.md`
+5. `SCRIPTPACK_INTERFACE_SPECIFICATION.md`
+6. `PROJECT_WORKFLOW.md`
+
+For ongoing development history and subsystem-specific work, additional
+documentation is maintained under the relevant directories in `docs/`.
 
 ------------------------------------------------------------------------
 
 # Roadmap
 
-## Milestone M1
+## Milestone M1 — Foundation
 
--   Core Engine Integration ✅
--   HomeTab ✅
+- Core Engine Integration ✅
+- HomeTab ✅
+- ScriptPack Architecture ✅
 
-## Milestone M2
+## Milestone M2 — Learning Experience
 
--   Flashcard Module
--   Quiz Module
--   Transliteration
+- Flashcard Module ✅
+- Learner Identity & Learning Integration ✅
+- Quiz Module ✅
 
-## Milestone M3
+## Current Development
 
--   Additional ScriptPacks
--   Theme System
--   Audio Expansion
+- Transliteration Module 🚧
+
+## Future Milestones
+
+- Additional ScriptPacks
+- Theme System
+- Audio Expansion
 
 ## Long-term Vision
 
--   Android Edition
--   Web Edition
--   Community Marketplace
--   ScriptPack Ecosystem
+- Android Edition
+- Web Edition
+- Community Marketplace
+- ScriptPack Ecosystem
 
 ------------------------------------------------------------------------
 
