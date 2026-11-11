@@ -14,7 +14,7 @@
 | Version      | 1.0                                |
 | Stability    | Frozen                             |
 | Owner        | Aksara Nusantara Project           |
-| License      | MIT                                |
+| License      | GPL-3.0-or-later                                |
 | Last Updated | 2026-07-26                         |
 
 ---
@@ -1022,7 +1022,7 @@ Whenever practical, backward compatibility SHOULD be preserved.
     "version": "1.0.0",
     "specification": "1.0",
     "author": "Aksara Nusantara Project",
-    "license": "MIT",
+    "license": "GPL-3.0-or-later",
     "entry_point": "script.py",
     "language": "jv",
     "writing_system": "Hanacaraka",

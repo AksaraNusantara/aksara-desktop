@@ -1,8 +1,8 @@
-\# Security Policy
+# Security Policy
 
 
 
-\## Supported Versions
+## Supported Versions
 
 
 
@@ -20,15 +20,15 @@ At the current stage of development, only the latest version of Aksara Nusantara
 
 
 
-\---
+---
 
 
 
-\## Reporting a Vulnerability
+## Reporting a Vulnerability
 
 
 
-If you discover a security vulnerability, please \*\*do not\*\* report it through a public GitHub Issue.
+If you discover a security vulnerability, please **do not** report it through a public GitHub Issue.
 
 
 
@@ -40,21 +40,21 @@ Please include:
 
 
 
-\- A clear description of the vulnerability.
+- A clear description of the vulnerability.
 
-\- Steps to reproduce the issue.
+- Steps to reproduce the issue.
 
-\- Potential impact.
+- Potential impact.
 
-\- Suggested mitigation (if known).
-
-
-
-\---
+- Suggested mitigation (if known).
 
 
 
-\## Response Process
+---
+
+
+
+## Response Process
 
 
 
@@ -62,23 +62,23 @@ The project maintainers will:
 
 
 
-1\. Acknowledge the report.
+1. Acknowledge the report.
 
-2\. Investigate the issue.
+2. Investigate the issue.
 
-3\. Fix the vulnerability if confirmed.
+3. Fix the vulnerability if confirmed.
 
-4\. Publish the fix in a future release.
+4. Publish the fix in a future release.
 
-5\. Credit the reporter when appropriate (unless anonymity is requested).
-
-
-
-\---
+5. Credit the reporter when appropriate (unless anonymity is requested).
 
 
 
-\## Responsible Disclosure
+---
+
+
+
+## Responsible Disclosure
 
 
 
@@ -90,11 +90,11 @@ Please allow sufficient time for the vulnerability to be investigated and fixed 
 
 
 
-\---
+---
 
 
 
-\## Scope
+## Scope
 
 
 
@@ -102,21 +102,21 @@ This policy currently applies to:
 
 
 
-\- Desktop application
+- Desktop application
 
-\- Source code
+- Source code
 
-\- Project documentation
+- Project documentation
 
-\- Future official releases
-
-
-
-\---
+- Future official releases
 
 
 
-\## Thank You
+---
+
+
+
+## Thank You
 
 
 

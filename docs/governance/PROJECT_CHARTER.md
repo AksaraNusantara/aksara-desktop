@@ -1,4 +1,4 @@
-\# PROJECT CHARTER
+# PROJECT CHARTER
 
 
 
@@ -6,11 +6,11 @@
 
 
 
-\---
+---
 
 
 
-\# Aksara Nusantara Project Charter
+# Aksara Nusantara Project Charter
 
 
 
@@ -30,11 +30,11 @@ License: GNU GPL v3
 
 
 
-\---
+---
 
 
 
-\# 1. Purpose
+# 1. Purpose
 
 
 
@@ -46,11 +46,11 @@ The project seeks to bridge cultural heritage with modern technology by creating
 
 
 
-\---
+---
 
 
 
-\# 2. Problem Statement
+# 2. Problem Statement
 
 
 
@@ -70,11 +70,11 @@ Aksara Nusantara addresses this challenge by providing a shared technological fo
 
 
 
-\---
+---
 
 
 
-\# 3. Vision
+# 3. Vision
 
 
 
@@ -82,11 +82,11 @@ To become the leading open-source ecosystem for preserving, learning, and advanc
 
 
 
-\---
+---
 
 
 
-\# 4. Mission
+# 4. Mission
 
 
 
@@ -122,11 +122,11 @@ The project is committed to:
 
 
 
-\---
+---
 
 
 
-\# 5. Project Objectives
+# 5. Project Objectives
 
 
 
@@ -154,11 +154,11 @@ The project aims to:
 
 
 
-\---
+---
 
 
 
-\# 6. Stakeholders
+# 6. Stakeholders
 
 
 
@@ -202,11 +202,11 @@ The ecosystem is intended for:
 
 
 
-\---
+---
 
 
 
-\# 7. Guiding Principles
+# 7. Guiding Principles
 
 
 
@@ -242,11 +242,11 @@ Every decision within the project should follow these principles:
 
 
 
-\---
+---
 
 
 
-\# 8. Project Scope
+# 8. Project Scope
 
 
 
@@ -310,11 +310,11 @@ These areas may become independent ecosystem projects in the future.
 
 
 
-\---
+---
 
 
 
-\# 9. Governance
+# 9. Governance
 
 
 
@@ -330,11 +330,11 @@ Community participation is encouraged through discussions, issue tracking, pull 
 
 
 
-\---
+---
 
 
 
-\# 10. Success Criteria
+# 10. Success Criteria
 
 
 
@@ -370,11 +370,11 @@ Success is measured not only by software downloads but also by educational impac
 
 
 
-\---
+---
 
 
 
-\# 11. Long-Term Commitment
+# 11. Long-Term Commitment
 
 
 
@@ -398,11 +398,11 @@ However, the mission of preserving Indonesia's traditional writing systems throu
 
 
 
-\---
+---
 
 
 
-\# Closing Statement
+# Closing Statement
 
 
 
@@ -414,7 +414,7 @@ It is an open invitation for everyone to participate in preserving one of Indone
 
 
 
-\---
+---
 
 
 

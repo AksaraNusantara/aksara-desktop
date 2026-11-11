@@ -1,12 +1,12 @@
-\# Code of Conduct
+# Code of Conduct
 
 
 
-\## Our Pledge
+## Our Pledge
 
 
 
-We, as contributors, maintainers, and community members of \*\*Aksara Nusantara\*\*, are committed to making participation in our project a welcoming, respectful, and harassment-free experience for everyone.
+We, as contributors, maintainers, and community members of **Aksara Nusantara**, are committed to making participation in our project a welcoming, respectful, and harassment-free experience for everyone.
 
 
 
@@ -14,11 +14,11 @@ Our mission is not only to build software, but also to help preserve, study, and
 
 
 
-\---
+---
 
 
 
-\## Our Standards
+## Our Standards
 
 
 
@@ -26,21 +26,21 @@ Examples of behavior that contributes to a positive environment include:
 
 
 
-\- Being respectful and considerate in discussions.
+- Being respectful and considerate in discussions.
 
-\- Welcoming contributors regardless of experience level.
+- Welcoming contributors regardless of experience level.
 
-\- Giving and accepting constructive feedback.
+- Giving and accepting constructive feedback.
 
-\- Supporting newcomers and helping others learn.
+- Supporting newcomers and helping others learn.
 
-\- Respecting different perspectives, cultures, and academic opinions.
+- Respecting different perspectives, cultures, and academic opinions.
 
-\- Using reliable references when discussing linguistic, historical, or cultural topics.
+- Using reliable references when discussing linguistic, historical, or cultural topics.
 
-\- Focusing on facts and evidence rather than personal attacks.
+- Focusing on facts and evidence rather than personal attacks.
 
-\- Recognizing that many traditional writing systems have regional variations and historical differences.
+- Recognizing that many traditional writing systems have regional variations and historical differences.
 
 
 
@@ -48,27 +48,27 @@ Examples of unacceptable behavior include:
 
 
 
-\- Harassment or discrimination of any kind.
+- Harassment or discrimination of any kind.
 
-\- Personal attacks, insults, or offensive comments.
+- Personal attacks, insults, or offensive comments.
 
-\- Trolling or deliberately provoking arguments.
+- Trolling or deliberately provoking arguments.
 
-\- Publishing private information without permission.
+- Publishing private information without permission.
 
-\- Spamming or disrupting discussions.
+- Spamming or disrupting discussions.
 
-\- Repeatedly ignoring community guidelines after warnings.
+- Repeatedly ignoring community guidelines after warnings.
 
-\- Disrespecting cultural heritage or intentionally spreading misinformation.
-
-
-
-\---
+- Disrespecting cultural heritage or intentionally spreading misinformation.
 
 
 
-\## Respect for Cultural Heritage
+---
+
+
+
+## Respect for Cultural Heritage
 
 
 
@@ -84,13 +84,13 @@ However, contributors are expected to:
 
 
 
-\- Respect differing scholarly opinions.
+- Respect differing scholarly opinions.
 
-\- Cite reliable sources whenever possible.
+- Cite reliable sources whenever possible.
 
-\- Discuss disagreements professionally.
+- Discuss disagreements professionally.
 
-\- Remember that historical research often contains multiple valid interpretations.
+- Remember that historical research often contains multiple valid interpretations.
 
 
 
@@ -102,11 +102,11 @@ Disrespect is not.
 
 
 
-\---
+---
 
 
 
-\## Maintainer Responsibilities
+## Maintainer Responsibilities
 
 
 
@@ -114,13 +114,13 @@ Project maintainers are responsible for:
 
 
 
-\- Clarifying community standards.
+- Clarifying community standards.
 
-\- Reviewing reports fairly.
+- Reviewing reports fairly.
 
-\- Taking appropriate action when necessary.
+- Taking appropriate action when necessary.
 
-\- Maintaining a welcoming environment for all contributors.
+- Maintaining a welcoming environment for all contributors.
 
 
 
@@ -128,11 +128,11 @@ Maintainers may edit, remove, or reject comments, issues, pull requests, or othe
 
 
 
-\---
+---
 
 
 
-\## Scope
+## Scope
 
 
 
@@ -140,25 +140,25 @@ This Code of Conduct applies to all community spaces related to Aksara Nusantara
 
 
 
-\- GitHub Issues
+- GitHub Issues
 
-\- Pull Requests
+- Pull Requests
 
-\- Discussions
+- Discussions
 
-\- Documentation
+- Documentation
 
-\- Community chat platforms
+- Community chat platforms
 
-\- Public events representing the project
-
-
-
-\---
+- Public events representing the project
 
 
 
-\## Reporting
+---
+
+
+
+## Reporting
 
 
 
@@ -170,11 +170,11 @@ All reports will be handled confidentially and reviewed fairly.
 
 
 
-\---
+---
 
 
 
-\## Enforcement
+## Enforcement
 
 
 
@@ -186,13 +186,13 @@ Depending on the severity of the violation, actions may include:
 
 
 
-1\. Friendly reminder.
+1. Friendly reminder.
 
-2\. Official warning.
+2. Official warning.
 
-3\. Temporary restriction.
+3. Temporary restriction.
 
-4\. Permanent removal from the community.
+4. Permanent removal from the community.
 
 
 
@@ -200,11 +200,11 @@ The goal of enforcement is to protect the community, encourage learning, and mai
 
 
 
-\---
+---
 
 
 
-\## Attribution
+## Attribution
 
 
 

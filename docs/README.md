@@ -4,31 +4,31 @@ Documentation
 
 Getting Started
 
-&#x20;   START\_HERE
+    START_HERE
 
 
 
 Architecture
 
-&#x20;   PROJECT\_BLUEPRINT
+    PROJECT_BLUEPRINT
 
-&#x20;   CORE\_ARCHITECTURE
+    CORE_ARCHITECTURE
 
 
 
 Standards
 
-&#x20;   SCRIPTPACK\_INTERFACE\_SPECIFICATION
+    SCRIPTPACK_INTERFACE_SPECIFICATION
 
 
 
 Governance
 
-&#x20;   PROJECT\_CHARTER
+    PROJECT_CHARTER
 
 
 
 Roadmap
 
-&#x20;   ROADMAP
+    ROADMAP
 

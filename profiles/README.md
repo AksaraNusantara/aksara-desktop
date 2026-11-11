@@ -1,4 +1,4 @@
-\# Learning Profiles
+# Learning Profiles
 
 
 
@@ -6,7 +6,7 @@ This directory stores local learning profiles for Aksara Nusantara users.
 
 
 
-A learning profile represents a learner's progress within the application. It is \*\*not\*\* intended for user authentication or online accounts.
+A learning profile represents a learner's progress within the application. It is **not** intended for user authentication or online accounts.
 
 
 
@@ -14,23 +14,23 @@ Each profile may contain information such as:
 
 
 
-\- Display name
+- Display name
 
-\- Learning progress
+- Learning progress
 
-\- Completed lessons
+- Completed lessons
 
-\- Quiz history
+- Quiz history
 
-\- Achievement records
+- Achievement records
 
-\- Personal learning statistics
+- Personal learning statistics
 
-\- User preferences (optional)
+- User preferences (optional)
 
 
 
-\## Purpose
+## Purpose
 
 
 
@@ -42,17 +42,17 @@ Examples include:
 
 
 
-\- Continuing lessons from previous sessions
+- Continuing lessons from previous sessions
 
-\- Tracking quiz scores over time
+- Tracking quiz scores over time
 
-\- Measuring learning progress
+- Measuring learning progress
 
-\- Unlocking future achievements and milestones
+- Unlocking future achievements and milestones
 
 
 
-\## Directory Structure
+## Directory Structure
 
 
 
@@ -76,7 +76,7 @@ profiles/
 
 │   ├── progress.json
 
-│   ├── quiz\_history.json
+│   ├── quiz_history.json
 
 │   └── achievements.json
 
@@ -84,31 +84,31 @@ profiles/
 
 └── guest/
 
-&#x20;   ├── profile.json
+    ├── profile.json
 
-&#x20;   └── progress.json
+    └── progress.json
 
 ```
 
 
 
-\## Notes
+## Notes
 
 
 
-\- Profiles are stored locally on the user's computer.
+- Profiles are stored locally on the user's computer.
 
-\- Multiple profiles are supported.
+- Multiple profiles are supported.
 
-\- Each profile is independent.
+- Each profile is independent.
 
-\- Deleting a profile permanently removes its learning history.
+- Deleting a profile permanently removes its learning history.
 
-\- Future versions may support optional cloud synchronization.
+- Future versions may support optional cloud synchronization.
 
 
 
-\## Future Extensions
+## Future Extensions
 
 
 
@@ -116,17 +116,17 @@ The profile system is designed to support future features, including:
 
 
 
-\- Learning statistics
+- Learning statistics
 
-\- Achievement badges
+- Achievement badges
 
-\- Daily learning streaks
+- Daily learning streaks
 
-\- Personalized recommendations
+- Personalized recommendations
 
-\- Cloud synchronization
+- Cloud synchronization
 
-\- Cross-device progress synchronization
+- Cross-device progress synchronization
 
 
 

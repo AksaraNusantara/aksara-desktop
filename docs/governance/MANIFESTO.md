@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-\# Aksara Nusantara Manifesto
+# Aksara Nusantara Manifesto
 
 
 
@@ -9,11 +9,11 @@
 
 
 
-\---
+---
 
 
 
-\## Why We Exist
+## Why We Exist
 
 
 
@@ -33,11 +33,11 @@ Aksara Nusantara exists to help preserve this priceless heritage through technol
 
 
 
-\---
+---
 
 
 
-\## Our Vision
+## Our Vision
 
 
 
@@ -45,15 +45,15 @@ We envision a future where every traditional script of the Indonesian archipelag
 
 
 
-\- Learned freely
+- Learned freely
 
-\- Studied openly
+- Studied openly
 
-\- Digitally preserved
+- Digitally preserved
 
-\- Shared globally
+- Shared globally
 
-\- Improved collaboratively
+- Improved collaboratively
 
 
 
@@ -65,11 +65,11 @@ Technology should help preserve it.
 
 
 
-\---
+---
 
 
 
-\## Our Mission
+## Our Mission
 
 
 
@@ -81,27 +81,27 @@ This includes:
 
 
 
-\- Educational applications
+- Educational applications
 
-\- Digital fonts
+- Digital fonts
 
-\- Learning materials
+- Learning materials
 
-\- Transliteration tools
+- Transliteration tools
 
-\- Unicode resources
+- Unicode resources
 
-\- Historical references
+- Historical references
 
-\- Community collaboration
-
-
-
-\---
+- Community collaboration
 
 
 
-\## Open Source First
+---
+
+
+
+## Open Source First
 
 
 
@@ -121,11 +121,11 @@ Everyone is welcome to contribute.
 
 
 
-\---
+---
 
 
 
-\## Respect History
+## Respect History
 
 
 
@@ -149,11 +149,11 @@ Respect preserves community.
 
 
 
-\---
+---
 
 
 
-\## Education Before Perfection
+## Education Before Perfection
 
 
 
@@ -173,11 +173,11 @@ Every contribution matters.
 
 
 
-\---
+---
 
 
 
-\## Community Over Ownership
+## Community Over Ownership
 
 
 
@@ -193,19 +193,19 @@ Whether you are:
 
 
 
-\- a student,
+- a student,
 
-\- a teacher,
+- a teacher,
 
-\- a historian,
+- a historian,
 
-\- a linguist,
+- a linguist,
 
-\- a software developer,
+- a software developer,
 
-\- a designer,
+- a designer,
 
-\- or simply curious,
+- or simply curious,
 
 
 
@@ -213,11 +213,11 @@ there is a place for you in this community.
 
 
 
-\---
+---
 
 
 
-\## Looking Forward
+## Looking Forward
 
 
 
@@ -233,11 +233,11 @@ This is only the beginning.
 
 
 
-\---
+---
 
 
 
-\## Our Promise
+## Our Promise
 
 
 
@@ -245,17 +245,17 @@ We promise to build this project with:
 
 
 
-\- openness
+- openness
 
-\- transparency
+- transparency
 
-\- curiosity
+- curiosity
 
-\- respect
+- respect
 
-\- kindness
+- kindness
 
-\- continuous learning
+- continuous learning
 
 
 
@@ -271,12 +271,12 @@ We build community.
 
 
 
-\---
+---
 
 
 
-\*"The preservation of culture is a shared responsibility."\*
+*"The preservation of culture is a shared responsibility."*
 
 
 
-\*\*Welcome to Aksara Nusantara.\*\*
+**Welcome to Aksara Nusantara.**

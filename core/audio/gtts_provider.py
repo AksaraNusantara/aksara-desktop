@@ -19,7 +19,7 @@ Responsibilities:
 
 Copyright (c) Aksara Nusantara Project
 
-SPDX-License-Identifier: MIT
+SPDX-License-Identifier: GPL-3.0-or-later
 
 ===============================================================================
 """

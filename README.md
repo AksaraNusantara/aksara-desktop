@@ -256,7 +256,7 @@ Please read **CONTRIBUTING.md** before submitting pull requests.
 
 # License
 
-Released under the MIT License.
+Released under the GNU General Public License v3.0.
 
 See **LICENSE** for details.
 

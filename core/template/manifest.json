@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "specification": "1.0",
     "author": "Aksara Nusantara Project",
-    "license": "MIT",
+    "license": "GPL-3.0-or-later",
     "entry_point": "script.py",
     "language": "und",
     "writing_system": "Template"

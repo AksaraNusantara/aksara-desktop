@@ -1,4 +1,4 @@
-\# Application Layer
+# Application Layer
 
 
 
@@ -14,11 +14,11 @@ The Application Layer is built on top of the Foundation and SHALL NOT implement 
 
 
 
-\---
+---
 
 
 
-\# Responsibilities
+# Responsibilities
 
 
 
@@ -26,17 +26,17 @@ The Application Layer is responsible for:
 
 
 
-\* application bootstrap;
+* application bootstrap;
 
-\* application lifecycle management;
+* application lifecycle management;
 
-\* shared service management;
+* shared service management;
 
-\* runtime state management;
+* runtime state management;
 
-\* workspace management;
+* workspace management;
 
-\* coordination with the graphical user interface.
+* coordination with the graphical user interface.
 
 
 
@@ -44,11 +44,11 @@ The Application Layer SHALL communicate with writing systems exclusively through
 
 
 
-\---
+---
 
 
 
-\# Package Structure
+# Package Structure
 
 
 
@@ -58,37 +58,37 @@ application/
 
 
 
-&#x20;   \_\_init\_\_.py
+    __init__.py
 
 
 
-&#x20;   application.py
+    application.py
 
 
 
-&#x20;   context.py
+    context.py
 
 
 
-&#x20;   state.py
+    state.py
 
 
 
-&#x20;   workspace\_manager.py
+    workspace_manager.py
 
 ```
 
 
 
-\---
+---
 
 
 
-\# Components
+# Components
 
 
 
-\## application.py
+## application.py
 
 
 
@@ -100,17 +100,17 @@ Responsibilities:
 
 
 
-\* initialize the Foundation;
+* initialize the Foundation;
 
-\* create the Application Context;
+* create the Application Context;
 
-\* create the Application State;
+* create the Application State;
 
-\* create the Workspace Manager;
+* create the Workspace Manager;
 
-\* create the MainWindow;
+* create the MainWindow;
 
-\* control the application lifecycle.
+* control the application lifecycle.
 
 
 
@@ -118,11 +118,11 @@ This file represents the runtime entry point of the Application Layer.
 
 
 
-\---
+---
 
 
 
-\## context.py
+## context.py
 
 
 
@@ -134,13 +134,13 @@ Responsibilities:
 
 
 
-\* expose shared services;
+* expose shared services;
 
-\* provide access to the Foundation;
+* provide access to the Foundation;
 
-\* provide access to application configuration;
+* provide access to application configuration;
 
-\* own application-wide services.
+* own application-wide services.
 
 
 
@@ -148,11 +148,11 @@ The Application Context SHALL NOT store runtime state.
 
 
 
-\---
+---
 
 
 
-\## state.py
+## state.py
 
 
 
@@ -164,11 +164,11 @@ Responsibilities:
 
 
 
-\* store shared runtime information;
+* store shared runtime information;
 
-\* expose application-wide runtime data;
+* expose application-wide runtime data;
 
-\* notify interested components when runtime state changes.
+* notify interested components when runtime state changes.
 
 
 
@@ -176,11 +176,11 @@ The Application State SHALL NOT own shared services.
 
 
 
-\---
+---
 
 
 
-\## workspace\_manager.py
+## workspace_manager.py
 
 
 
@@ -192,15 +192,15 @@ Responsibilities:
 
 
 
-\* register Workspace Modules;
+* register Workspace Modules;
 
-\* activate Workspace Modules;
+* activate Workspace Modules;
 
-\* deactivate Workspace Modules;
+* deactivate Workspace Modules;
 
-\* coordinate workspace lifecycle;
+* coordinate workspace lifecycle;
 
-\* provide access to registered Workspace Modules.
+* provide access to registered Workspace Modules.
 
 
 
@@ -208,49 +208,49 @@ The Workspace Manager SHALL NOT implement Workspace Module functionality.
 
 
 
-\---
+---
 
 
 
-\# Relationship with Other Packages
+# Relationship with Other Packages
 
 
 
 ```text
 
-&#x20;               main.py
+                main.py
 
-&#x20;                   │
+                    │
 
-&#x20;                   ▼
+                    ▼
 
-&#x20;           Application Layer
+            Application Layer
 
-&#x20;                   │
+                    │
 
-&#x20;       ┌───────────┴───────────┐
+        ┌───────────┴───────────┐
 
-&#x20;       ▼                       ▼
+        ▼                       ▼
 
 Application Context     Application State
 
-&#x20;       │
+        │
 
-&#x20;       ▼
+        ▼
 
-&#x20;  Workspace Manager
+   Workspace Manager
 
-&#x20;       │
+        │
 
-&#x20;       ▼
+        ▼
 
-&#x20; Workspace Modules
+  Workspace Modules
 
-&#x20;       │
+        │
 
-&#x20;       ▼
+        ▼
 
-&#x20;    Foundation
+     Foundation
 
 ```
 
@@ -264,11 +264,11 @@ The Foundation SHALL NOT depend on the Application Layer.
 
 
 
-\---
+---
 
 
 
-\# Design Principles
+# Design Principles
 
 
 
@@ -276,17 +276,17 @@ The Application Layer follows these architectural principles.
 
 
 
-\* Single Responsibility Principle
+* Single Responsibility Principle
 
-\* Explicit Dependencies
+* Explicit Dependencies
 
-\* Separation of Concerns
+* Separation of Concerns
 
-\* Modular Design
+* Modular Design
 
-\* Open for Extension
+* Open for Extension
 
-\* Foundation Independence
+* Foundation Independence
 
 
 
@@ -294,19 +294,19 @@ All implementation SHALL conform to the requirements defined by:
 
 
 
-\* `APPLICATION\_ARCHITECTURE.md`
+* `APPLICATION_ARCHITECTURE.md`
 
-\* `PROJECT\_WORKFLOW.md`
+* `PROJECT_WORKFLOW.md`
 
-\* `TRACEABILITY.md`
-
-
-
-\---
+* `TRACEABILITY.md`
 
 
 
-\# Development Workflow
+---
+
+
+
+# Development Workflow
 
 
 
@@ -314,17 +314,17 @@ New runtime components SHOULD be introduced in the following order.
 
 
 
-1\. Application
+1. Application
 
-2\. Application Context
+2. Application Context
 
-3\. Application State
+3. Application State
 
-4\. Workspace Manager
+4. Workspace Manager
 
-5\. MainWindow
+5. MainWindow
 
-6\. Workspace Modules
+6. Workspace Modules
 
 
 
@@ -332,21 +332,21 @@ Each implementation SHOULD be accompanied by:
 
 
 
-\* unit tests (when applicable);
+* unit tests (when applicable);
 
-\* documentation updates;
+* documentation updates;
 
-\* traceability references;
+* traceability references;
 
-\* a dedicated Git commit.
-
-
-
-\---
+* a dedicated Git commit.
 
 
 
-\# Version
+---
+
+
+
+# Version
 
 
 

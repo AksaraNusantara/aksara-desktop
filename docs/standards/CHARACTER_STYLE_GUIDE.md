@@ -13,7 +13,7 @@
 | Status | Foundation v1.0 (Frozen) |
 | Version | 1.0 |
 | Owner | Aksara Nusantara Project |
-| License | MIT |
+| License | GPL-3.0-or-later |
 | Last Updated | 2026-07-27 |
 
 ---

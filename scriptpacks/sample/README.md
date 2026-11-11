@@ -1,4 +1,4 @@
-\# Official ScriptPack Template
+# Official ScriptPack Template
 
 
 
@@ -14,11 +14,11 @@ The template serves as the canonical reference implementation of the ScriptPack 
 
 
 
-\---
+---
 
 
 
-\# Purpose
+# Purpose
 
 
 
@@ -26,13 +26,13 @@ The ScriptPack Template demonstrates:
 
 
 
-\- the required directory structure;
+- the required directory structure;
 
-\- the required metadata;
+- the required metadata;
 
-\- the BaseScriptPack implementation;
+- the BaseScriptPack implementation;
 
-\- recommended project organization.
+- recommended project organization.
 
 
 
@@ -40,11 +40,11 @@ It is intended to be copied and customized for a specific writing system.
 
 
 
-\---
+---
 
 
 
-\# Directory Structure
+# Directory Structure
 
 
 
@@ -80,19 +80,19 @@ template/
 
 
 
-\---
+---
 
 
 
-\# Creating a New ScriptPack
+# Creating a New ScriptPack
 
 
 
-1\. Copy the entire template directory.
+1. Copy the entire template directory.
 
 
 
-2\. Rename the directory.
+2. Rename the directory.
 
 
 
@@ -116,31 +116,31 @@ javanese/
 
 
 
-3\. Update `manifest.json`.
+3. Update `manifest.json`.
 
 
 
-4\. Implement `script.py`.
+4. Implement `script.py`.
 
 
 
-5\. Add assets.
+5. Add assets.
 
 
 
-6\. Test using the Core Engine.
+6. Test using the Core Engine.
 
 
 
-\---
+---
 
 
 
-\# Required Files
+# Required Files
 
 
 
-\## manifest.json
+## manifest.json
 
 
 
@@ -148,7 +148,7 @@ Contains ScriptPack metadata.
 
 
 
-\## script.py
+## script.py
 
 
 
@@ -156,7 +156,7 @@ Implements the BaseScriptPack interface.
 
 
 
-\## README.md
+## README.md
 
 
 
@@ -164,11 +164,11 @@ Documents the ScriptPack.
 
 
 
-\---
+---
 
 
 
-\# Assets
+# Assets
 
 
 
@@ -180,13 +180,13 @@ Examples:
 
 
 
-\- fonts
+- fonts
 
-\- audio
+- audio
 
-\- images
+- images
 
-\- character data
+- character data
 
 
 
@@ -194,11 +194,11 @@ The Core Engine SHALL NOT own these resources.
 
 
 
-\---
+---
 
 
 
-\# Conformance
+# Conformance
 
 
 
@@ -206,17 +206,17 @@ Every ScriptPack SHALL conform to:
 
 
 
-\- AN-STD-001 — ScriptPack Interface Specification
+- AN-STD-001 — ScriptPack Interface Specification
 
 
 
-\---
+---
 
 
 
-\# License
+# License
 
 
 
-Unless otherwise specified, this template is released under the MIT License.
+Unless otherwise specified, this template is released under the GNU General Public License v3.0.
 
