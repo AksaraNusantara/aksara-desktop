@@ -64,6 +64,15 @@ class EngineError(CoreEngineError):
     pass
 
 
+class TransliterationError(EngineError):
+    """
+    Raised when a transliteration request cannot be dispatched, for example
+    when no ScriptPack is selected or the ScriptPack does not provide
+    transliteration support.
+    """
+    pass
+
+
 class AudioServiceError(CoreEngineError):
     """
     Raised when an audio service operation fails.

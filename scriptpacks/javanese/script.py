@@ -12,17 +12,65 @@ Module Type:
 Purpose:
     Official implementation of the Javanese ScriptPack.
 
+Implements:
+    AN-STD-001
+    Section 11 - BaseScriptPack Interface
+    Section 17 - Transliteration
+
+References:
+    docs/standards/SCRIPTPACK_INTERFACE_SPECIFICATION.md
+
+Copyright (c) Aksara Nusantara Project
+
+SPDX-License-Identifier: GPL-3.0-or-later
+
 ===============================================================================
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 from PySide6.QtGui import QFontDatabase
 
 from core.scriptpack import BaseScriptPack
+from core.transliteration import TransliterationDirection
+from core.transliteration import TransliterationResult
+
+
+_TRANSLITERATION_MODULE = "aksara_scriptpack_javanese_transliteration"
+
+
+def _load_transliteration_module():
+    """
+    Load the sibling ``transliteration.py`` by path.
+
+    The Loader imports this file through ``spec_from_file_location``, so
+    the ScriptPack directory is not a regular package and relative imports
+    are unavailable.
+    """
+
+    module = sys.modules.get(_TRANSLITERATION_MODULE)
+
+    if module is not None:
+        return module
+
+    spec = importlib.util.spec_from_file_location(
+        _TRANSLITERATION_MODULE,
+        Path(__file__).with_name("transliteration.py"),
+    )
+
+    if spec is None or spec.loader is None:
+        raise ImportError("Unable to load Javanese transliteration module.")
+
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[_TRANSLITERATION_MODULE] = module
+    spec.loader.exec_module(module)
+
+    return module
 
 
 class JavaneseScriptPack(BaseScriptPack):
@@ -31,6 +79,28 @@ class JavaneseScriptPack(BaseScriptPack):
     def __init__(self) -> None:
         super().__init__()
         self._dataset_name = "nglegena"
+        self._transliterator = None
+
+    def supports_transliteration(self) -> bool:
+        """The Javanese ScriptPack provides transliteration."""
+
+        return True
+
+    def transliterate(
+        self,
+        text: str,
+        direction: TransliterationDirection,
+    ) -> TransliterationResult:
+        """Transliterate between Latin and Aksara Jawa."""
+
+        if self._transliterator is None:
+            module = _load_transliteration_module()
+
+            self._transliterator = module.JavaneseTransliterator(
+                Path(__file__).parent / "assets" / "characters"
+            )
+
+        return self._transliterator.transliterate(text, direction)
 
     def get_characters(self) -> list[dict]:
         """Return character definitions from the current dataset(s)."""

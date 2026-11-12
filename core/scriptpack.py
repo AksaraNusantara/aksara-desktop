@@ -27,6 +27,14 @@ SPDX-License-Identifier: GPL-3.0-or-later
 from __future__ import annotations
 
 from abc import ABC
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.transliteration import (
+        TransliterationDirection,
+        TransliterationResult,
+    )
 from abc import abstractmethod
 
 from pathlib import Path
@@ -129,6 +137,37 @@ class BaseScriptPack(ABC):
         Return the complete collection of characters provided
         by the ScriptPack.
         """
+        raise NotImplementedError
+
+    # -------------------------------------------------------------------------
+    # Implements:
+    #
+    # AN-STD-001
+    # Section 17 - Transliteration (optional capability)
+    # -------------------------------------------------------------------------
+    def supports_transliteration(self) -> bool:
+        """
+        Return True when the ScriptPack provides transliteration.
+
+        Transliteration is optional (Section 17.1). ScriptPacks that
+        implement it SHALL override both this method and
+        ``transliterate()``.
+        """
+
+        return False
+
+    def transliterate(
+        self,
+        text: str,
+        direction: TransliterationDirection,
+    ) -> TransliterationResult:
+        """
+        Transliterate ``text`` in the given direction.
+
+        The algorithm is writing-system specific and owned by the
+        ScriptPack (TR-018).
+        """
+
         raise NotImplementedError
 
     @abstractmethod

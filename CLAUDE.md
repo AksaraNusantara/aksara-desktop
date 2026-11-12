@@ -49,7 +49,15 @@ Key decisions are recorded as ADRs in `docs/decisions/`: deferred ScriptPack act
 
 ## Transliteration research (AD-TR-01): current focus
 
-The Transliteration Module is being designed through a long, numbered, architecture-first research process. It is not implemented yet.
+The Transliteration Module is being designed through a long, numbered, architecture-first research process.
+
+A first implementation covers only the LOCKED rules (TR-001–TR-018) in `docs/development/transliteration/06. ... Contract Rules v0_1.md`:
+- `core/transliteration.py` holds the script-agnostic types: `TransliterationDirection`, `DiagnosticCode`, `TransliterationResult`.
+- `CoreEngine.transliterate()` only dispatches to a ScriptPack. Spec §17.2 / TR-018 forbid writing-system rules in core.
+- The Javanese grammar lives in `scriptpacks/javanese/transliteration.py`. It is pure Python (no Qt), its glyph tables come from `assets/characters/*.json`, and `script.py` loads it by path.
+- OPEN behaviour (e.g. `ng` before a consonant, TR-CR-001) is preserved unchanged and reported with an `OPEN_CONTRACT` diagnostic instead of being guessed.
+- The tests are in `tests/test_transliteration_javanese.py`.
+- API names are provisional, because Phase 2D-3 left them unlocked.
 
 - Each step gets a design doc in `docs/development/transliteration/NN. AD-TR-01 — Phase X — Step N — <Title>.md`, which ends with a "Step N Completion Status" block (experiment/test counts, Experimental / Architectural / Documentation status).
 - Each step's executable probes live in `tests/research/test_stepNN_MM_<topic>.py`, with earlier ones in `tests/transliteration/experiments/`. They are self-contained `unittest` files: plain dicts or local `Experimental*` dataclasses, no imports from production code, and test methods numbered `test_01_...` under `# NN-M-X` section comments. They probe semantic boundaries (admission, permission, authority, result vs. decision, etc.) across several domains; they are not tests of app behavior.

@@ -52,6 +52,9 @@ from core.registry import ScriptPackRegistry
 from core.scriptpack import BaseScriptPack
 from core.validator import ScriptPackValidator
 from core.exceptions import EngineError
+from core.exceptions import TransliterationError
+from core.transliteration import TransliterationDirection
+from core.transliteration import TransliterationResult
 
 
 class CoreEngine:
@@ -423,6 +426,69 @@ class CoreEngine:
         )
 
         return scriptpack.get_dataset_display_name()
+
+    def transliterate(
+        self,
+        text: str,
+        direction: TransliterationDirection,
+        identifier: str | None = None,
+    ) -> TransliterationResult:
+        """
+        Transliterate text through a ScriptPack (AD-TR-01 TD-001).
+
+        The Core Engine only dispatches the request; it does not implement
+        transliteration rules (AN-STD-001 Section 17.2, TR-018).
+
+        Parameters
+        ----------
+        text:
+            Input text. It is passed through unmodified (TR-013).
+
+        direction:
+            Transliteration direction.
+
+        identifier:
+            ScriptPack identifier. Defaults to the active ScriptPack.
+
+        Returns
+        -------
+        TransliterationResult
+            Output text and diagnostics.
+
+        Raises
+        ------
+        TransliterationError
+            If no ScriptPack is selected, or the ScriptPack does not
+            support transliteration.
+        """
+
+        if not isinstance(text, str):
+            raise TypeError("text must be a str.")
+
+        direction = TransliterationDirection(direction)
+
+        if identifier is not None:
+            scriptpack = self.get(identifier)
+        elif self._active_scriptpack is not None:
+            scriptpack = self._active_scriptpack
+        else:
+            raise TransliterationError(
+                "No ScriptPack selected for transliteration."
+            )
+
+        if not scriptpack.supports_transliteration():
+            raise TransliterationError(
+                "ScriptPack does not support transliteration."
+            )
+
+        result = scriptpack.transliterate(text, direction)
+
+        if not isinstance(result, TransliterationResult):
+            raise TransliterationError(
+                "ScriptPack returned an invalid transliteration result."
+            )
+
+        return result
 
     def _require_active_scriptpack(
         self,
